@@ -5,30 +5,29 @@
 <head>
     <meta charset="UTF-8">
     <title>My Diary</title>
-    <link rel="stylesheet" href="{% static 'entries/css/diary.css' %}">
+    <link rel="stylesheet" href="{% static 'css/diary.css' %}">
 </head>
 
 <body>
     <h1><a href="/">Dear diary …</a></h1>
 
-{% if messages %}
-<ul class="messages">
-{% for message in messages %}
-    <li class="message">
-        {{ message }}
-    </li>
-    {% endfor %}
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li class="message">
+            {{ message }}
+        </li>
+        {% endfor %}
     </ul>
-{% endif %}
+    {% endif %}
 
-{% block content %}{% endblock content %}
+    {% block content %}{% endblock content %}
 
-<hr>
-<form method="post" action="{% url 'admin:logout' %}">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Logout" />
-</form>
+    <hr>
+    <form method="post" action="{% url 'admin:logout' %}">
+        {% csrf_token %}
+        <input type="submit" value="Logout" />
+    </form>
 
 </body>
 

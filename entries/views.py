@@ -39,7 +39,7 @@ class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
             kwargs={"pk": self.entry.id}
         )
 
-class EntryDeleteView(LockedView, DeleteView):
+class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
     model = Entry
     success_url = reverse_lazy("entry-list")
     success_message = "Your entry was deleted!"
