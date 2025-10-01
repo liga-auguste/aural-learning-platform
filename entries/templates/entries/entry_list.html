@@ -1,25 +1,26 @@
 {% extends "entries/base.html" %}
 
 {% block content %}
-<article>
-    <h2 class="mark">{% now "Y-m-d H:i" %}</em></h2>
-    <a href="{% url 'entry-create' %}"><button>Add new entry</button></a>
-</article>
-
+<div class="lectures-container">
+    <article class="lecture editable-lecture">
+    <!-- <h3 class="mark">{% now "Y-m-d H:i" %}</h3> -->
+    <h1><a class="add-module-btn" href="{% url 'entry-create' %}">+Neues Modul hinzufügen</a></h1>
+    </article>
 {% for entry in entry_list %}
-<article>
-    <h2 class="{{ entry.date_created|date:'l' }}">
+<article class="lecture">
+    <h3 class="{{ entry.date_created|date:'l' }}">
         {{ entry.date_created|date:'Y-m-d H:i' }}
-    </h2>
-    <h3>
+    </h3>
+    <h2>
         <a href="{% url 'entry-detail' entry.id %}">
             {{ entry.title }}
         </a>
-    </h3>
+    </h2>
+    <p>
+        <a href="{% url 'entry-update' entry.id %}" class="btn">Edit</a>
+        <a href="{% url 'entry-delete' entry.id %}" class="btn">Delete</a>
+    </p>
 </article>
-<p>
-    <a href="{% url 'entry-update' entry.id %}">✍️ Edit</a>
-    <a href="{% url 'entry-delete' entry.id %}">⛔ Delete</a>
-</p>
 {% endfor %}
+</div>
 {% endblock content %}
