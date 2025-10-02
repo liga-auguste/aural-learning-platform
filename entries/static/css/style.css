@@ -4,18 +4,16 @@
   --lecture-bcg: #eaebeb;
   --btn-hover: #ef8354;
   --btn: #a9b3c6;
-  --acc-col-faded: #fad6c7;
   --lecture-hover: #dadfe7;
 }
 
 .darkmode {
   --bcg-col: #1F1F1F;
   --text-color: rgb(193, 194, 198);
-  --lecture-bcg: #252424;
-  --btn-hover: #6c3e2b;
+  --lecture-bcg: #3c3c3f;
+  --btn-hover: #be4f1f;
   --btn: #34435b;
-  --acc-col-faded: #6c3e2b;
-  --lecture-hover: #3c3c3f;
+  --lecture-hover: #555559;
 }
 
 * {
@@ -37,6 +35,7 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 1.5rem 0;
 }
 
 /* Darkmode switch */
