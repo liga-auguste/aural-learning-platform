@@ -1,0 +1,92 @@
+[
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 1",
+      "inclass": "Begriffe Intervall, Oktave, Tonraum, Konsonanz, Dissonanz, Komplementär-intervalle, Inklusivzählung",
+      "homework": "Intervalle von bestimmten Tönen aufbauen\nAm Klavier spielen",
+      "tags": ""
+    }
+  },
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 2",
+      "inclass": "Wiederholung der Grundbegriffe aus dem Modul 1\nQuantitativer und qualitativer Abstand (groß, rein, klein, verm, Überm.), Tritonus\nGrobbestimmung und Feinbestimmung\nLiedanfänge als Merkhilfe",
+      "homework": "Intervalle bezeichnen\nSpielen und überprüfen\nIntervalle von bestimmten Tönen aufbauen\nLiedanfänge - Liste vollständig?",
+      "tags": ""
+    }
+  },
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 3",
+      "inclass": "Oktaven in der Graphik bezeichnen\nGraphik zu Alteration\nHans-Peter Braun: Musiklehre",
+      "homework": "Hans-Peter Braun: Musiklehre (s. 310-316 lesen)",
+      "tags": ""
+    }
+  },
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 4",
+      "inclass": "Begriffe aus dem Skript: Obertonreihe, Vorzeichen, Notenwerte, Pausenwerte\nObertonreihe von d\nDoppelerhöhung und Doppelerniedrigung\nIntervallreihe",
+      "homework": "Finde Notationsfehler\nNotiere Töne in Bass- und Violinschlüssel\nNotiere die Intervalle aufwärts und abwärts",
+      "tags": ""
+    }
+  },
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 5",
+      "inclass": "Hausaufgabe gemeinsam anschauen\nIntervalle - Wiederholung\nIntervalle - bis gr10\nIntervallreihe modal-tonal\nArten der Molltonleiter",
+      "homework": "",
+      "tags": ""
+    }
+  },
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 6",
+      "inclass": "Intervalle hören und mit der Bezeichnung sowie mit der Notenschrift notieren\nTempobezeichnungen schnell -> langsam anordnen (Ausdrucken)\nIntervalle aufwärts und abwärts aufbauen\nEinstimmiger Diktat - Einstieg (Gott, dein Segen geht mit uns, aus Kinder-Kirchen-Hits) oder alternativ EG 311",
+      "homework": "",
+      "tags": ""
+    }
+  },
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 7",
+      "inclass": "Intervalle hören und mit der Bezeichnung und in Notenschrift notieren\nIntervalle aufwärts und abwärts aufbauen\nKorrigiere Fehler im Rhythmusdiktat\nErkenne die Intervalle und ordne sie in der richtigen Reihenfolge",
+      "homework": "",
+      "tags": ""
+    }
+  },
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 8",
+      "inclass": "Dreistimmige Akkorde I\nEinleitung in Dreistimmige Akkorde (Dreiklang, Sextakkord, Quartsextakkord)\nTabelle Bezeichnung Funktionstheorie, GB und Akkordbezeichnung\nAufgabe: Akkorde aufbauen und Tonarten notieren",
+      "homework": "Siehe Unterricht\nSkript-Lösung = HA-Lösung",
+      "tags": ""
+    }
+  },
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 9",
+      "inclass": "Dreistimmige Akkorde II\nMoll und Umkehrungen (hören und erkennen)\nDur und Umkehrungen (hören und erkennen)\nVerminderter Dreiklang (+Auflösung)\nÜbermäßiger Dreiklang (+Auflösung)\nQuartvorhalt = Quartseptklang",
+      "homework": "",
+      "tags": ""
+    }
+  },
+  {
+    "model": "modules.module",
+    "fields": {
+      "title": "Modul 10",
+      "inclass": "Notation in 6/8, Struktur 3+3 Achtel, mögliche Rhythmen\nEinstimmiger Diktat 6/8\nKurze Wiederholung der dreistimmigen Akkorde\nAkkorde mit einer Veränderung, einzeln\nAkkorde mit einer Veränderung, ganze Reihe",
+      "homework": "",
+      "tags": ""
+    }
+  }
+]

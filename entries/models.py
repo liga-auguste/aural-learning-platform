@@ -11,5 +11,3 @@ class Entry(models.Model):
     
     class Meta:
         verbose_name_plural ='Entries'
-
-# Create your models here.

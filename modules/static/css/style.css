@@ -1,0 +1,299 @@
+:root {
+  --bcg-col: white;
+  --text-color: #2d3142;
+  --lecture-bcg: #eaebeb;
+  --btn-hover: #ef8354;
+  --btn: #a9b3c6;
+  --lecture-hover: #dadfe7;
+}
+
+.darkmode {
+  --bcg-col: #1F1F1F;
+  --text-color: rgb(193, 194, 198);
+  --lecture-bcg: #3c3c3f;
+  --btn-hover: #be4f1f;
+  --btn: #34435b;
+  --lecture-hover: #555559;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: "Barlow Semi Condensed", sans-serif;
+}
+
+body {
+  max-width: 75%;
+  margin: 0 auto;
+  color: var(--text-color);
+  background-color: var(--bcg-col);
+}
+
+.header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 0;
+}
+
+/* Darkmode switch */
+
+.theme-switch {
+  height: 50px;
+  width: 50px;
+  padding: 0;
+  border-radius: 50%;
+  background-color: var(--btn);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  top: 20px;
+  right: 20px;
+}
+
+.theme-switch svg {
+  fill: var(--text-color);
+}
+
+.theme-switch svg:last-child {
+  display: none;
+}
+
+.darkmode .theme-switch svg:first-child {
+  display: none;
+}
+
+.darkmode .theme-switch svg:last-child {
+  display: block;
+}
+
+/* Stylings body */
+.lectures-container {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+}
+
+.lecture {
+  background-color: var(--lecture-bcg);
+  padding: 0.75rem;
+  border: 1px solid var(--btn);
+  border-radius: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.lecture:hover {
+  background-color: var(--lecture-hover);
+  transition: transform 0.5s ease, background-color 0.5s ease;
+}
+
+/* Button general styling */
+
+/* button {
+  margin-top: 0.5rem;
+  border: none;
+  background-color: var(--btn);
+  color: var(--text-color);
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  border-radius: 20px;
+  padding: 0.5rem 0.75rem;
+  font-family: inherit;
+} */
+
+button, .btn {
+  margin-top: 0.5rem;
+  border: none;
+  background-color: var(--btn);
+  color: var(--text-color);
+  text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.3s ease;
+  border-radius: 20px;
+  padding: 0.5rem 0.75rem;
+  font-family: inherit;
+}
+
+button:hover, .btn:hover {
+  background-color: var(--btn-hover);
+  transform: scale(1.05);
+}
+
+.btn-align {
+  text-align: right;
+  padding-right: 2rem;
+}
+
+.add-module-btn {
+  color: var(--text-color);
+  text-decoration: none;
+  font-size: xx-large;
+  align-self: center;
+}
+
+.add-module-btn:visited {
+  color: var(--text-color);   /* visited-Link gleich einfärben */
+}
+
+.add-module-btn:hover {
+  color: var(--btn-hover);    /* beim Hovern leicht abheben */
+}
+
+.link-container {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  align-items: flex-end;
+  margin-top: auto;
+}
+
+/* Input styling */
+
+.form-inline {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "Barlow Semi Condensed", sans-serif;
+}
+
+.form-inline input {
+  vertical-align: middle;
+  margin: 5px 10px 5px 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  box-sizing: border-box;
+  line-height: 1.6rem;
+}
+
+.small-input {
+  width: 3rem;
+  border-radius: 5px;
+}
+
+.long-input {
+  width: 100%;
+}
+
+/* small screens */
+@media screen and (max-width: 765px) {
+  .lectures-container {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+}
+
+/* medium screens */
+@media screen and (min-width: 766px) {
+}
+
+/* large screens */
+@media screen and (min-width: 1600px) {
+  .lectures-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+
+/* Modal */
+dialog {
+  padding: 1.5rem;
+  border-radius: 6px;
+  background-color: var(--lecture-hover);
+  line-height: 1.5rem;
+}
+
+dialog::backdrop {
+  background-color: rgb(0, 0, 0, 0.6);
+}
+
+body.darkmode dialog {
+  background-color: var(--lecture-hover);
+  color: var(--text-color);
+}
+
+body.darkmode dialog input,
+body.darkmode dialog textarea,
+body.darkmode dialog select {
+  background-color: #1e1e1e;
+  color: var(--text-color);
+  border: 1px solid var(--btn);
+}
+
+body.darkmode dialog button {
+  background-color: var(--btn);
+  color: var(--text-color);
+}
+
+.custom-upload-button {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background-color: var(--btn);
+  color: var(--text-color);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  font-family: inherit;
+}
+
+.custom-upload-button:hover {
+  background-color: var(--btn-hover);
+  transform: scale(1.05);
+}
+
+
+
+
+/* link-button-chaos */
+h1 a,
+h2 a,
+h3 a {
+  color: var(--text-color);  /* nimmt automatisch die Light- oder Dark-Variante */
+  text-decoration: none;
+}
+
+h1 a:link,
+h1 a:visited,
+h2 a:link,
+h2 a:visited,
+h3 a:link,
+h3 a:visited {
+  color: var(--text-color);  /* keine Browser-Farben */
+}
+
+h1 a:hover,
+h2 a:hover,
+h3 a:hover {
+  color: var(--btn-hover);      /* Hover-Farbe aus deiner Palette */
+}
+
+
+
+/* currently not used code */
+
+.add-btn {
+  align-self: center;
+}
+
+.remove-btn {
+  margin-left: 0.5rem;
+  line-height: 0.85rem;
+}
+
+.editable-lecture {
+  display: flex;
+  justify-content: center; /* horizontal */
+  align-items: center;     /* vertikal */
+  min-height: 200px;       /* Höhe, damit Vertikal-Zentrierung sichtbar ist */
+  flex: 1 1 300px;         /* optional: macht es flexibler beim Layout */
+}
+
+
+
+.editable-link-container{
+  justify-content: space-between;
+}

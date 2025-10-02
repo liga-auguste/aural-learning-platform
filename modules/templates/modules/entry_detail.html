@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}{{ object.title }}{% endblock %}
+{% block content %}
+  <h2>{{ object.title }}</h2>
+  <p><strong>Unterricht:</strong> {{ object.inclass|linebreaks }}</p>
+  <p><strong>Hausaufgabe:</strong> {{ object.homework|linebreaks }}</p>
+  <p><strong>Tags:</strong> {{ object.tags }}</p>
+
+  <p>
+    <a href="{% url 'entry_update' object.pk %}">Bearbeiten</a> |
+    <a href="{% url 'entry_delete' object.pk %}">Löschen</a> |
+    <a href="{% url 'entry_list' %}">Zurück zur Liste</a>
+  </p>
+{% endblock %}

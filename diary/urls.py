@@ -20,6 +20,7 @@ from django.urls import path, include
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("entries.urls")),
-    path("modules/", include("modules.urls")),
+    path("", include("modules.urls")),   # Root auf modules
+    path("accounts/", include("django.contrib.auth.urls")),
 ]
+

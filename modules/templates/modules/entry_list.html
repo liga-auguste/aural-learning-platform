@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Module{% endblock %}
+{% block content %}
+  <h2>Alle Module</h2>
+  <p><a href="{% url 'entry_create' %}" class="btn">Neues Modul anlegen</a></p>
+
+  {% if object_list %}
+    <ul>
+      {% for entry in object_list %}
+        <li>
+          <a href="{% url 'entry_detail' entry.pk %}">{{ entry.title }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Noch keine Module vorhanden.</p>
+  {% endif %}
+{% endblock %}
