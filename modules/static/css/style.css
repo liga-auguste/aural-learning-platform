@@ -1,10 +1,11 @@
 :root {
   --bcg-col: white;
   --text-color: #2d3142;
-  --lecture-bcg: #eaebeb;
+  --lecture-bcg: #EBEBEB;
   --btn-hover: #ef8354;
   --btn: #a9b3c6;
   --lecture-hover: #dadfe7;
+  --tags: #C1CBD7;
 }
 
 .darkmode {
@@ -14,6 +15,7 @@
   --btn-hover: #be4f1f;
   --btn: #34435b;
   --lecture-hover: #555559;
+  --tags: #505053;
 }
 
 * {
@@ -144,6 +146,27 @@ button:hover, .btn:hover {
   align-items: flex-start;
   margin-top: auto;
 }
+
+/* Tags und styling */
+
+.terms { 
+  display: flex; 
+  gap: 0.4rem; 
+  flex-wrap: wrap; 
+  margin: 0.5rem 0;
+}
+
+.badge {
+  background: var(--tags);
+  color: var(--text-color);
+  padding: 0.2rem 0.6rem;
+  border-radius: 12px;
+}
+
+.muted {
+  color: #888;
+}
+
 
 /* Input styling */
 

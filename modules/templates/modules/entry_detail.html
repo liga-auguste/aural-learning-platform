@@ -4,7 +4,15 @@
 <h2>{{ object.title }}</h2>
 <p><strong>Unterricht:</strong> {{ object.inclass|linebreaks }}</p>
 <p><strong>Hausaufgabe:</strong> {{ object.homework|linebreaks }}</p>
-<p><strong>Tags:</strong> {{ object.tags }}</p>
+<p><strong>Begriffe:</strong></p>
+<div class="terms">
+  {% for term in object.terms.all %}
+    <span class="badge">{{ term.name }}</span>
+  {% empty %}
+    <span class="muted">keine Begriffe</span>
+  {% endfor %}
+</div>
+
 
 <p>
   <a class="btn" href="{% url 'entry_update' object.pk %}">Bearbeiten</a>
