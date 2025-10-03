@@ -7,7 +7,7 @@
     <h1><a class="add-module-btn" href="{% url 'entry-create' %}">+Neues Modul hinzufügen</a></h1>
     </article>
 {% for entry in entry_list %}
-<article class="lecture">
+    <article class="lecture">
     <h3 class="{{ entry.date_created|date:'l' }}">
         {{ entry.date_created|date:'Y-m-d H:i' }}
     </h3>
@@ -20,7 +20,7 @@
         <a href="{% url 'entry-update' entry.id %}" class="btn">Edit</a>
         <a href="{% url 'entry-delete' entry.id %}" class="btn">Delete</a>
     </p>
-</article>
+    </article>
 {% endfor %}
 </div>
 {% endblock content %}

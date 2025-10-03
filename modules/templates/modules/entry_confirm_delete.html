@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Modul löschen{% endblock %}
 {% block content %}
-  <h2>"{{ object }}" wirklich löschen?</h2>
+  <h2>{{ object }} wirklich löschen?</h2>
   <form method="post">{% csrf_token %}
     <button type="submit">Ja, löschen</button>
-    <a href="{% url 'entry_detail' object.pk %}">Abbrechen</a>
+    <a class="btn" href="{% url 'entry_detail' object.pk %}">Abbrechen</a>
   </form>
 {% endblock %}

@@ -94,18 +94,6 @@ body {
 
 /* Button general styling */
 
-/* button {
-  margin-top: 0.5rem;
-  border: none;
-  background-color: var(--btn);
-  color: var(--text-color);
-  text-decoration: none;
-  transition: transform 0.2s ease, background-color 0.3s ease;
-  border-radius: 20px;
-  padding: 0.5rem 0.75rem;
-  font-family: inherit;
-} */
-
 button, .btn {
   margin-top: 0.5rem;
   border: none;
@@ -116,6 +104,7 @@ button, .btn {
   border-radius: 20px;
   padding: 0.5rem 0.75rem;
   font-family: inherit;
+  display: inline-block;
 }
 
 button:hover, .btn:hover {
@@ -126,6 +115,10 @@ button:hover, .btn:hover {
 .btn-align {
   text-align: right;
   padding-right: 2rem;
+}
+
+.svg {
+  color: var(--text-color)
 }
 
 .add-module-btn {
@@ -145,9 +138,10 @@ button:hover, .btn:hover {
 
 .link-container {
   display: flex;
+  _background-color: red;
   gap: 1rem;
   justify-content: flex-end;
-  align-items: flex-end;
+  align-items: flex-start;
   margin-top: auto;
 }
 
@@ -251,7 +245,8 @@ body.darkmode dialog button {
 /* link-button-chaos */
 h1 a,
 h2 a,
-h3 a {
+h3 a, 
+div a {
   color: var(--text-color);  /* nimmt automatisch die Light- oder Dark-Variante */
   text-decoration: none;
 }
