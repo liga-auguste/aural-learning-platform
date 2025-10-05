@@ -4,14 +4,14 @@ from .models import Module
 class ModuleForm(forms.ModelForm):
     class Meta:
         model = Module
-        fields = ["title", "inclass", "homework", "terms", "pdf_1", "pdf_2", "pdf_3", "pdf_4"]
+        fields = ["title", "inclass", "homework", "tags", "pdf_1", "pdf_2", "pdf_3", "pdf_4"]
         labels = {
             "title": "Titel des Moduls",
             "inclass": "Im Unterricht",
             "homework": "Hausaufgabe",
-            "terms": "Begriffe",
+            "tags": "Begriffe",
             "pdf_1": "Skript",
-            "pdf_2": "Lösung",
+            "pdf_2": "Lösung zum Skript",
             "pdf_3": "Hausaufgabe",
             "pdf_4": "Hausaufgabe - Lösung",
         }

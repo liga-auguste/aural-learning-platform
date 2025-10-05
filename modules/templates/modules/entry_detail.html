@@ -6,17 +6,17 @@
 <p><strong>Hausaufgabe:</strong> {{ object.homework|linebreaks }}</p>
 <p><strong>Begriffe:</strong></p>
 <div class="terms">
-  {% for term in object.terms.all %}
-    <span class="badge">{{ term.name }}</span>
+  {% for tag in entry.tags.all %}
+    <a href="{% url 'modules:entries_by_tag' tag.slug %}" class="badge">{{ tag.name }}</a>
   {% empty %}
-    <span class="muted">keine Begriffe</span>
+    <span class="muted">keine Tags</span>
   {% endfor %}
 </div>
 
 
 <p>
-  <a class="btn" href="{% url 'entry_update' object.pk %}">Bearbeiten</a>
-  <a class="btn" href="{% url 'entry_delete' object.pk %}">Löschen</a>
-  <a class="btn" href="{% url 'entry_list' %}">Zurück zur Liste</a>
+  <a class="btn" href="{% url 'modules:entry_update' object.pk %}">Bearbeiten</a>
+  <a class="btn" href="{% url 'modules:entry_delete' object.pk %}">Löschen</a>
+  <a class="btn" href="{% url 'modules:entry_list' %}">Zurück zur Liste</a>
 </p>
 {% endblock %}

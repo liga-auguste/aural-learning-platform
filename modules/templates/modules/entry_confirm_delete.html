@@ -4,6 +4,6 @@
   <h2>{{ object }} wirklich löschen?</h2>
   <form method="post">{% csrf_token %}
     <button type="submit">Ja, löschen</button>
-    <a class="btn" href="{% url 'entry_detail' object.pk %}">Abbrechen</a>
+    <a class="btn" href="{% url 'modules:entry_detail' object.pk %}">Abbrechen</a>
   </form>
 {% endblock %}
