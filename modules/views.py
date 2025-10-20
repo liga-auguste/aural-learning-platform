@@ -1,3 +1,4 @@
+from django.db.models import Max
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -11,8 +12,6 @@ from .forms import ModuleForm
 
 from django.utils.text import slugify
 from taggit.models import Tag
-
-
 
 class HomeView(TemplateView):
     template_name = "modules/home.html"
@@ -74,7 +73,7 @@ class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):
     model = Module
     form_class = ModuleForm
     template_name = "modules/entry_form.html"
-    success_url = reverse_lazy("entry_list")
+    success_url = reverse_lazy("modules:entry_list")
     success_message = "Das Modul wurde erstellt!"
 
 class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
@@ -84,13 +83,13 @@ class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
     success_message = "Das Modul wurde aktualisiert!"
 
     def get_success_url(self):
-        return reverse_lazy("entry_detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy("modules:entry_detail", kwargs={"pk": self.object.pk})
 
 
 class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
     model = Module
     template_name = "modules/entry_confirm_delete.html"
-    success_url = reverse_lazy("entry_list")
+    success_url = reverse_lazy("modules:entry_list")
     success_message = "Das Modul wurde gelöscht!"
 
     def delete(self, request, *args, **kwargs):

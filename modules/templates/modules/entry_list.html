@@ -7,14 +7,15 @@
         <a class="btn" href="{% url 'modules:entry_create' %}">+ Neues Modul anlegen</a>
     </div>
   </div>
-  <div>
+  <div class="tag-filter">
     {% if current_tag %}
-  <div class="tag-filter-info">
-    Gefiltert nach: <strong>{{ current_tag.name }}</strong>
+    <div class="tag-filter-info">
+    Gefiltert nach: {{ current_tag.name }}
     · <a href="{% url 'modules:entry_list' %}">Filter entfernen</a>
-  </div>
+    </div>
 {% endif %}
   </div>
+  
   <div class="lectures-container">
 
   {% if object_list %}

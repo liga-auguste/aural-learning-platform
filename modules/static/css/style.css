@@ -71,6 +71,13 @@ body {
 .darkmode .theme-switch svg:last-child {
   display: block;
 }
+/* Tag filter */
+.tag-filter {
+  color: var(--text-color);
+  padding: 1rem 0;
+  font-size: 1.25rem;
+}
+
 
 /* Stylings body */
 .lectures-container {
@@ -285,7 +292,8 @@ h3 a:visited {
 
 h1 a:hover,
 h2 a:hover,
-h3 a:hover {
+h3 a:hover, 
+div a:hover {
   color: var(--btn-hover);      /* Hover-Farbe aus deiner Palette */
 }
 

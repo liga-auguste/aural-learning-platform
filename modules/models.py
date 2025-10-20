@@ -1,11 +1,12 @@
-from django.db import models
+from django.db import models, transaction
+from django.db.models import Max
 from django.core.validators import FileExtensionValidator
 from taggit.managers import TaggableManager
 
 
 
 def module_upload_path(instance, filename):
-    return f"modules/{instance.pk or 'tmp'}/{filename}"
+    return f"media/modules/{instance.pk}/{filename}"
 
 
 pdf_validator = FileExtensionValidator(allowed_extensions=["pdf"])
@@ -26,7 +27,7 @@ class Module(models.Model):
     pdf_4 = models.FileField(upload_to=module_upload_path, validators=[pdf_validator],
                              blank=True, null=True)
 
-    order = models.PositiveIntegerField(default=0, db_index=True)
+    order = models.PositiveIntegerField(db_index=True, blank=True, null=True)
 
     def __str__(self):
         return self.title
@@ -35,3 +36,10 @@ class Module(models.Model):
         ordering = ["order", "id"]
         verbose_name = "Module"
         verbose_name_plural = "Module"
+        
+    def save(self, *args, **kwargs):
+        if self.order is None:
+            with transaction.atomic():
+                max_order = Module.objects.select_for_update().aggregate(m=Max("order"))["m"] or 0
+                self.order = max_order + 1
+        super().save(*args, **kwargs)
