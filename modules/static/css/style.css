@@ -1,15 +1,15 @@
 :root {
   --bcg-col: white;
   --text-color: #2d3142;
-  --lecture-bcg: #EBEBEB;
+  --lecture-bcg: #ebebeb;
   --btn-hover: #ef8354;
   --btn: #a9b3c6;
   --lecture-hover: #dadfe7;
-  --tags: #C1CBD7;
+  --tags: #c1cbd7;
 }
 
 .darkmode {
-  --bcg-col: #1F1F1F;
+  --bcg-col: #1f1f1f;
   --text-color: rgb(193, 194, 198);
   --lecture-bcg: #3c3c3f;
   --btn-hover: #be4f1f;
@@ -78,7 +78,6 @@ body {
   font-size: 1.25rem;
 }
 
-
 /* Stylings body */
 .lectures-container {
   display: grid;
@@ -103,7 +102,9 @@ body {
 
 /* Button general styling */
 
-button, .btn {
+button,
+a.btn,
+input.btn {
   margin-top: 0.5rem;
   border: none;
   background-color: var(--btn);
@@ -113,10 +114,13 @@ button, .btn {
   border-radius: 20px;
   padding: 0.5rem 0.75rem;
   font-family: inherit;
+  font-size: 1rem;
   display: inline-block;
 }
 
-button:hover, .btn:hover {
+button:hover,
+a.btn:hover,
+input.btn:hover {
   background-color: var(--btn-hover);
   transform: scale(1.05);
 }
@@ -127,7 +131,7 @@ button:hover, .btn:hover {
 }
 
 .svg {
-  color: var(--text-color)
+  color: var(--text-color);
 }
 
 .add-module-btn {
@@ -138,11 +142,11 @@ button:hover, .btn:hover {
 }
 
 .add-module-btn:visited {
-  color: var(--text-color);   /* visited-Link gleich einfärben */
+  color: var(--text-color); /* visited-Link gleich einfärben */
 }
 
 .add-module-btn:hover {
-  color: var(--btn-hover);    /* beim Hovern leicht abheben */
+  color: var(--btn-hover); /* beim Hovern leicht abheben */
 }
 
 .link-container {
@@ -156,10 +160,10 @@ button:hover, .btn:hover {
 
 /* Tags und styling */
 
-.terms { 
-  display: flex; 
-  gap: 0.4rem; 
-  flex-wrap: wrap; 
+.terms {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
   margin: 0.5rem 0;
 }
 
@@ -173,7 +177,6 @@ button:hover, .btn:hover {
 .muted {
   color: #888;
 }
-
 
 /* Input styling */
 
@@ -269,15 +272,14 @@ body.darkmode dialog button {
   transform: scale(1.05);
 }
 
-
-
-
 /* link-button-chaos */
 h1 a,
 h2 a,
-h3 a, 
+h3 a,
 div a {
-  color: var(--text-color);  /* nimmt automatisch die Light- oder Dark-Variante */
+  color: var(
+    --text-color
+  ); /* nimmt automatisch die Light- oder Dark-Variante */
   text-decoration: none;
 }
 
@@ -287,17 +289,18 @@ h2 a:link,
 h2 a:visited,
 h3 a:link,
 h3 a:visited {
-  color: var(--text-color);  /* keine Browser-Farben */
+  color: var(--text-color); /* keine Browser-Farben */
 }
 
 h1 a:hover,
 h2 a:hover,
-h3 a:hover, 
-div a:hover {
-  color: var(--btn-hover);      /* Hover-Farbe aus deiner Palette */
+h3 a:hover {
+  color: var(--btn-hover); /* Hover-Farbe aus deiner Palette */
 }
 
-
+div a:hover:not(.btn) {
+  color: var(--btn-hover);
+}
 
 /* currently not used code */
 
@@ -313,13 +316,11 @@ div a:hover {
 .editable-lecture {
   display: flex;
   justify-content: center; /* horizontal */
-  align-items: center;     /* vertikal */
-  min-height: 200px;       /* Höhe, damit Vertikal-Zentrierung sichtbar ist */
-  flex: 1 1 300px;         /* optional: macht es flexibler beim Layout */
+  align-items: center; /* vertikal */
+  min-height: 200px; /* Höhe, damit Vertikal-Zentrierung sichtbar ist */
+  flex: 1 1 300px; /* optional: macht es flexibler beim Layout */
 }
 
-
-
-.editable-link-container{
+.editable-link-container {
   justify-content: space-between;
 }
