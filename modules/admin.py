@@ -3,7 +3,7 @@ from .models import Module
 
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
-    list_display = ("order", "title", "tags_list")   # Tags sichtbar
+    list_display = ("order", "title", "tags_list", "pdf_1", "pdf_2", "pdf_3", "pdf_4")   # Tags sichtbar
     list_editable = ("order",)
     list_display_links = ("title",)
     ordering = ("order", "id")
@@ -14,3 +14,4 @@ class ModuleAdmin(admin.ModelAdmin):
         return ", ".join(obj.tags.names())
     tags_list.short_description = "Tags"
 
+    

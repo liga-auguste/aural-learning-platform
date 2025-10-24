@@ -13,18 +13,22 @@ pdf_validator = FileExtensionValidator(allowed_extensions=["pdf"])
 
 
 class Module(models.Model):
-    title = models.CharField(max_length=200)
-    inclass = models.TextField()                      # früher: content
-    homework = models.TextField(blank=True, null=True)
+    title = models.CharField("Titel des Moduls", max_length=200)
+    inclass = models.TextField("Unterricht")                      # früher: content
+    homework = models.TextField("Hausaufgabe", blank=True, null=True)
     tags = TaggableManager(verbose_name="Begriffe", blank=True)
 
-    pdf_1 = models.FileField(upload_to=module_upload_path, validators=[pdf_validator],
+    pdf_1 = models.FileField(
+        "Skript", upload_to=module_upload_path, validators=[pdf_validator],
                              blank=True, null=True)
-    pdf_2 = models.FileField(upload_to=module_upload_path, validators=[pdf_validator],
+    pdf_2 = models.FileField(
+        "Lösung zum Skript", upload_to=module_upload_path, validators=[pdf_validator],
                              blank=True, null=True)
-    pdf_3 = models.FileField(upload_to=module_upload_path, validators=[pdf_validator],
+    pdf_3 = models.FileField(
+        "Hausaufgabe", upload_to=module_upload_path, validators=[pdf_validator],
                              blank=True, null=True)
-    pdf_4 = models.FileField(upload_to=module_upload_path, validators=[pdf_validator],
+    pdf_4 = models.FileField(
+        "Lösung zur Hausaufgabe", upload_to=module_upload_path, validators=[pdf_validator],
                              blank=True, null=True)
 
     order = models.PositiveIntegerField(db_index=True, blank=True, null=True)

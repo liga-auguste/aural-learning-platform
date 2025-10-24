@@ -302,25 +302,210 @@ div a:hover:not(.btn) {
   color: var(--btn-hover);
 }
 
-/* currently not used code */
-
-.add-btn {
-  align-self: center;
+/* Entry-detail-links */
+.file-list { 
+  list-style: none; 
+  padding-left: 0; 
+  margin: .5rem 0 1rem; 
 }
 
-.remove-btn {
-  margin-left: 0.5rem;
-  line-height: 0.85rem;
+.file-list li { 
+  margin: .25rem 0; 
 }
 
-.editable-lecture {
+.file-list a { 
+  text-decoration: none; 
+}
+
+.file-list a:hover { 
+  text-decoration: underline; 
+}
+
+/* entry-form styling */
+/* .form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem 1.5rem;
+}
+@media (min-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+.form-row.span-2 {
+  grid-column: 1 / -1;
+}
+
+.form-actions {
   display: flex;
-  justify-content: center; /* horizontal */
-  align-items: center; /* vertikal */
-  min-height: 200px; /* Höhe, damit Vertikal-Zentrierung sichtbar ist */
-  flex: 1 1 300px; /* optional: macht es flexibler beim Layout */
+  gap: .75rem;
+  margin-top: 1.25rem;
+} */
+
+/* Grid-Wrapper: 2 Spalten – links Label (fixbreit), rechts Feld (flex) */
+.form-grid {
+  display: grid;
+  grid-template-columns: minmax(160px, 260px) 1fr;
+  column-gap: 1.25rem;
+  row-gap: 0.9rem;
+  align-items: start;
 }
 
-.editable-link-container {
-  justify-content: space-between;
+/* Kinder der form-row sollen direkt im Grid platziert werden */
+.form-row { 
+  display: contents;
+}
+
+/* Label links, sauber ausgerichtet */
+.form-row > label {
+  grid-column: 1;
+  align-self: start;
+  font-weight: 600;
+  color: var(--text-color);
+  padding-top: .4rem; /* gleicht die Oberkante zu Inputs/Textareas an */
+}
+
+/* Alle anderen Elemente (Input, Textarea, Fehler, current-file) rechts */
+.form-row > :not(label) {
+  grid-column: 2;
+}
+
+/* Inputs / Textareas optisch angleichen */
+.form-row input[type="text"],
+.form-row input[type="file"],
+.form-row textarea,
+.form-row select {
+  width: 100%;
+  padding: .6rem .75rem;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: .6rem;
+  background: var(--lecture-bcg);
+  color: var(--text-color);
+  outline: none;
+}
+
+.form-row textarea { min-height: 7.5rem; resize: vertical; }
+
+.form-row input:focus,
+.form-row textarea:focus,
+.form-row select:focus {
+  border-color: var(--btn-hover);
+  box-shadow: 0 0 0 3px rgba(239,131,84,.15);
+}
+
+/* Fehler und „Aktuell“-Link sitzen automatisch in Spalte 2 */
+.form-row .errorlist,
+.form-row .error { margin-top: .35rem; color: #b00020; font-size: .9rem; }
+
+.current-file {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+  margin-top: .4rem; 
+  font-size: .9rem; 
+}
+
+.current-file a {
+  display: inline-block;
+  text-decoration: none;
+  padding: .3rem .6rem;
+  border-radius: .4rem;
+  background: var(--btn);
+  color: var(--text-color);
+}
+.current-file a:hover { background: var(--btn-hover); }
+
+/* Buttons */
+.form-actions { margin-top: 1.25rem; display: flex; gap: .75rem; }
+
+/* Responsive: auf Mobil einspaltig */
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-row { display: block; }
+  .form-row > label { padding-top: 0; margin-bottom: .35rem; }
+}
+
+
+ /* optional: aktuelle Datei-Links hübsch */
+.current-file a {
+  background: var(--btn);
+  color: var(--text-color);
+  text-decoration: none;
+  padding: .3rem .6rem;
+  border-radius: .4rem;
+}
+.current-file a:hover {
+  color: var(--lecture-hover);
+}
+
+.file-widget { 
+  display: flex; 
+  flex-direction: column; 
+  gap:.45rem; 
+}
+.file-widget .clear-chk { 
+  font-size:.9rem; 
+  opacity: .8; 
+}
+
+.picker-row { 
+  display:flex; 
+  gap:.75rem; 
+  align-items:center; 
+  flex-wrap:wrap; 
+}
+.clear-chk-inline { 
+  font-size: .9rem;
+  opacity: .85;
+  display: flex;
+  align-items: center;
+  gap: .35rem;
+}
+
+/* keine Datei */
+.current-file.none {
+  opacity: .7;
+}
+
+
+/* INLINE neben dem Link erzwingen */
+.file-widget .current-file {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+/* Label + Checkbox als eine Einheit inline */
+.file-widget .clear-chk-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .9rem;
+  opacity: .85;
+}
+
+/* (optional) Hover – konsistent nur EINE Regel behalten */
+.file-widget .current-file a:hover {
+  background: var(--btn-hover);
+  color: var(--text-color); /* damit die Schrift bei Hover lesbar bleibt */
+}
+
+/* Einheitliche Schrift in Formular-Controls */
+input, textarea, select, button {
+  font: inherit;              /* = font-family + -size + -weight erben */
+  color: inherit;
+  line-height: 1.4;
+}
+
+/* Falls du Tag-/Select-Widgets nutzt (z.B. taggit/select2), auch dort erzwingen */
+.select2-container,
+.select2-selection,
+.select2-results__option,
+.tagify, .tagify__input {
+  font-family: inherit;
+  font-size: 1rem;
 }

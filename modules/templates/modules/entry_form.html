@@ -2,10 +2,72 @@
 {% block title %}Modul bearbeiten{% endblock %}
 {% block content %}
   <h2>{{ view.object|default:"Neues Modul" }}</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Speichern</button>
-  </form>
+ <form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <div class="form-grid">
+
+  
+  <div class="form-row">
+    {{ form.title.label_tag }} 
+    {{ form.title }}
+    {{ form.title.errors }}
+  </div>
+
+  <div class="form-row">
+    {{ form.tags.label_tag }}
+    {{ form.tags }}
+    {{ form.tags.errors }}
+  </div>
+
+  <div class="form-row span-2">
+    {{ form.inclass.label_tag }}
+    {{ form.inclass }}
+    {{ form.inclass.errors }}
+  </div>
+
+  <div class="form-row span-2">
+    {{ form.homework.label_tag }}
+    {{ form.homework }}
+    {{ form.homework.errors }}
+  </div>
+
+
+  {# --- PDF 1 --- #}
+  <div class="form-row">
+    {{ form.pdf_1.label_tag }}
+    {{ form.pdf_1 }}
+    {{ form.pdf_1.errors }}
+  </div>
+
+  {# --- PDF 2 --- #}
+  <div class="form-row">
+    {{ form.pdf_2.label_tag }}
+    {{ form.pdf_2 }}
+    {{ form.pdf_2.errors }}
+  </div>
+
+  {# --- PDF 3 --- #}
+  <div class="form-row">
+    {{ form.pdf_3.label_tag }}
+    {{ form.pdf_3 }}
+    {{ form.pdf_3.errors }}
+  </div>
+
+  {# --- PDF 4 --- #}
+  <div class="form-row">
+    {{ form.pdf_4.label_tag }}
+    {{ form.pdf_4 }}
+    {{ form.pdf_4.errors }}
+  </div>
+</div>
+
+<div class="form-actions">
+  <button type="submit" class="btn">Speichern</button>
   <a class="btn" href="{% url 'modules:entry_list' %}">Zurück</a>
+</div>
+
+</form>
+
 {% endblock %}
