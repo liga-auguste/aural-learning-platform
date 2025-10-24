@@ -1,0 +1,23 @@
+{% load i18n %}
+<div class="file-widget">
+  {% if widget.is_initial %}
+    <div class="current-file">
+      <a href="{{ widget.value.url }}" target="_blank" rel="noopener">{{ widget.value.name }}</a>
+
+      {% if not widget.required %}
+        <label class="clear-chk-inline" for="{{ widget.checkbox_id }}">
+          <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
+          {{ widget.clear_checkbox_label }}
+        </label>
+      {% endif %}
+    </div>
+    {% else %}
+    <div class="current-file none">
+      keine Datei
+    </div>
+  {% endif %}
+
+  <div class="picker-row">
+    {{ widget.input }}
+  </div>
+</div>
