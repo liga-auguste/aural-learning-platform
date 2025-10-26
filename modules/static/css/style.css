@@ -33,12 +33,115 @@ body {
   background-color: var(--bcg-col);
 }
 
+.sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 250px;
+  z-index: 999;
+  padding: 1rem;
+  background-color: var(--lecture-bcg);
+  box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
+
+  /* immer sichtbar im DOM, aber außerhalb des Viewports */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+
+  transform: translateX(100%); /* rechts versteckt */
+  transition: transform 0.25s ease;
+}
+
+.sidebar.open {
+  transform: translateX(0); /* hereinfahren */
+}
+
+.icon-btn {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+.sidebar li {
+  width: 100%;
+}
+
+.sidebar a {
+  width: 100%;
+}
+
+nav {
+  _background-color: var(--lecture-bcg);
+  _box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
+  _position: relative; 
+  z-index: 50;
+}
+
+nav ul {
+  width: 100%;
+  list-style: none;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.main {
+  padding-inline-start: 0;
+  margin-block-start: 0;
+  margin-block-end: 0;
+  
+}
+
+.main:first-child {
+  margin-right: auto;
+}
+
+nav li {
+  height: 2rem;
+}
+
+nav a {
+  height: 100%;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  color: var(--text-color);
+}
+
+nav a:hover {
+  background-color: var(--btn);
+}
+
+.menu-btn { 
+  z-index: 51; 
+}
+
 .header-flex {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 0;
 }
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+}
+.nav-container h1 {
+  margin: 0;
+}
+
+nav h1 {
+  white-space: nowrap;
+}
+
+.close-btn {
+  margin-bottom: 1rem;
+}
+
 
 /* Darkmode switch */
 
@@ -51,9 +154,10 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  position: fixed;
+  _position: fixed;
   top: 20px;
   right: 20px;
+  z-index: 5;
 }
 
 .theme-switch svg {
@@ -212,10 +316,13 @@ input.btn:hover {
     display: grid;
     grid-template-columns: 1fr;
   }
+
 }
 
 /* medium screens */
 @media screen and (min-width: 766px) {
+  .sidebar { transform: translateX(100%); }   /* verborgen */
+  .sidebar.open { transform: translateX(0); }  /* sichtbar */
 }
 
 /* large screens */
