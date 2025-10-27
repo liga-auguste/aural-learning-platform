@@ -40,16 +40,17 @@ body {
   height: 100vh;
   width: 250px;
   z-index: 999;
-  padding: 1rem;
+  
   background-color: var(--lecture-bcg);
   box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
-
-  /* immer sichtbar im DOM, aber außerhalb des Viewports */
+  
   display: flex;
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
-
+  padding: 1.5rem 1rem;
+  gap: 0.75rem;
+  
   transform: translateX(100%); /* rechts versteckt */
   transition: transform 0.25s ease;
 }
@@ -64,6 +65,8 @@ body {
   cursor: pointer;
 }
 
+
+
 .sidebar li {
   width: 100%;
 }
@@ -76,7 +79,7 @@ nav {
   _background-color: var(--lecture-bcg);
   _box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
   _position: relative; 
-  z-index: 50;
+  z-index: 100;
 }
 
 nav ul {
@@ -90,21 +93,19 @@ nav ul {
   padding-inline-start: 0;
   margin-block-start: 0;
   margin-block-end: 0;
-  
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .main:first-child {
   margin-right: auto;
 }
 
-nav li {
-  height: 2rem;
-}
 
 nav a {
-  height: 100%;
   text-decoration: none;
-  display: flex;
+  display: inline-flex;
   align-items: center;
   color: var(--text-color);
 }
@@ -128,10 +129,14 @@ nav a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  min-height: fit-content;
   padding: 1rem 0;
+  gap: 1rem;
 }
 .nav-container h1 {
   margin: 0;
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  line-height: 1.2;
 }
 
 nav h1 {
@@ -142,6 +147,24 @@ nav h1 {
   margin-bottom: 1rem;
 }
 
+.icon-btn,
+.theme-switch {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;               /* verhindert Baseline-Versatz */
+  padding: .4rem;               /* Klickfläche ohne zu „ploppen“ */
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.icon-btn svg,
+.theme-switch svg {
+  display: block;
+}
 
 /* Darkmode switch */
 
@@ -150,7 +173,7 @@ nav h1 {
   width: 50px;
   padding: 0;
   border-radius: 50%;
-  background-color: var(--btn);
+  _background-color: var(--btn);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -312,6 +335,11 @@ input.btn:hover {
 
 /* small screens */
 @media screen and (max-width: 765px) {
+  .nav-container {
+    padding: 0.4rem 0.5rem 0.4rem 0;  
+    gap: 0.5rem;
+  }
+  
   .lectures-container {
     display: grid;
     grid-template-columns: 1fr;
@@ -384,9 +412,7 @@ h1 a,
 h2 a,
 h3 a,
 div a {
-  color: var(
-    --text-color
-  ); /* nimmt automatisch die Light- oder Dark-Variante */
+  color: var(--text-color);
   text-decoration: none;
 }
 
@@ -402,7 +428,8 @@ h3 a:visited {
 h1 a:hover,
 h2 a:hover,
 h3 a:hover {
-  color: var(--btn-hover); /* Hover-Farbe aus deiner Palette */
+  color: var(--btn-hover);
+  background: none; 
 }
 
 div a:hover:not(.btn) {
