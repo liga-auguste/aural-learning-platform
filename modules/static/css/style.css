@@ -33,6 +33,7 @@ body {
   background-color: var(--bcg-col);
 }
 
+/* Sidebar */
 .sidebar {
   position: fixed;
   top: 0;
@@ -59,14 +60,6 @@ body {
   transform: translateX(0); /* hereinfahren */
 }
 
-.icon-btn {
-  background: none;
-  border: 0;
-  cursor: pointer;
-}
-
-
-
 .sidebar li {
   width: 100%;
 }
@@ -75,6 +68,7 @@ body {
   width: 100%;
 }
 
+/* Navbar */
 nav {
   _background-color: var(--lecture-bcg);
   _box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
@@ -96,12 +90,11 @@ nav ul {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
+} */
 
-.main:first-child {
+ .main:first-child {
   margin-right: auto;
 }
-
 
 nav a {
   text-decoration: none;
@@ -122,7 +115,7 @@ nav a:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.5rem 0;
+  _padding: 1.5rem 0;
 }
 
 .nav-container {
@@ -161,6 +154,12 @@ nav h1 {
   cursor: pointer;
 }
 
+.icon-btn {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
 .icon-btn svg,
 .theme-switch svg {
   display: block;
@@ -183,6 +182,12 @@ nav h1 {
   z-index: 5;
 }
 
+.icon-btn {
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
 .theme-switch svg {
   fill: var(--text-color);
 }
@@ -198,6 +203,7 @@ nav h1 {
 .darkmode .theme-switch svg:last-child {
   display: block;
 }
+
 /* Tag filter */
 .tag-filter {
   color: var(--text-color);
@@ -261,30 +267,6 @@ input.btn:hover {
   color: var(--text-color);
 }
 
-.add-module-btn {
-  color: var(--text-color);
-  text-decoration: none;
-  font-size: xx-large;
-  align-self: center;
-}
-
-.add-module-btn:visited {
-  color: var(--text-color); /* visited-Link gleich einfärben */
-}
-
-.add-module-btn:hover {
-  color: var(--btn-hover); /* beim Hovern leicht abheben */
-}
-
-.link-container {
-  display: flex;
-  _background-color: red;
-  gap: 1rem;
-  justify-content: flex-end;
-  align-items: flex-start;
-  margin-top: auto;
-}
-
 /* Tags und styling */
 
 .terms {
@@ -344,7 +326,6 @@ input.btn:hover {
     display: grid;
     grid-template-columns: 1fr;
   }
-
 }
 
 /* medium screens */
@@ -485,7 +466,7 @@ div a:hover:not(.btn) {
   align-items: start;
 }
 
-/* Kinder der form-row sollen direkt im Grid platziert werden */
+/* Kinder der form-row direkt im Grid platziert*/
 .form-row { 
   display: contents;
 }
@@ -496,7 +477,7 @@ div a:hover:not(.btn) {
   align-self: start;
   font-weight: 600;
   color: var(--text-color);
-  padding-top: .4rem; /* gleicht die Oberkante zu Inputs/Textareas an */
+  padding-top: 0.4rem; /* gleicht die Oberkante zu Inputs/Textareas an */
 }
 
 /* Alle anderen Elemente (Input, Textarea, Fehler, current-file) rechts */
@@ -558,8 +539,15 @@ div a:hover:not(.btn) {
   .form-grid {
     grid-template-columns: 1fr;
   }
-  .form-row { display: block; }
-  .form-row > label { padding-top: 0; margin-bottom: .35rem; }
+
+  .form-row { 
+    display: block; 
+  }
+
+  .form-row > label { 
+    padding-top: 0; 
+    margin-bottom: .35rem; 
+  }
 }
 
 
@@ -601,7 +589,7 @@ div a:hover:not(.btn) {
 
 /* keine Datei */
 .current-file.none {
-  opacity: .7;
+  opacity: 0.7;
 }
 
 
@@ -642,4 +630,72 @@ input, textarea, select, button {
 .tagify, .tagify__input {
   font-family: inherit;
   font-size: 1rem;
+}
+
+
+/* Footer */
+footer.site-footer {
+  margin-top: 4rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--lecture-hover);
+  color: var(--text-color);
+  background-color: var(--bcg-col);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.footer-links {
+  margin: 1rem 0;
+}
+
+.footer-links a {
+  margin: 0 0.8rem;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: color 0.2s ease;
+}
+
+.footer-links a:hover {
+  color: var(--btn-hover);
+}
+
+.footer-top p {
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.footer-bottom p {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Kontaktformular */
+.form .form-row {
+  margin-bottom: 1rem;
+}
+.form label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-weight: 500;
+}
+.form input[type="text"],
+.form input[type="email"],
+.form textarea {
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid var(--lecture-hover);
+  background: var(--bcg-col);
+  color: var(--text-color);
+  border-radius: 6px;
+}
+.form .checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 400;
+}
+.form .error {
+  margin-top: 0.3rem;
+  font-size: 0.85rem;
+  color: #b00020;
 }

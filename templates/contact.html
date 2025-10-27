@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Kontakt{% endblock %}
+
+{% block content %}
+  <h2>Kontakt</h2>
+  <p>Schreib mir gern eine Nachricht zu „Gehörbildung Online“.</p>
+
+  <form method="post" class="form">
+    {% csrf_token %}
+    {{ form.hp_field }} {# Honeypot #}
+
+    <div class="form-row">
+      {{ form.name.label_tag }} {{ form.name }}
+      {% for e in form.name.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="form-row">
+      {{ form.email.label_tag }} {{ form.email }}
+      {% for e in form.email.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="form-row">
+      {{ form.subject.label_tag }} {{ form.subject }}
+      {% for e in form.subject.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="form-row">
+      {{ form.message.label_tag }} {{ form.message }}
+      {% for e in form.message.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <div class="form-row checkbox">
+      <label>{{ form.consent }} {{ form.consent.label }}</label>
+      {% for e in form.consent.errors %}<div class="error">{{ e }}</div>{% endfor %}
+    </div>
+
+    <button type="submit" class="btn">Senden</button>
+  </form>
+{% endblock %}

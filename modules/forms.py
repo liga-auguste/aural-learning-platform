@@ -48,3 +48,19 @@ class ModuleFilesForm(forms.ModelForm):
             "pdf_3": "Hausaufgabe",
             "pdf_4": "Lösung zur Hausaufgabe",
         }
+        
+class ContactForm(forms.Form):
+    name = forms.CharField(label="Name", max_length=100)
+    email = forms.EmailField(label="E-Mail")
+    subject = forms.CharField(label="Betreff", max_length=150, required=False)
+    message = forms.CharField(label="Nachricht", widget=forms.Textarea(attrs={"rows": 6}))
+    consent = forms.BooleanField(
+        label="Ich stimme der Verarbeitung meiner Angaben zu (Datenschutz)."
+    )
+    # Honeypot (soll leer bleiben)
+    hp_field = forms.CharField(required=False, widget=forms.HiddenInput)
+
+    def clean_hp_field(self):
+        if self.cleaned_data.get("hp_field"):
+            raise forms.ValidationError("Spam erkannt.")
+        return ""

@@ -61,6 +61,24 @@
     {% block content %}{% endblock content %}
 <script defer src="{% static 'modules/js/script.js' %}"></script>
 </body>
+<footer class="site-footer">
+  <div class="footer-top">
+    <p>Gehörbildung – Ein Portfolio-Projekt</p>
+  </div>
+
+  <div class="footer-links">
+    <a href="{% url 'modules:entry_list' %}">Startseite</a>
+    <a href="{% url 'about' %}">Über</a>
+    <a href="{% url 'contact' %}">Kontakt</a>
+    <a href="{% url 'impressum' %}">Impressum</a>
+    <a href="{% url 'datenschutz' %}">Datenschutz</a>
+  </div>
+
+  <div class="footer-bottom">
+    <p>© 2025 Līga Auguste · Design & Entwicklung</p>
+  </div>
+</footer>
+
 <br>
 <br>
 </html>
