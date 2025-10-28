@@ -6,7 +6,7 @@ from taggit.managers import TaggableManager
 
 
 def module_upload_path(instance, filename):
-    return f"media/modules/{instance.pk}/{filename}"
+    return f"modules/{instance.pk}/{filename}"
 
 
 pdf_validator = FileExtensionValidator(allowed_extensions=["pdf"])
