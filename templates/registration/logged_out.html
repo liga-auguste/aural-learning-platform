@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Abgemeldet{% endblock %}
+{% block content %}
+  <main class="auth-wrapper">
+    <h1>Abgemeldet</h1>
+    <p>Du wurdest abgemeldet.</p>
+    <a class="btn" href="{% url 'login' %}">Erneut anmelden</a>
+  </main>
+{% endblock %}

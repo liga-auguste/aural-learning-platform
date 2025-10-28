@@ -1,0 +1,189 @@
+:root {
+  --bcg-col: white;
+  --text-color: #2d3142;
+  --lecture-bcg: #ebebeb;
+  --btn-hover: #ef8354;
+  --btn: #a9b3c6;
+  --lecture-hover: #dadfe7;
+  --tags: #c1cbd7;
+}
+
+.darkmode {
+  --bcg-col: #1f1f1f;
+  --text-color: rgb(193, 194, 198);
+  --lecture-bcg: #3c3c3f;
+  --btn-hover: #be4f1f;
+  --btn: #34435b;
+  --lecture-hover: #555559;
+  --tags: #505053;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Layout */
+.auth-wrapper {
+  max-width: 420px;
+  margin: 3rem auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-wrapper .form-row {
+  display: grid;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+/* Formular */
+.auth-wrapper form {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 2rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Inputs */
+.auth-wrapper input[type="text"],
+.auth-wrapper input[type="password"],
+.auth-wrapper input[type="email"] {
+  display: block;
+  width: 100%;
+  padding: 0.6rem 0.7rem;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.9rem;
+  background: var(--lecture-bcg, #eee);
+  color: inherit;
+  box-sizing: border-box;
+  letter-spacing: normal; /* sorgt bei Passwort für gleiches Rendering */
+}
+
+/* Fokuszustand */
+.auth-wrapper input[type="text"]:focus,
+.auth-wrapper input[type="password"]:focus,
+.auth-wrapper input[type="email"]:focus {
+  outline: none;
+  border-color: var(--btn-hover);
+  box-shadow: 0 0 0 3px rgba(239, 131, 84, 0.15);
+}
+
+/* Autofill (Chrome/Safari) angleichen */
+.auth-wrapper input:-webkit-autofill,
+.auth-wrapper input:-webkit-autofill:hover,
+.auth-wrapper input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--lecture-bcg, #eee) inset;
+  box-shadow: 0 0 0 1000px var(--lecture-bcg, #eee) inset;
+  -webkit-text-fill-color: var(--text-color, #222);
+}
+
+/* Sonstiges */
+.auth-wrapper .error {
+  background: #fee;
+  border: 1px solid #f99;
+  padding: 0.5rem 0.7rem;
+  border-radius: 0.4rem;
+}
+
+.auth-wrapper .muted {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.auth-wrapper .form-remember {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Buttons and Links */
+.auth-wrapper .btn {
+  padding: 0.6rem 1rem;
+  border-radius: 0.5rem;
+}
+
+a.auth {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+a.auth:hover {
+  color: var(--btn-hover);
+}
+
+body.no-sidebar .menu-btn {
+  pointer-events: none;   /* verhindert Klicks */
+  opacity: 0.4;           /* optional: ausgegraut, damit man sieht, dass sie inaktiv ist */
+  cursor: default;        /* kein Hand-Cursor */
+}
+
+/* ===============================
+   Login – Darkmode Overrides
+   =============================== */
+.darkmode .auth-wrapper form {
+  background: rgba(28, 28, 28, 0.92);            /* dunkle, leicht transparente Karte */
+  border: 1px solid rgba(255, 255, 255, 0.08);    /* zarte Kontur für Kontrast */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.45);
+}
+
+/* Inputs im Darkmode: etwas hellere Ränder + passende Fläche */
+.darkmode .auth-wrapper input[type="text"],
+.darkmode .auth-wrapper input[type="password"],
+.darkmode .auth-wrapper input[type="email"] {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: var(--lecture-bcg);                 /* kommt aus .darkmode */
+  color: var(--text-color);
+}
+
+/* Fokus-Ring im Darkmode (benutzt deine Akzentfarbe) */
+.darkmode .auth-wrapper input[type="text"]:focus,
+.darkmode .auth-wrapper input[type="password"]:focus,
+.darkmode .auth-wrapper input[type="email"]:focus {
+  border-color: var(--btn-hover);
+  box-shadow: 0 0 0 3px rgba(190, 79, 31, 0.25);  /* var(--btn-hover) ≈ #be4f1f */
+  outline: none;
+}
+
+/* Autofill im Darkmode angleichen */
+.darkmode .auth-wrapper input:-webkit-autofill,
+.darkmode .auth-wrapper input:-webkit-autofill:hover,
+.darkmode .auth-wrapper input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--lecture-bcg) inset;
+  box-shadow: 0 0 0 1000px var(--lecture-bcg) inset;
+  -webkit-text-fill-color: var(--text-color);
+}
+
+/* Placeholder-Farbe anpassen (optional, bessere Lesbarkeit) */
+.auth-wrapper input::placeholder {
+  color: #8a8f98;
+}
+.darkmode .auth-wrapper input::placeholder {
+  color: #a2a7b0;
+}
+
+/* Fehlerbox im Darkmode */
+.darkmode .auth-wrapper .error {
+  background: #3a1f1f;
+  border-color: #a44;
+  color: #f2dddd;
+}
+
+/* Muted-Text im Darkmode etwas heller */
+.darkmode .auth-wrapper .muted {
+  color: #aeb3bb;
+}
+
+/* Checkbox-Akzent passend zur Akzentfarbe (Light & Dark) */
+.auth-wrapper input[type="checkbox"] {
+  accent-color: var(--btn-hover);
+}
+
+/* Optional: weiche Übergänge beim Theme-Switch */
+.auth-wrapper form,
+.auth-wrapper input,
+.auth-wrapper .error {
+  transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease, color .25s ease;
+}

@@ -68,6 +68,44 @@ body {
   width: 100%;
 }
 
+.sidebar-section {
+  margin-top: 1rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--tags);
+}
+
+.sidebar-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.3rem 0.5rem;
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+.module-list {
+  list-style: none;
+  margin: 0;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.module-list li a {
+  display: block;
+  padding: 0.3rem 0.4rem;
+  text-decoration: none;
+  color: var(--text-color);
+  border-radius: 0.4rem;
+  transition: background-color 0.2s ease;
+}
+
+.module-list li a:hover {
+  background-color: var(--lecture-hover);
+  color: var(--btn-hover);
+}
+
+
 /* Navbar */
 nav {
   _background-color: var(--lecture-bcg);
@@ -90,7 +128,7 @@ nav ul {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-} */
+}
 
  .main:first-child {
   margin-right: auto;
@@ -679,6 +717,7 @@ footer.site-footer {
   font-weight: 500;
 }
 .form input[type="text"],
+.form input[type="password"],
 .form input[type="email"],
 .form textarea {
   width: 100%;
@@ -698,4 +737,66 @@ footer.site-footer {
   margin-top: 0.3rem;
   font-size: 0.85rem;
   color: #b00020;
+}
+
+.auth-wrapper input:-webkit-autofill,
+.auth-wrapper input:-webkit-autofill:hover,
+.auth-wrapper input:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px var(--lecture-bcg) inset;
+  box-shadow: 0 0 0 1000px var(--lecture-bcg) inset;
+  -webkit-text-fill-color: var(--text-color);
+}
+
+/* about */
+.about {
+  margin: 2rem auto;
+  max-width: 75ch;
+}
+
+.about h1,
+.about h2,
+.about h3 {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.about p,
+.about ul {
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.about ul {
+  padding-left: 1.2rem;
+}
+
+.grid-cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr;
+  margin: 1.5rem 0;
+}
+
+.card {
+  padding: 1rem 1.2rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.9rem;
+  background: var(--lecture-bcg);
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+.about-footer {
+  margin-top: 2rem;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+/* optional – etwas mehr Raum auf großen Screens */
+@media screen and (min-width: 768px) {
+  .grid-cards {
+    grid-template-columns: 1fr 1fr;
+  }
 }

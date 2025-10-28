@@ -6,29 +6,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=barlow-semi-condensed:300,500" rel="stylesheet" />
     <title>Gehörbildung | Module</title>
 </head>
 
-<body>
+<body class="{% block body_class %}{% endblock %}">
     <header></header>
     <nav>
         <ul class="sidebar" id="sidebar" aria-hidden="true">
-            <li>
-                <button class="icon-btn close-btn" aria-label="Menü schließen" type="button">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-                </button>
-            </li>
-            <li><a href="#">Alle Begriffe</a></li>
-            <li><a href="#">Über dieses Projekt</a></li>
-            <li>
-                <form method="post" action="{% url 'admin:logout' %}">
-                    {% csrf_token %}
-                    <input class="btn" type="submit" value="Abmelden" />
-                </form>
-            </li>
-        </ul>
+  <li>
+    <button class="icon-btn close-btn" aria-label="Menü schließen" type="button">
+      <!-- svg -->
+    </button>
+  </li>
+
+  <li><a href="#">Alle Begriffe</a></li>
+  <li><a href="{% url 'about' %}">Über dieses Projekt</a></li>
+
+  <li>
+    <form method="post" action="{% url 'admin:logout' %}">
+      {% csrf_token %}
+      <input class="btn" type="submit" value="Abmelden" />
+    </form>
+  </li>
+
+</ul>
+
+
         <div class="nav-container">
             <h1><a href="{% url 'modules:entry_list' %}">Unterricht in Gehörbildung</a></h1>
             <ul class="main">
@@ -68,7 +74,7 @@
 
   <div class="footer-links">
     <a href="{% url 'modules:entry_list' %}">Startseite</a>
-    <a href="{% url 'about' %}">Über</a>
+    <a href="{% url 'about' %}">Über dieses Projekt</a>
     <a href="{% url 'contact' %}">Kontakt</a>
     <a href="{% url 'impressum' %}">Impressum</a>
     <a href="{% url 'datenschutz' %}">Datenschutz</a>
