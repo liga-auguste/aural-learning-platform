@@ -26,10 +26,10 @@ class ModuleForm(forms.ModelForm):
             "title": forms.TextInput(attrs={"class": "form-control"}),
             "inclass": forms.Textarea(attrs={"rows": 5}),
             "homework": forms.Textarea(attrs={"rows": 3}),
-            "pdf_1": PrettyFileInput(attrs={"accept":".pdf"}),
-            "pdf_2": PrettyFileInput(attrs={"accept":".pdf"}),
-            "pdf_3": PrettyFileInput(attrs={"accept":".pdf"}),
-            "pdf_4": PrettyFileInput(attrs={"accept":".pdf"}),
+            "pdf_1": PrettyFileInput(attrs={"accept": ".pdf"}),
+            "pdf_2": PrettyFileInput(attrs={"accept": ".pdf"}),
+            "pdf_3": PrettyFileInput(attrs={"accept": ".pdf"}),
+            "pdf_4": PrettyFileInput(attrs={"accept": ".pdf"}),
         }
 
 class ModuleFilesForm(forms.ModelForm):
