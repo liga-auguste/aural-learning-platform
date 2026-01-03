@@ -1,9 +1,7 @@
-{% load i18n %}
 <div class="file-widget">
   {% if widget.is_initial %}
     <div class="current-file">
-      <a href="{{ widget.value.url }}" target="_blank" rel="noopener">{{ widget.value.name }}</a>
-
+      <a href="{{ widget.value.url }}" target="_blank" rel="noopener">{{ widget.value }}</a>
       {% if not widget.required %}
         <label class="clear-chk-inline" for="{{ widget.checkbox_id }}">
           <input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}">
@@ -11,13 +9,12 @@
         </label>
       {% endif %}
     </div>
+  {% else %}
     <div class="current-file none">
       keine Datei
     </div>
   {% endif %}
-
   <div class="picker-row">
-    {{ widget.input }}
+    <input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
   </div>
-  {{widget}}
 </div>

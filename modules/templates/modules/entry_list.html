@@ -50,11 +50,11 @@
       </div>
     </div>
     <div class="terms">
-      {% for tag in entry.tags.all %}
-      <a href="{% url 'modules:entries_by_tag' tag.slug %}" class="badge">{{ tag.name }}</a>
-      {% empty %}
-      <span class="muted">keine Tags</span>
-      {% endfor %}
+      {% for term in entry.terms.all %}
+  <a href="{% url 'modules:entries_by_tag' term.slug %}" class="badge">{{ term.name }}</a>
+{% empty %}
+  <span class="muted">keine Begriffe</span>
+{% endfor %}
     </div>
 
   </article>

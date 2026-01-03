@@ -16,7 +16,7 @@ class Module(models.Model):
     title = models.CharField("Titel des Moduls", max_length=200)
     inclass = models.TextField("Unterricht")                      # früher: content
     homework = models.TextField("Hausaufgabe", blank=True, null=True)
-    tags = TaggableManager(verbose_name="Begriffe", blank=True)
+    terms = TaggableManager(verbose_name="Begriffe", blank=True)
 
     pdf_1 = models.FileField(
         "Skript", upload_to=module_upload_path, validators=[pdf_validator],
@@ -32,6 +32,7 @@ class Module(models.Model):
                              blank=True, null=True)
 
     order = models.PositiveIntegerField(db_index=True, blank=True, null=True)
+
 
     def __str__(self):
         return self.title
