@@ -1,6 +1,6 @@
 from django import forms
 from django.forms.widgets import ClearableFileInput
-from .models import Module
+from modules.models import Module
 
 class PrettyFileInput(ClearableFileInput):
     template_name = "widgets/pretty_clearable_file_input.html"
@@ -8,15 +8,16 @@ class PrettyFileInput(ClearableFileInput):
     input_text = ""
     clear_checkbox_label = "Zurücksetzen"
 
+
 class ModuleForm(forms.ModelForm):
     class Meta:
         model = Module
-        fields = ["title", "inclass", "homework", "tags", "pdf_1", "pdf_2", "pdf_3", "pdf_4"]
+        fields = ["title", "inclass", "homework", "terms", "pdf_1", "pdf_2", "pdf_3", "pdf_4"]
         labels = {
             "title": "Titel des Moduls",
             "inclass": "Unterricht",
             "homework": "Hausaufgabe",
-            "tags": "Begriffe",
+            "terms": "Begriffe",
             "pdf_1": "Skript",
             "pdf_2": "Lösung zum Skript",
             "pdf_3": "Hausaufgabe",

@@ -1,5 +1,6 @@
 from django.urls import path, include
 from . import views
+from .views import TermListView
 
 urlpatterns = [
     path(
@@ -27,4 +28,8 @@ urlpatterns = [
         views.EntryDeleteView.as_view(),
         name="entry-delete",
     ),
+    path(
+        "begriffe/", 
+        TermListView.as_view(), 
+        name="term_list"),
 ]

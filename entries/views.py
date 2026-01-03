@@ -11,6 +11,7 @@ from django.views.generic import (
 )
 
 from .models import Entry
+from taggit.models import Tag
 
 class LockedView(LoginRequiredMixin):
     login_url = "admin:login"
@@ -24,13 +25,13 @@ class EntryDetailView(LockedView, DetailView):
     
 class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):
     model = Entry
-    fields = ["title", "content"]
+    fields = ["title", "content", "terms"]
     success_url = reverse_lazy("entry-list")
     success_message = "Your new entry was created!"
     
 class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
     model = Entry
-    fields = ["title", "content"]
+    fields = ["title", "content", "terms"]
     success_message = "Your entry was updated!"
     
     def get_success_url(self):
@@ -47,3 +48,4 @@ class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         messages.success(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
+    

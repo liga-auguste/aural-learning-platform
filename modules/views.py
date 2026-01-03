@@ -18,6 +18,7 @@ from django.core.mail import send_mail
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from .forms import ContactForm
+from entries.models import Entry
 
 class HomeView(TemplateView):
     template_name = "modules/home.html"
@@ -37,7 +38,7 @@ class EntryListView(LockedView, ListView):
         qs = (
             Module.objects
             .all()
-            .prefetch_related("tags")
+            .prefetch_related("terms")
             .order_by("order", "id")
         )
         if not tag_value:
@@ -53,7 +54,7 @@ class EntryListView(LockedView, ListView):
             qs_tag = Tag.objects.filter(slug=slugify(tag_value)).first()
 
         if qs_tag:
-            return qs.filter(tags__in=[qs_tag])
+            return qs.filter(terms__in=[qs_tag])
         # Wenn nichts passt, leere Liste zurückgeben (oder alle, wenn du magst)
         return Module.objects.none()
 
@@ -125,3 +126,17 @@ def contact_view(request):
     else:
         form = ContactForm()
     return render(request, "contact.html", {"form": form})
+
+class TermListView(ListView):
+    model = Tag
+    template_name = "entries/term_list.html"
+    context_object_name = "tags"
+
+    def get_queryset(self):
+        tags = Tag.objects.all().order_by("name")
+
+        # jedem Tag die passenden Entries anhängen
+        for tag in tags:
+            tag.modules = Module.objects.filter(terms=tag).only("id", "title")
+
+        return tags

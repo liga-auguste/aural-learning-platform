@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Alle Begriffe</h1>
+
+  <ul>
+    {% for tag in tags %}
+      <li>
+        <details>
+          <summary>
+            {{ tag.name }}
+            <small>({{ tag.modules|length }})</small>
+          </summary>
+
+          <ul>
+            {% for module in tag.modules %}
+             <li>
+  <a href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a>
+</li>
+
+            {% empty %}
+              <li><em>Kommt in keinem Modul vor.</em></li>
+            {% endfor %}
+          </ul>
+        </details>
+      </li>
+    {% empty %}
+      <li>Keine Begriffe vorhanden.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}
