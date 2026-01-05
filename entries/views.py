@@ -22,6 +22,8 @@ class EntryListView(LockedView, ListView):
 
 class EntryDetailView(LockedView, DetailView):
     model = Entry
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
     
 class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):
     model = Entry
@@ -37,7 +39,7 @@ class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy(
             "entry-detail",
-            kwargs={"pk": self.entry.id}
+            kwargs={"slug": self.object.slug}
         )
 
 class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):

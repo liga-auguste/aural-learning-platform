@@ -22,7 +22,7 @@
   {% for entry in object_list %}
   <article class="lecture">
     <div class="header-flex">
-      <h2><a href="{% url 'modules:entry_detail' entry.pk %}">{{ entry.title }}</a></h2>
+      <h2><a href="{% url 'modules:entry_detail' entry.slug %}">{{ entry.title }}</a></h2>
       <div>
 
         <a class="svg btn" href="{% url 'modules:entry_update' entry.pk %}" aria-label="Modul bearbeiten"

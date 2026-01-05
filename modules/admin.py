@@ -3,11 +3,12 @@ from .models import Module
 
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
-    list_display = ("order", "title", "terms_list", "pdf_1", "pdf_2", "pdf_3", "pdf_4")
+    list_display = ("order", "title", "terms_list", "pdf_1", "pdf_2", "pdf_3", "pdf_4", "slug")
     list_editable = ("order",)
     list_display_links = ("title",)
     ordering = ("order", "id")
     search_fields = ("title", "inclass", "homework", "terms__name")
+    prepopulated_fields = {"slug": ("title",)}
 
     def terms_list(self, obj):
         return ", ".join(obj.terms.names())

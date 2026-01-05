@@ -1,3 +1,4 @@
+from entries.models import Entry
 from django.db.models import Max
 from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -8,6 +9,7 @@ from django.views.generic import (
     TemplateView, ListView, DetailView,
     CreateView, UpdateView, DeleteView,
 )
+
 from .models import Module
 from .forms import ModuleForm
 
@@ -16,10 +18,14 @@ from taggit.models import Tag
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from .forms import ContactForm
-from entries.models import Entry
+
+def entry_pk_redirect(request, pk):
+    entry = get_object_or_404(Module, pk=pk)
+    return redirect("modules:entry_detail", slug=entry.slug)
+
 
 class HomeView(TemplateView):
     template_name = "modules/home.html"
@@ -73,6 +79,8 @@ class EntryListView(LockedView, ListView):
 
 class EntryDetailView(LockedView, DetailView):
     model = Module
+    slug_field = "slug"
+    slug_url_kwarg = "slug"
     template_name = "modules/entry_detail.html"
     context_object_name = "entry"
     
@@ -122,7 +130,8 @@ class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
     success_message = "Das Modul wurde aktualisiert!"
 
     def get_success_url(self):
-        return reverse_lazy("modules:entry_detail", kwargs={"pk": self.object.pk})
+        return reverse_lazy("modules:entry_detail", kwargs={"slug": self.object.slug})
+
 
 
 class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
@@ -172,3 +181,4 @@ class TermListView(ListView):
             tag.modules = Module.objects.filter(terms=tag).only("id", "title")
 
         return tags
+
