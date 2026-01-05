@@ -8,6 +8,7 @@
   --btn: #a9b3c6;
   --lecture-hover: #dadfe7;
   --tags: #c1cbd7;
+  --accent-green: #A7C1A3;
 }
 
 .darkmode {
@@ -18,6 +19,8 @@
   --btn: #34435b;
   --lecture-hover: #555559;
   --tags: #505053;
+  --accent-green: #667D69;
+
 }
 
 * {
@@ -106,6 +109,71 @@ body {
   background-color: var(--lecture-hover);
   color: var(--btn-hover);
 }
+/* Messages */
+/* Messages – konsistent in Light/Dark */
+.messages{
+  margin: .75rem 0 1.25rem;
+}
+
+.messages .message{
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+
+  padding: .55rem .9rem;
+  border-radius: 999px;                 /* pill */
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-color);
+  line-height: 1.2;
+}
+
+/* Icon-Badge links (statt Emoji) */
+.messages .message::before{
+  content: "i";
+  display: inline-grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: .45rem;
+
+  font-weight: 700;
+  font-size: .95rem;
+
+  background: var(--btn);
+  color: var(--text-color);
+}
+
+/* Typen aus Django: info/success/warning/error */
+.messages .message.success{
+  border-color: color-mix(in srgb, var(--accent-green) 70%, var(--border-subtle));
+}
+.messages .message.success::before{
+  content: "✓";
+  background: var(--accent-green);
+}
+
+.messages .message.warning{
+  border-color: color-mix(in srgb, var(--btn-hover) 55%, var(--border-subtle));
+}
+.messages .message.warning::before{
+  content: "!";
+  background: var(--btn-hover);
+}
+
+.messages .message.error{
+  border-color: rgba(176,0,32,.55);
+}
+.messages .message.error::before{
+  content: "!";
+  background: rgba(176,0,32,.8);
+  color: white;
+}
+
+.messages .message.info::before{
+  content: "i";
+}
+
 
 
 /* Navbar */
@@ -306,6 +374,11 @@ input.btn:hover {
 .svg {
   color: var(--text-color);
 }
+
+.materials-nav .btn {
+  background-color: var(--accent-green);
+}
+
 
 /* Tags und styling */
 
@@ -539,6 +612,23 @@ div a:hover:not(.btn) {
   outline: none;
 }
 
+/* Detailansicht: Werte wie Inputs aussehen lassen */
+.form-row .form-value {
+  width: 100%;
+  padding: .6rem .75rem;
+  border: 1px solid rgba(0,0,0,.15);
+  border-radius: .6rem;
+  background: var(--lecture-bcg);
+  color: var(--text-color);
+}
+
+/* mehrzeilige Felder wirken wie textarea */
+.form-row .form-value.multiline {
+  min-height: 7.5rem;
+  white-space: pre-wrap;
+}
+
+
 .form-row textarea { min-height: 7.5rem; resize: vertical; }
 
 .form-row input:focus,
@@ -552,13 +642,13 @@ div a:hover:not(.btn) {
 .form-row .errorlist,
 .form-row .error { margin-top: .35rem; color: #b00020; font-size: .9rem; }
 
-.current-file {
+/* .current-file {
   display: flex;
   align-items: center;
   gap: .75rem;
   flex-wrap: wrap;
   margin-top: .4rem; 
-  font-size: .9rem; 
+  font-size: .9rem;
 }
 
 .current-file a {
@@ -569,7 +659,8 @@ div a:hover:not(.btn) {
   background: var(--btn);
   color: var(--text-color);
 }
-.current-file a:hover { background: var(--btn-hover); }
+
+.current-file a:hover { background: var(--btn-hover); } */
 
 /* Buttons */
 .form-actions { margin-top: 1.25rem; display: flex; gap: .75rem; }
@@ -593,7 +684,7 @@ div a:hover:not(.btn) {
 
  /* optional: aktuelle Datei-Links hübsch */
 .current-file a {
-  background: var(--btn);
+  background: var(--accent-green);
   color: var(--text-color);
   text-decoration: none;
   padding: .3rem .6rem;
@@ -825,4 +916,139 @@ input[type="file"]::file-selector-button:hover {
 
 .pdf-row {
   display: flex;
+}
+
+/* Begriffe */
+/* Grid für die Begriffe */
+.tag-grid{
+  display: grid;
+  gap: .75rem;
+  grid-template-columns: repeat(12, 1fr);  /* 12er Raster */
+  margin-top: 1rem;
+}
+
+/* Details als „Kachel“ */
+.tag-card{
+  border: 1px solid var(--lecture-hover);
+  border-radius: 1rem;
+  background: var(--lecture-bcg);
+  overflow: hidden;
+  grid-column: span 4;
+}
+
+.tag-card:nth-child(4n){
+  grid-column: span 3;
+}
+.tag-card:nth-child(7n){
+  grid-column: span 4;
+}
+.tag-card:nth-child(9n){
+  grid-column: span 5;
+}
+
+
+/* Summary = Pill/Kachel-Header */
+.tag-pill{
+  list-style: none;           /* verhindert Marker */
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .75rem;
+
+  padding: .9rem 1rem;
+  font-weight: 600;
+  user-select: none;
+}
+
+/* Pfeil/Marker in Webkit ausblenden */
+.tag-pill::-webkit-details-marker{
+  display: none;
+}
+
+/* Name & Count */
+.tag-name{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tag-count{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 2rem;
+  padding: .15rem .55rem;
+  border-radius: 999px;
+  background: var(--tags);
+  font-size: .9rem;
+  font-weight: 600;
+}
+
+/* Hover-Effekt wie Mentimeter: leicht „lift“ */
+.tag-card:hover{
+  transform: translateY(-2px);
+  transition: transform .15s ease;
+}
+
+/* Offener Zustand: Akzent */
+.tag-card[open]{
+  border-color: var(--accent-green);
+}
+
+/* Panel mit Modulen */
+.tag-panel{
+  padding: .85rem 1rem 1rem;
+  border-top: 1px solid var(--lecture-hover);
+  display: grid;
+  gap: .5rem;
+}
+
+/* Module Links */
+.tag-module{
+  margin: 0;
+  font-size: 1rem;
+}
+
+.tag-module a{
+  display: inline-block;
+  padding: .35rem .6rem;
+  border-radius: .6rem;
+  background: rgba(0,0,0,.06);
+}
+
+.darkmode .tag-module a{
+  background: rgba(255,255,255,.06);
+}
+
+@media (max-width: 900px){
+  /* Reset: alle Desktop-Nth-Child-Varianten ausknipsen */
+  .tag-card{
+    grid-column: span 6;
+    transform: none;          /* falls du stagger/translate benutzt */
+  }
+
+  /* falls du im Desktop mehrere nth-child hast: alle neutralisieren */
+  .tag-card:nth-child(4n),
+  .tag-card:nth-child(5n),
+  .tag-card:nth-child(7n),
+  .tag-card:nth-child(9n){
+    grid-column: span 6;
+  }
+
+  /* neue, einfache Irregularität für 2 Spalten */
+  .tag-card:nth-child(5n){
+    grid-column: span 12;     /* ab und zu volle Breite */
+  }
+}
+
+@media (max-width: 520px){
+  .tag-card,
+  .tag-card:nth-child(4n),
+  .tag-card:nth-child(5n),
+  .tag-card:nth-child(7n),
+  .tag-card:nth-child(9n){
+    grid-column: span 12;
+  }
 }

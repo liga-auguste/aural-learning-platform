@@ -2,58 +2,82 @@
 {% block title %}{{ object.title }}{% endblock %}
 
 {% block content %}
-  <h2>{{ object.title }}</h2>
+<h2>{{ object.title }}</h2>
 
-  <p><strong>Unterricht:</strong> {{ object.inclass|linebreaks }}</p>
-  <p><strong>Hausaufgabe:</strong> {{ object.homework|linebreaks }}</p>
+<div class="form-grid">
 
-  <p><strong>Begriffe:</strong></p>
-  <div class="terms">
-    {% for term in entry.terms.all %}
-      <a href="{% url 'modules:entries_by_tag' term.slug %}" class="badge">{{ term.name }}</a>
-    {% empty %}
-      <span class="muted">keine Tags</span>
-    {% endfor %}
+  <div class="form-row">
+    <label>Titel</label>
+    <div class="form-value">
+      {{ object.title }}
+    </div>
   </div>
 
-  {# --- Materialien (PDF-Links nur wenn vorhanden) --- #}
-  {% if object.pdf_1 or object.pdf_2 or object.pdf_3 or object.pdf_4 %}
-    <h3>Materialien</h3>
-    <ul class="file-list">
-      {% if object.pdf_1 %}
-        <li>
-          <a href="{{ object.pdf_1.url }}" target="_blank" rel="noopener">
-            {{ object.pdf_1.name|default:"PDF 1" }}
-          </a>
-        </li>
-      {% endif %}
-      {% if object.pdf_2 %}
-        <li>
-          <a href="{{ object.pdf_2.url }}" target="_blank" rel="noopener">
-            {{ object.pdf_2.name|default:"PDF 2" }}
-          </a>
-        </li>
-      {% endif %}
-      {% if object.pdf_3 %}
-        <li>
-          <a href="{{ object.pdf_3.url }}" target="_blank" rel="noopener">
-            {{ object.pdf_3.name|default:"PDF 3" }}
-          </a>
-        </li>
-      {% endif %}
-      {% if object.pdf_4 %}
-        <li>
-          <a href="{{ object.pdf_4.url }}" target="_blank" rel="noopener">
-            {{ object.pdf_4.name|default:"PDF 4" }}
-          </a>
-        </li>
-      {% endif %}
-    </ul>
-  {% endif %}
+  <div class="form-row span-2">
+    <label>Unterricht</label>
+    <div class="form-value">
+      {{ object.inclass|linebreaksbr }}
+    </div>
+  </div>
 
-  <p class="actions">
-    <a class="btn" href="{% url 'modules:entry_update' object.pk %}">Bearbeiten</a>
-    <a class="btn" href="{% url 'modules:entry_delete' object.pk %}">Löschen</a>
-    <a class="btn" href="{% url 'modules:entry_list' %}">Zurück zur Liste</a>
-  </p>
+  <div class="form-row">
+  <label>Hausaufgabe</label>
+
+  {% if object.homework %}
+    <div class="form-value multiline">
+      {{ object.homework|linebreaksbr }}
+    </div>
+  {% else %}
+    <div class="form-value muted">
+      keine Hausaufgabe   🎉🎉🎉
+    </div>
+  {% endif %}
+</div>
+
+
+  <div class="form-row">
+    <label>Begriffe</label>
+    <div class="terms">
+    {% for term in object.terms.all %}
+      <span class="badge">{{ term.name }}</span>
+    {% empty %}
+      <span class="muted">keine Begriffe</span>
+    {% endfor %}
+  </div>
+  </div>
+
+  <div class="form-row span-2">
+  <label>Materialien</label>
+
+  <div>
+    {% if object.pdf_1 or object.pdf_2 or object.pdf_3 or object.pdf_4 %}
+      <div class="materials-nav">
+        {% if object.pdf_1 %}
+          <a class="btn" href="{{ object.pdf_1.url }}" target="_blank" rel="noopener">Skript</a>
+        {% endif %}
+        {% if object.pdf_2 %}
+          <a class="btn" href="{{ object.pdf_2.url }}" target="_blank" rel="noopener">Lösung zum Skript</a>
+        {% endif %}
+        {% if object.pdf_3 %}
+          <a class="btn" href="{{ object.pdf_3.url }}" target="_blank" rel="noopener">Hausaufgabe</a>
+        {% endif %}
+        {% if object.pdf_4 %}
+          <a class="btn" href="{{ object.pdf_4.url }}" target="_blank" rel="noopener">Lösung zur Hausaufgabe</a>
+        {% endif %}
+      </div>
+    {% else %}
+      <span class="muted">keine Dateien vorhanden</span>
+    {% endif %}
+  </div>
+</div>
+
+
+</div>
+
+
+<p class="actions">
+  <a class="btn" href="{% url 'modules:entry_update' object.pk %}">Bearbeiten</a>
+  <a class="btn" href="{% url 'modules:entry_delete' object.pk %}">Löschen</a>
+  <a class="btn" href="{% url 'modules:entry_list' %}">Zurück zur Liste</a>
+</p>
 {% endblock %}

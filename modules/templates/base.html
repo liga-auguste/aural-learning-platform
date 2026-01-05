@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{% static 'modules/css/style.css' %}">
-    <link rel="stylesheet" href="{% static 'css/auth.css' %}">
+    <link rel="stylesheet" href="{% static 'modules/css/auth.css' %}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=barlow-semi-condensed:300,500" rel="stylesheet" />
     <title>Gehörbildung | Module</title>
@@ -16,24 +16,23 @@
     <header></header>
     <nav>
         <ul class="sidebar" id="sidebar" aria-hidden="true">
-  <li>
-    <button class="icon-btn close-btn" aria-label="Menü schließen" type="button">
-      <!-- svg -->
-    </button>
-  </li>
+          <li>
+            <button class="icon-btn close-btn" aria-label="Menü schließen" type="button">
+              </button>
+          </li>
+          <li><a href="{% url 'modules:term_list' %}"> Alle Begriffe</a>
+          </li>
+          <li><a href="{% url 'modules:entry_list' %}"> Alle Module</a>
+          </li>
 
-  <li><a href="{% url 'modules:term_list' %}"> Alle Begriffe</a>
-</li>
-  <li><a href="{% url 'about' %}">Über dieses Projekt</a></li>
-
-  <li>
-    <form method="post" action="{% url 'admin:logout' %}">
-      {% csrf_token %}
-      <input class="btn" type="submit" value="Abmelden" />
-    </form>
-  </li>
-
-</ul>
+          <li><a href="{% url 'about' %}">Über dieses Projekt</a></li>
+          <li>
+               <form method="post" action="{% url 'admin:logout' %}">
+              {% csrf_token %}
+              <input class="btn" type="submit" value="Abmelden" />
+              </form>
+          </li>
+        </ul>
 
 
         <div class="nav-container">
@@ -55,37 +54,37 @@
         </div>
     </nav>
 
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-        <li class="message">
-            {{ message }}
-        </li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+   {% if messages %}
+    <div class="messages">
+      {% for message in messages %}
+        <div class="message {{ message.tags }}">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
 
     {% block content %}{% endblock content %}
+    <footer class="site-footer">
+      <div class="footer-top">
+        <p>Gehörbildung – Ein Portfolio-Projekt</p>
+      </div>
+    
+      <div class="footer-links">
+        <a href="{% url 'modules:entry_list' %}">Startseite</a>
+        <a href="{% url 'about' %}">Über dieses Projekt</a>
+        <a href="{% url 'contact' %}">Kontakt</a>
+        <a href="{% url 'impressum' %}">Impressum</a>
+        <a href="{% url 'datenschutz' %}">Datenschutz</a>
+      </div>
+    
+      <div class="footer-bottom">
+        <p>© 2026 Līga Auguste · Design & Entwicklung</p>
+      </div>
+    </footer>
 <script defer src="{% static 'modules/js/script.js' %}"></script>
+<br>
+<br>
 </body>
-<footer class="site-footer">
-  <div class="footer-top">
-    <p>Gehörbildung – Ein Portfolio-Projekt</p>
-  </div>
 
-  <div class="footer-links">
-    <a href="{% url 'modules:entry_list' %}">Startseite</a>
-    <a href="{% url 'about' %}">Über dieses Projekt</a>
-    <a href="{% url 'contact' %}">Kontakt</a>
-    <a href="{% url 'impressum' %}">Impressum</a>
-    <a href="{% url 'datenschutz' %}">Datenschutz</a>
-  </div>
-
-  <div class="footer-bottom">
-    <p>© 2025 Līga Auguste · Design & Entwicklung</p>
-  </div>
-</footer>
-
-<br>
-<br>
 </html>
