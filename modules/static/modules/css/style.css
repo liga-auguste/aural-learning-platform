@@ -530,6 +530,19 @@ div a:hover:not(.btn) {
   color: var(--btn-hover);
 }
 
+/* Navbar Entry-Detail View – minimal hover */
+.module-nav a {
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.module-nav a:hover {
+  text-decoration: none;
+  color: var(--text-color);
+  background: none;
+}
+
+
 /* Entry-detail-links */
 .file-list { 
   list-style: none; 
@@ -768,7 +781,7 @@ input, textarea, select, button {
 footer.site-footer {
   margin-top: 4rem;
   padding: 2rem 0;
-  border-top: 1px solid var(--lecture-hover);
+ _border-top: 1px solid var(--lecture-hover);
   color: var(--text-color);
   background-color: var(--bcg-col);
   text-align: center;
@@ -1051,4 +1064,33 @@ input[type="file"]::file-selector-button:hover {
   .tag-card:nth-child(9n){
     grid-column: span 12;
   }
+}
+
+/* Navbar Entry-Detail View */
+
+.module-nav {
+  margin-top: 2rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--lecture-hover);
+}
+
+.module-nav-inner {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+}
+
+.module-nav-btn,
+.module-nav-center {
+  padding: 0.6rem 0.9rem;
+  border-radius: 999px;
+  _background: var(--btn);
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+.module-nav-btn.is-disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }

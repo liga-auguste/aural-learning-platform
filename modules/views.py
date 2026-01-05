@@ -1,4 +1,5 @@
 from django.db.models import Max
+from django.db.models import Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -74,6 +75,37 @@ class EntryDetailView(LockedView, DetailView):
     model = Module
     template_name = "modules/entry_detail.html"
     context_object_name = "entry"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        obj = self.object
+
+        if obj.order is None:
+            context["prev_entry"] = None
+            context["next_entry"] = None
+            return context
+
+        context["prev_entry"] = (
+            Module.objects
+            .filter(
+                Q(order__lt=obj.order) |
+                Q(order=obj.order, id__lt=obj.id)
+            )
+            .order_by("-order", "-id")
+            .first()
+        )
+
+        context["next_entry"] = (
+            Module.objects
+            .filter(
+                Q(order__gt=obj.order) |
+                Q(order=obj.order, id__gt=obj.id)
+            )
+            .order_by("order", "id")
+            .first()
+        )
+
+        return context
 
 
 class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):

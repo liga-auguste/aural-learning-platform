@@ -74,10 +74,31 @@
 
 </div>
 
-
 <p class="actions">
   <a class="btn" href="{% url 'modules:entry_update' object.pk %}">Bearbeiten</a>
   <a class="btn" href="{% url 'modules:entry_delete' object.pk %}">Löschen</a>
   <a class="btn" href="{% url 'modules:entry_list' %}">Zurück zur Liste</a>
 </p>
+
+<nav class="module-nav" aria-label="Modul Navigation">
+  <div class="module-nav-inner">
+
+    {% if prev_entry %}
+      <a class="module-nav-btn" href="{% url 'modules:entry_detail' prev_entry.pk %}">← vorher</a>
+    {% else %}
+      <span class="module-nav-btn is-disabled">← vorher</span>
+    {% endif %}
+
+    <a class="module-nav-center" href="{% url 'modules:entry_list' %}">Übersicht</a>
+
+    {% if next_entry %}
+      <a class="module-nav-btn" href="{% url 'modules:entry_detail' next_entry.pk %}">nächstes →</a>
+    {% else %}
+      <span class="module-nav-btn is-disabled">nächstes →</span>
+    {% endif %}
+
+  </div>
+</nav>
+
+
 {% endblock %}
