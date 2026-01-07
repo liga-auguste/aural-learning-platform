@@ -10,6 +10,9 @@ def module_upload_path(instance, filename):
 
 
 pdf_validator = FileExtensionValidator(allowed_extensions=["pdf"])
+audio_validator = FileExtensionValidator(
+    allowed_extensions=["mp3", "wav", "ogg", "m4a"]
+)
 
 
 class Module(models.Model):
@@ -33,6 +36,40 @@ class Module(models.Model):
                              blank=True, null=True)
 
     order = models.PositiveIntegerField(db_index=True, blank=True, null=True)
+    
+    audio_1 = models.FileField(
+        "Audio Hausaufgabe 1",
+        upload_to=module_upload_path,
+        validators=[audio_validator],
+        blank=True,
+        null=True,
+    )
+    audio_2 = models.FileField(
+        "Audio Hausaufgabe 2",
+        upload_to=module_upload_path,
+        validators=[audio_validator],
+        blank=True,
+        null=True,
+    )
+    audio_3 = models.FileField(
+        "Audio Hausaufgabe 3",
+        upload_to=module_upload_path,
+        validators=[audio_validator],
+        blank=True,
+        null=True,
+    )
+    audio_4 = models.FileField(
+        "Audio Hausaufgabe 4",
+        upload_to=module_upload_path,
+        validators=[audio_validator],
+        blank=True,
+        null=True,
+    )
+
+    audio_1_title = models.CharField("Titel Audio 1", max_length=120, blank=True)
+    audio_2_title = models.CharField("Titel Audio 2", max_length=120, blank=True)
+    audio_3_title = models.CharField("Titel Audio 3", max_length=120, blank=True)
+    audio_4_title = models.CharField("Titel Audio 4", max_length=120, blank=True)
 
 
     def __str__(self):

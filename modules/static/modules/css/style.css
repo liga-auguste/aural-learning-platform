@@ -1094,3 +1094,17 @@ input[type="file"]::file-selector-button:hover {
   opacity: 0.5;
   pointer-events: none;
 }
+
+
+/* Audio */
+.audio-caption {
+  font-weight: 400;
+  font-size: 0.9rem;
+  opacity: 0.75;
+  margin-top: 0.25rem;
+  line-height: 1.2;
+}
+
+.is-hidden {
+  display: none;
+}

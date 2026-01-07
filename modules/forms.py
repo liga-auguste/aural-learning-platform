@@ -12,7 +12,12 @@ class PrettyFileInput(ClearableFileInput):
 class ModuleForm(forms.ModelForm):
     class Meta:
         model = Module
-        fields = ["title", "inclass", "homework", "terms", "pdf_1", "pdf_2", "pdf_3", "pdf_4"]
+        fields = ["title", "inclass", "homework", "terms", "pdf_1", "pdf_2", "pdf_3", "pdf_4", 
+            "audio_1","audio_1_title",
+            "audio_2","audio_2_title",
+            "audio_3","audio_3_title",
+            "audio_4","audio_4_title",
+            ]
         labels = {
             "title": "Titel des Moduls",
             "inclass": "Unterricht",
@@ -32,6 +37,29 @@ class ModuleForm(forms.ModelForm):
             "pdf_3": PrettyFileInput(attrs={"accept": ".pdf"}),
             "pdf_4": PrettyFileInput(attrs={"accept": ".pdf"}),
         }
+    
+    def clean(self):
+        cleaned = super().clean()
+
+        pairs = [
+            ("audio_1", "audio_1_title"),
+            ("audio_2", "audio_2_title"),
+            ("audio_3", "audio_3_title"),
+            ("audio_4", "audio_4_title"),
+        ]
+
+        for file_field, title_field in pairs:
+            f = cleaned.get(file_field)
+            t = (cleaned.get(title_field) or "").strip()
+
+            if f and not t:
+                self.add_error(title_field, "Bitte gib einen Titel an, wenn du eine Audiodatei hochlädst.")
+
+            # optional streng: Titel nur erlaubt, wenn auch Datei hochgeladen ist
+            # if t and not f:
+            #     self.add_error(file_field, "Bitte lade auch eine Audiodatei hoch, wenn du einen Titel angibst.")
+
+        return cleaned
 
 class ModuleFilesForm(forms.ModelForm):
     class Meta:

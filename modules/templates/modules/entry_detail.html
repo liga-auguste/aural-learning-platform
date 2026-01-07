@@ -68,9 +68,88 @@
     {% else %}
       <span class="muted">keine Dateien vorhanden</span>
     {% endif %}
+    </div>
   </div>
-</div>
 
+  {# ================= AUDIO ================= #}
+
+{% if object.audio_1 or object.audio_2 or object.audio_3 or object.audio_4 %}
+
+  {# --- Audio 1 --- #}
+  {% if object.audio_1 %}
+    <div class="form-row">
+      <label>Audio</label>
+      <label>
+        {% if object.audio_1_title %}
+          <div class="audio-caption">{{ object.audio_1_title }}</div>
+        {% endif %}
+      </label>
+      <div class="form-value">
+        <audio controls preload="none" class="audio-player">
+          <source src="{{ object.audio_1.url }}">
+        </audio>
+      </div>
+    </div>
+  {% endif %}
+
+  {# --- Audio 2 --- #}
+  {% if object.audio_2 %}
+    <div class="form-row">
+      <label>
+        {% if object.audio_2_title %}
+          <div class="audio-caption">{{ object.audio_2_title }}</div>
+        {% endif %}
+      </label>
+      <div class="form-value">
+        <audio controls preload="none" class="audio-player">
+          <source src="{{ object.audio_2.url }}">
+        </audio>
+      </div>
+    </div>
+  {% endif %}
+
+  {# --- Audio 3 --- #}
+  {% if object.audio_3 %}
+    <div class="form-row">
+      <label>
+        {% if object.audio_3_title %}
+          <div class="audio-caption">{{ object.audio_3_title }}</div>
+        {% endif %}
+      </label>
+      <div class="form-value">
+        <audio controls preload="none" class="audio-player">
+          <source src="{{ object.audio_3.url }}">
+        </audio>
+      </div>
+    </div>
+  {% endif %}
+
+  {# --- Audio 4 --- #}
+  {% if object.audio_4 %}
+    <div class="form-row">
+      <label>
+        {% if object.audio_4_title %}
+          <div class="audio-caption">{{ object.audio_4_title }}</div>
+        {% endif %}
+      </label>
+      <div class="form-value">
+        <audio controls preload="none" class="audio-player">
+          <source src="{{ object.audio_4.url }}">
+        </audio>
+      </div>
+    </div>
+  {% endif %}
+
+{% else %}
+  <div class="form-row">
+    <label>Audio</label>
+    <div class="form-value muted">keine Audiodateien vorhanden</div>
+  </div>
+{% endif %}
+
+
+
+  </div>
 
 </div>
 

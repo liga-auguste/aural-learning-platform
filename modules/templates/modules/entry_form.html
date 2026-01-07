@@ -60,6 +60,68 @@
     {{ form.pdf_4 }}
     {{ form.pdf_4.errors }}
   </div>
+
+  {# --- AUDIO 1 (immer sichtbar) --- #}
+<div class="form-row audio-row" data-audio="1">
+  <label>
+    {{ form.audio_1_title }}
+    {{ form.audio_1_title.errors }}
+  </label>
+  <div class="form-value">
+    {{ form.audio_1 }}
+    {{ form.audio_1.errors }}
+  </div>
+</div>
+
+{# --- AUDIO 2 --- #}
+<div class="form-row audio-row {% if not form.instance.audio_2 %}is-hidden{% endif %}" data-audio="2">
+  <label>
+    {{ form.audio_2_title }}
+    {{ form.audio_2_title.errors }}
+  </label>
+  <div class="form-value">
+    {{ form.audio_2 }}
+    {{ form.audio_2.errors }}
+  </div>
+</div>
+
+{# --- AUDIO 3 --- #}
+<div class="form-row audio-row {% if not form.instance.audio_3 %}is-hidden{% endif %}" data-audio="3">
+  <label>
+    {{ form.audio_3_title }}
+    {{ form.audio_3_title.errors }}
+  </label>
+  <div class="form-value">
+    {{ form.audio_3 }}
+    {{ form.audio_3.errors }}
+  </div>
+</div>
+
+{# --- AUDIO 4 --- #}
+<div class="form-row audio-row {% if not form.instance.audio_4 %}is-hidden{% endif %}" data-audio="4">
+  <label>
+    {{ form.audio_4_title }}
+    {{ form.audio_4_title.errors }}
+  </label>
+  <div class="form-value">
+    {{ form.audio_4 }}
+    {{ form.audio_4.errors }}
+  </div>
+</div>
+
+{# Button ist ebenfalls direkte form-row #}
+<div class="form-row audio-add-row">
+  <label></label>
+  <div class="form-value">
+    <button type="button" class="btn" id="add-audio-btn">
+      + weiteres Audio
+    </button>
+  </div>
+</div>
+
+
+
+
 </div>
 
 <div class="form-actions">
