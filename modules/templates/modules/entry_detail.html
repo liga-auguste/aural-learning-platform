@@ -163,7 +163,7 @@
   <div class="module-nav-inner">
 
     {% if prev_entry %}
-      <a class="module-nav-btn" href="{% url 'modules:entry_detail' prev_entry.pk %}">← vorher</a>
+      <a class="module-nav-btn" href="{% url 'modules:entry_detail' prev_entry.slug %}">← vorher</a>
     {% else %}
       <span class="module-nav-btn is-disabled">← vorher</span>
     {% endif %}
@@ -171,7 +171,7 @@
     <a class="module-nav-center" href="{% url 'modules:entry_list' %}">Übersicht</a>
 
     {% if next_entry %}
-      <a class="module-nav-btn" href="{% url 'modules:entry_detail' next_entry.pk %}">nächstes →</a>
+      <a class="module-nav-btn" href="{% url 'modules:entry_detail' next_entry.slug %}">nächstes →</a>
     {% else %}
       <span class="module-nav-btn is-disabled">nächstes →</span>
     {% endif %}

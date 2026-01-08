@@ -18,7 +18,7 @@ audio_validator = FileExtensionValidator(
 class Module(models.Model):
     title = models.CharField("Titel des Moduls", max_length=200)
     slug = models.SlugField(max_length=220, unique=True, blank=True, null=True)
-    inclass = models.TextField("Unterricht")                      # früher: content
+    inclass = models.TextField("Unterricht")
     homework = models.TextField("Hausaufgabe", blank=True, null=True)
     terms = TaggableManager(verbose_name="Begriffe", blank=True)
 
