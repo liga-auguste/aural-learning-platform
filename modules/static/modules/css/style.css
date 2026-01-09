@@ -657,6 +657,15 @@ div a:hover:not(.btn) {
   color: var(--text-color);
 }
 
+/* File-Input innerhalb form-value: kein eigener Rahmen */
+.form-row .form-value input[type="file"] {
+  border: none;
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+}
+
+
 /* mehrzeilige Felder wirken wie textarea */
 .form-row .form-value.multiline {
   min-height: 7.5rem;
@@ -1131,3 +1140,6 @@ input[type="file"]::file-selector-button:hover {
   display: none;
 }
 
+.field-value {
+  display: flex;
+}
