@@ -59,6 +59,12 @@ body {
   
   transform: translateX(100%); /* rechts versteckt */
   transition: transform 0.25s ease;
+
+  overflow-y: auto;
+  min-height: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;/* ← optional, gut für iOS */
+
 }
 
 .sidebar.open {
@@ -109,6 +115,24 @@ body {
   background-color: var(--lecture-hover);
   color: var(--btn-hover);
 }
+
+.module-link.is-active {
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.sidebar-modules-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+body.nav-open {
+  overflow: hidden;
+}
+
+
 /* Messages */
 /* Messages – konsistent in Light/Dark */
 .messages{
@@ -173,8 +197,6 @@ body {
 .messages .message.info::before{
   content: "i";
 }
-
-
 
 /* Navbar */
 nav {
@@ -1108,3 +1130,4 @@ input[type="file"]::file-selector-button:hover {
 .is-hidden {
   display: none;
 }
+

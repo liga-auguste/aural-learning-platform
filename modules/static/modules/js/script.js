@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function openSidebar() {
     sidebar.classList.add('open');
+
+    document.body.classList.add('nav-open'); 
+
     sidebar.removeAttribute('inert');
     sidebar.setAttribute('aria-hidden', 'false');
     menuBtn.setAttribute('aria-expanded', 'true');
@@ -46,6 +49,9 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeSidebar() {
     menuBtn.focus();
     sidebar.classList.remove('open');
+
+    document.body.classList.remove('nav-open');
+
     sidebar.setAttribute('inert', '');
     sidebar.setAttribute('aria-hidden', 'true');
     menuBtn.setAttribute('aria-expanded', 'false');

@@ -1,0 +1,42 @@
+ <ul class="sidebar" id="sidebar" aria-hidden="true">
+          <li>
+            <button class="icon-btn close-btn" aria-label="Menü schließen" type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+              </button>
+          </li>
+          <li><a href="{% url 'modules:term_list' %}"> Alle Begriffe</a></li>
+          <li><a href="{% url 'modules:entry_list' %}"> Alle Module</a></li>
+          <li><a href="{% url 'about' %}">Über dieses Projekt</a></li>
+
+          <li class="sidebar-section">Module</li>
+
+            <li class="sidebar-scroll-li">
+                <div class="sidebar-modules-scroll">
+                    <ul class="module-list">
+                        {% for module in nav_modules %}
+                            <li>
+                                <a href="{% url 'modules:entry_detail' module.slug %}" class="module-link {% if request.resolver_match.url_name == 'entry_detail' and request.resolver_match.kwargs.slug == module.slug %}is-active{% endif %}">
+                                {{ module.title }}
+                                </a>
+
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </li>
+<!-- test scroll -->
+<!-- {% for i in "12345678901234567890" %}
+  <li class="debug">
+    <a href="#">99 Testmodul {{ forloop.counter }}</a>
+  </li>
+{% endfor %} -->
+
+
+          <!-- Abmelden -->
+          <li>
+               <form method="post" action="{% url 'admin:logout' %}">
+              {% csrf_token %}
+              <input class="btn" type="submit" value="Abmelden" />
+              </form>
+          </li>
+ </ul>

@@ -9,31 +9,12 @@
     <link rel="stylesheet" href="{% static 'modules/css/auth.css' %}">
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=barlow-semi-condensed:300,500" rel="stylesheet" />
-    <title>Gehörbildung | Module</title>
+    <title>{% block title %}Gehörbildung{% endblock %}</title>
 </head>
 
 <body class="{% block body_class %}{% endblock %}">
-    <header></header>
     <nav>
-        <ul class="sidebar" id="sidebar" aria-hidden="true">
-          <li>
-            <button class="icon-btn close-btn" aria-label="Menü schließen" type="button">
-              </button>
-          </li>
-          <li><a href="{% url 'modules:term_list' %}"> Alle Begriffe</a>
-          </li>
-          <li><a href="{% url 'modules:entry_list' %}"> Alle Module</a>
-          </li>
-
-          <li><a href="{% url 'about' %}">Über dieses Projekt</a></li>
-          <li>
-               <form method="post" action="{% url 'admin:logout' %}">
-              {% csrf_token %}
-              <input class="btn" type="submit" value="Abmelden" />
-              </form>
-          </li>
-        </ul>
-
+        {% include "includes/sidebar.html" %}
 
         <div class="nav-container">
             <h1><a href="{% url 'modules:entry_list' %}">Unterricht in Gehörbildung</a></h1>
