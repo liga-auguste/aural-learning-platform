@@ -33,6 +33,10 @@
     {{ form.terms.errors }}
   </div>
 
+<div class="form-row">
+  <label>Materialien</label>
+</div>
+
   {# --- PDF 1 --- #}
   <div class="form-row">
     {{ form.pdf_1.label_tag }}
@@ -60,6 +64,10 @@
     {{ form.pdf_4 }}
     {{ form.pdf_4.errors }}
   </div>
+
+<div class="form-row">
+  <label>Audio</label>
+</div>
 
   {# --- AUDIO 1 (immer sichtbar) --- #}
 <div class="form-row audio-row" data-audio="1">
@@ -125,8 +133,30 @@
 </div>
 
 <div class="form-actions">
-  <button type="submit" class="btn">Speichern</button>
-  <a class="btn" href="{% url 'modules:entry_list' %}">Zurück</a>
+  <button type="submit" class="btn btn-icon-text">
+  <svg xmlns="http://www.w3.org/2000/svg"
+       width="20"
+       height="20"
+       viewBox="0 0 24 24"
+       fill="none"
+       stroke="currentColor"
+       stroke-width="2"
+       stroke-linecap="round"
+       stroke-linejoin="round"
+       aria-hidden="true">
+    <path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>
+    <path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/>
+    <path d="M7 3v4a1 1 0 0 0 1 1h7"/>
+  </svg>
+
+  <span>Speichern</span>
+</button>
+
+<a class="svg btn btn-icon-text" href="{% url 'modules:entry_list' %}" aria-label="Zurück zur Liste"
+          title="zurück zur Liste">
+  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-icon lucide-list"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg>
+          <span>Zurück zur Liste</span>
+  </a>
 </div>
 
 </form>

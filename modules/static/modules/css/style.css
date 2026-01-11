@@ -295,6 +295,8 @@ nav h1 {
   display: block;
 }
 
+
+
 /* Darkmode switch */
 
 .theme-switch {
@@ -374,11 +376,12 @@ input.btn {
   color: var(--text-color);
   text-decoration: none;
   transition: transform 0.2s ease, background-color 0.3s ease;
-  border-radius: 20px;
+  border-radius: 1rem;
   padding: 0.5rem 0.75rem;
   font-family: inherit;
   font-size: 1rem;
   display: inline-block;
+  
 }
 
 button:hover,
@@ -397,9 +400,35 @@ input.btn:hover {
   color: var(--text-color);
 }
 
+
+
 .materials-nav .btn {
   background-color: var(--accent-green);
 }
+
+.btn-icon-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  justify-content: center;
+}
+
+a.btn.btn-icon-text {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  line-height: 1;
+  white-space: nowrap; /* verhindert Umbruch wie bei "löschen" */
+}
+a.btn.btn-icon-text svg {
+  display: block;
+  flex: 0 0 auto;
+}
+a.btn.btn-icon-text span {
+  line-height: 1;
+}
+
 
 
 /* Tags und styling */
@@ -415,7 +444,7 @@ input.btn:hover {
   background: var(--tags);
   color: var(--text-color);
   padding: 0.2rem 0.6rem;
-  border-radius: 12px;
+  border-radius: 1rem;
 }
 
 .muted {
@@ -512,7 +541,7 @@ body.darkmode dialog button {
   padding: 0.5rem 1rem;
   background-color: var(--btn);
   color: var(--text-color);
-  border-radius: 20px;
+  border-radius: 1rem;
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   font-family: inherit;
@@ -917,7 +946,7 @@ footer.site-footer {
 .card {
   padding: 1rem 1.2rem;
   border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 0.9rem;
+  border-radius: 1rem;
   background: var(--lecture-bcg);
 }
 
@@ -940,7 +969,7 @@ footer.site-footer {
 
 input[type="file"]::file-selector-button {
   border: none;
-  border-radius: 20px;
+  border-radius: 999px;
   padding: 0.45rem 0.75rem;
   margin-right: 0.75rem;
 
