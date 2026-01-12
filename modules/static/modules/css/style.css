@@ -854,26 +854,19 @@ input[type="file"]::file-selector-button:hover {
 .pdf-row { display: flex; }
 
 /* Begriffe */
-/* Grid für die Begriffe */
-.tag-grid {
+.tag-grid{
   display: grid;
   gap: .75rem;
-  grid-template-columns: repeat(12, 1fr);
-  margin-top: 1rem;
+  margin-top: .75rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
-/* Details als „Kachel“ */
-.tag-card {
+.tag-card{
   border: 1px solid var(--lecture-hover);
   border-radius: var(--r-card);
   background: var(--lecture-bcg);
   overflow: hidden;
-  grid-column: span 4;
 }
-
-.tag-card:nth-child(4n) { grid-column: span 3; }
-.tag-card:nth-child(7n) { grid-column: span 4; }
-.tag-card:nth-child(9n) { grid-column: span 5; }
 
 /* Summary = Pill/Kachel-Header */
 .tag-pill {
@@ -889,6 +882,13 @@ input[type="file"]::file-selector-button:hover {
   font-weight: 600;
   user-select: none;
 }
+
+.form-value.form-value--plain{
+  border: none;
+  background: transparent;
+  padding: 0;
+}
+
 
 /* Pfeil/Marker in Webkit ausblenden */
 .tag-pill::-webkit-details-marker { display: none; }
@@ -1032,5 +1032,16 @@ input[type="file"]::file-selector-button:hover {
   .btn.btn-icon-text span {
     display: none;
   }
+}
+
+/* Glossar Stuff */
+.tag-badge{
+  font-size: .72rem;
+  padding: .1rem .45rem;
+  border-radius: var(--r-pill);
+  border: 1px solid color-mix(in srgb, var(--btn) 50%, transparent);
+  background: color-mix(in srgb, var(--btn) 25%, transparent);
+  opacity: .9;
+  margin-left: .5rem;
 }
 

@@ -96,3 +96,32 @@ class Module(models.Model):
             self.slug = candidate
 
         super().save(*args, **kwargs)
+        
+class GlossaryEntry(models.Model):
+    title = models.CharField(max_length=200, unique=True)
+    slug = models.SlugField(max_length=200, unique=True, blank=True)
+    short_definition = models.CharField(max_length=300, blank=True)
+    definition = models.TextField()
+    modules = models.ManyToManyField(
+        "modules.Module",
+        related_name="glossary_terms",
+        blank=True
+        )
+    exam_relevant = models.BooleanField(default=False)
+        
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.title) or "begriff"
+            candidate = base
+            i = 2
+            while GlossaryEntry.objects.filter(slug=candidate).exclude(pk=self.pk).exists():
+                candidate = f"{base}-{i}"
+                i += 1
+            self.slug = candidate
+
+        super().save(*args, **kwargs)
+    
+    def __str__(self):
+        return self.title
+        
+        

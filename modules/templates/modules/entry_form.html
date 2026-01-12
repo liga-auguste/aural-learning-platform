@@ -33,6 +33,19 @@
     {{ form.terms.errors }}
   </div>
 
+  <div class="form-row">
+    <label for="{{ form.glossary_entries.id_for_label }}">
+    {{ form.glossary_entries.label }}
+  </label>
+  <div class="form-value">
+    {{ form.glossary_entries }}
+    {% if form.glossary_entries.help_text %}
+      <p class="help">{{ form.glossary_entries.help_text }}</p>
+    {% endif %}
+    {{ form.glossary_entries.errors }}
+  </div>
+  </div>
+
 <div class="form-row">
   <label>Materialien</label>
 </div>

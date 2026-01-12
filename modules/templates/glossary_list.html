@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Glossar</h2>
+
+  <div class="tag-grid">
+    {% for term in terms %}
+      <details class="tag-card" open>
+        <summary class="tag-pill">
+          <span class="tag-name">{{ term.title }}</span>
+          {% if term.exam_relevant %}
+            <span class="tag-badge">prüfungsrelevant</span>
+          {% endif %}
+          <span class="tag-count">{{ term.modules.count }}</span>
+        </summary>
+
+        <div class="tag-panel">
+          {% if term.short_definition %}
+            <p class="muted">{{ term.short_definition }}</p>
+          {% endif %}
+
+          <p>{{ term.definition|linebreaksbr }}</p>
+
+          {% if term.modules.all %}
+            <hr>
+            <p class="muted">Kommt vor in:</p>
+            {% for module in term.modules.all %}
+              <h3 class="tag-module">
+                <a href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a>
+              </h3>
+            {% empty %}
+              <p class="muted">Noch keinem Modul zugeordnet.</p>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </details>
+    {% empty %}
+      <p>Keine Begriffe vorhanden.</p>
+    {% endfor %}
+  </div>
+{% endblock %}

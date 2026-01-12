@@ -1,6 +1,7 @@
 from django import forms
 from django.forms.widgets import ClearableFileInput
 from modules.models import Module
+from .models import GlossaryEntry
 
 class PrettyFileInput(ClearableFileInput):
     template_name = "widgets/pretty_clearable_file_input.html"
@@ -10,6 +11,28 @@ class PrettyFileInput(ClearableFileInput):
 
 
 class ModuleForm(forms.ModelForm):
+    glossary_entries = forms.ModelMultipleChoiceField(
+    queryset=GlossaryEntry.objects.all().order_by("title"),
+    required=False,
+    label="Glossar:",
+    help_text="Begriffe, die in diesem Modul erklärt und angezeigt werden",
+    widget=forms.CheckboxSelectMultiple,
+)
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields["glossary_entries"].initial = self.instance.glossary_terms.all()
+            
+    def save(self, commit=True):
+        module = super().save(commit=commit)
+        if commit:
+            module.glossary_terms.set(self.cleaned_data.get("glossary_entries") or [])
+        
+        return module
+
+
+    
     class Meta:
         model = Module
         fields = ["title", "inclass", "homework", "terms", "pdf_1", "pdf_2", "pdf_3", "pdf_4", 
@@ -22,7 +45,7 @@ class ModuleForm(forms.ModelForm):
             "title": "Titel des Moduls",
             "inclass": "Unterricht",
             "homework": "Hausaufgabe",
-            "terms": "Begriffe",
+            "terms": "Aufgaben",
             "pdf_1": "Skript",
             "pdf_2": "Lösung zum Skript",
             "pdf_3": "Hausaufgabe",

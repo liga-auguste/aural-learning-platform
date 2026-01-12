@@ -3,7 +3,7 @@ from .views import (
     HomeView,
     EntryListView, EntryDetailView,
     EntryCreateView, EntryUpdateView, EntryDeleteView,
-    TermListView, entry_pk_redirect,
+    TermListView, GlossaryListView, entry_pk_redirect,
 )
 
 app_name = "modules"
@@ -23,5 +23,6 @@ urlpatterns = [
     path("entries/<int:pk>/delete/", EntryDeleteView.as_view(), name="entry_delete"),
 
     path("terms/", TermListView.as_view(), name="term_list"),
+    path("glossar/", GlossaryListView.as_view(), name="glossary_list"),
 ]
 

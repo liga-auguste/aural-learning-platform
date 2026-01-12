@@ -10,7 +10,7 @@ from django.views.generic import (
     CreateView, UpdateView, DeleteView,
 )
 
-from .models import Module
+from .models import Module, GlossaryEntry
 from .forms import ModuleForm
 
 from django.utils.text import slugify
@@ -18,7 +18,7 @@ from taggit.models import Tag
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from .forms import ContactForm
 
@@ -182,3 +182,15 @@ class TermListView(ListView):
 
         return tags
 
+class GlossaryListView(LockedView, ListView):
+    model = GlossaryEntry
+    template_name = "modules/glossary_list.html"
+    context_object_name = "terms"
+
+    def get_queryset(self):
+        return (
+            GlossaryEntry.objects
+            .all()
+            .prefetch_related("modules")
+            .order_by("title")
+        )

@@ -1,5 +1,7 @@
 from django.contrib import admin
-from .models import Module
+from .models import Module, GlossaryEntry
+
+admin.site.register(GlossaryEntry)
 
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
@@ -35,3 +37,8 @@ class ModuleAdmin(admin.ModelAdmin):
         return ", ".join(obj.terms.names())
     terms_list.short_description = "Begriffe"
 
+class GlossaryEntryAdmin(admin.ModelAdmin):
+    list_display = ("title", "exam_relevant")
+    list_filter = ("exam_relevant",)
+    search_fields = ("title", "definition")
+    prepopulated_fields = {"slug": ("title",)}
