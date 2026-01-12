@@ -84,7 +84,7 @@
           <div class="audio-caption">{{ object.audio_1_title }}</div>
         {% endif %}
       </label>
-      <div class="form-value">
+      <div class="form-value audio-block">
         <audio controls preload="none" class="audio-player">
           <source src="{{ object.audio_1.url }}">
         </audio>
@@ -100,7 +100,7 @@
           <div class="audio-caption">{{ object.audio_2_title }}</div>
         {% endif %}
       </label>
-      <div class="form-value">
+      <div class="form-value audio-block">
         <audio controls preload="none" class="audio-player">
           <source src="{{ object.audio_2.url }}">
         </audio>
@@ -116,7 +116,7 @@
           <div class="audio-caption">{{ object.audio_3_title }}</div>
         {% endif %}
       </label>
-      <div class="form-value">
+      <div class="form-value audio-block">
         <audio controls preload="none" class="audio-player">
           <source src="{{ object.audio_3.url }}">
         </audio>
@@ -132,7 +132,7 @@
           <div class="audio-caption">{{ object.audio_4_title }}</div>
         {% endif %}
       </label>
-      <div class="form-value">
+      <div class="form-value audio-block">
         <audio controls preload="none" class="audio-player">
           <source src="{{ object.audio_4.url }}">
         </audio>
@@ -169,7 +169,7 @@
 
   <!-- <a class="btn" href="{% url 'modules:entry_update' object.pk %}">Bearbeiten</a> -->
 
- <a class="svg btn btn-icon-text" href="{% url 'modules:entry_delete' object.pk %}" aria-label="Modul löschen"
+  <a class="svg btn btn-icon-text" href="{% url 'modules:entry_delete' object.pk %}" aria-label="Modul löschen"
           title="Modul löschen">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
@@ -181,16 +181,16 @@
             <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
           </svg>
           <span>Löschen</span>
-        </a>
+  </a>
 
   <!-- <a class="btn" href="{% url 'modules:entry_delete' object.pk %}">Löschen</a> -->
   <a class="svg btn btn-icon-text" href="{% url 'modules:entry_list' %}" aria-label="Zurück zur Liste"
           title="zurück zur Liste">
-  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-icon lucide-list"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-icon lucide-list"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg>
           <span>Zurück zur Liste</span>
   </a>
   <!-- <a class="btn" href="{% url 'modules:entry_list' %}">Zurück zur Liste</a> -->
-</p>
+  </p>
 
 <nav class="module-nav" aria-label="Modul Navigation">
   <div class="module-nav-inner">

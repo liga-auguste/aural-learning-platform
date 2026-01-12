@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Alle Module{% endblock %}
 {% block content %}
-<div class="header-flex">
+<header class="page-header flex-between">
   <h2>Alle Module</h2>
-  <div>
+
+  <div class="actions btn-group">
     <a class="btn" href="{% url 'modules:entry_create' %}">+ Neues Modul anlegen</a>
   </div>
-</div>
+</header>
+
+
 <div class="tag-filter">
   {% if current_tag %}
   <div class="tag-filter-info">
@@ -20,11 +23,12 @@
 
   {% if object_list %}
   {% for entry in object_list %}
-  <article class="lecture">
-    <div class="header-flex">
-      <h2><a href="{% url 'modules:entry_detail' entry.slug %}">{{ entry.title }}</a></h2>
-      <div>
 
+  <article class="lecture">
+    <header class="card-header flex-between">
+      <h2 class="card-title"><a href="{% url 'modules:entry_detail' entry.slug %}">{{ entry.title }}</a></h2>
+      
+      <div class="card-actions btn-group">
         <a class="svg btn btn-icon-text" href="{% url 'modules:entry_update' entry.pk %}" aria-label="Modul bearbeiten"
           title="Modul bearbeiten">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -50,13 +54,14 @@
           <span>Löschen</span>
         </a>
       </div>
-    </div>
+    </header>
+
     <div class="terms">
       {% for term in entry.terms.all %}
-  <a href="{% url 'modules:entries_by_tag' term.slug %}" class="badge">{{ term.name }}</a>
-{% empty %}
-  <span class="muted">keine Begriffe</span>
-{% endfor %}
+      <a href="{% url 'modules:entries_by_tag' term.slug %}" class="badge">{{ term.name }}</a>
+      {% empty %}
+      <span class="muted">keine Begriffe</span>
+      {% endfor %}
     </div>
 
   </article>
