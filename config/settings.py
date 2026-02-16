@@ -50,10 +50,10 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "diary.middleware.RememberMeMiddleware"
+    "config.middleware.RememberMeMiddleware"
 ]
 
-ROOT_URLCONF = "diary.urls"
+ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
     {
@@ -72,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "diary.wsgi.application"
+WSGI_APPLICATION = "config.wsgi.application"
 
 
 # Database
