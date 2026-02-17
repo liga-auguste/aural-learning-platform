@@ -9,8 +9,9 @@ from django.views.generic import (
     TemplateView, ListView, DetailView,
     CreateView, UpdateView, DeleteView,
 )
+from django.views import View
 
-from .models import Module, GlossaryEntry
+from .models import Module, GlossaryEntry, ModuleCompletion
 from .forms import ModuleForm
 
 from django.utils.text import slugify
@@ -73,7 +74,13 @@ class EntryListView(LockedView, ListView):
                 Tag.objects.filter(slug=tag_value).first()
                 or Tag.objects.filter(name=tag_value).first()
                 or Tag.objects.filter(slug=slugify(tag_value)).first()
-            )
+            )    
+        completed_ids = set(
+        ModuleCompletion.objects.filter(user=self.request.user)
+        .values_list("module_id", flat=True)
+        )
+        context["completed_ids"] = completed_ids
+
         return context
 
 
@@ -113,7 +120,39 @@ class EntryDetailView(LockedView, DetailView):
             .first()
         )
 
+        context["is_completed"] = ModuleCompletion.objects.filter(
+            user=self.request.user,
+            module=obj,
+        ).exists()
+        
         return context
+
+class EntryToggleCompleteView(LockedView, View):
+    def post(self, request, slug):
+        module = get_object_or_404(Module, slug=slug)
+
+        completion = ModuleCompletion.objects.filter(
+            user=request.user,
+            module=module
+        ).first()
+
+        if completion:
+            # Bereits abgeschlossen → rückgängig machen
+            completion.delete()
+        else:
+            # Noch nicht abgeschlossen → anlegen
+            ModuleCompletion.objects.create(
+                user=request.user,
+                module=module
+            )
+
+        # Zurück zur vorherigen Seite (wenn ?next=... gesetzt ist)
+        next_url = request.POST.get("next")
+        if next_url:
+            return redirect(next_url)
+
+        # Fallback: zur Übersicht
+        return redirect("modules:entry_list")
 
 
 class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):
@@ -131,8 +170,6 @@ class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
 
     def get_success_url(self):
         return reverse_lazy("modules:entry_detail", kwargs={"slug": self.object.slug})
-
-
 
 class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
     model = Module
@@ -194,3 +231,4 @@ class GlossaryListView(LockedView, ListView):
             .prefetch_related("modules")
             .order_by("title")
         )
+

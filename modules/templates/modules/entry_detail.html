@@ -191,7 +191,7 @@
 
 </div>
 
-<p class="form-actions">
+<div class="form-actions">
 
   <a class="svg btn btn-icon-text" href="{% url 'modules:entry_update' object.pk %}" aria-label="Modul bearbeiten"
           title="Modul bearbeiten">
@@ -222,13 +222,47 @@
   </a>
 
   <!-- <a class="btn" href="{% url 'modules:entry_delete' object.pk %}">Löschen</a> -->
+  
+<form method="post"
+      action="{% url 'modules:entry_toggle_complete' object.slug %}"
+      style="display:inline;">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+  <button type="submit"
+          class="svg btn btn-icon-text completion-btn {% if is_completed %}is-complete{% else %}is-incomplete{% endif %}"
+          aria-label="{% if is_completed %}Als nicht abgeschlossen markieren{% else %}Als abgeschlossen markieren{% endif %}"
+          title="{% if is_completed %}Rückgängig{% else %}Abschließen{% endif %}">
+
+    {% if is_completed %}
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           class="lucide lucide-circle-check">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+      <span>Abgeschlossen</span>
+    {% else %}
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           class="lucide lucide-circle">
+        <circle cx="12" cy="12" r="10"/>
+      </svg>
+      <span>Abschließen</span>
+    {% endif %}
+  </button>
+</form>
+
+
   <a class="svg btn btn-icon-text" href="{% url 'modules:entry_list' %}" aria-label="Zurück zur Liste"
           title="zurück zur Liste">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-icon lucide-list"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg>
           <span>Zurück zur Liste</span>
   </a>
   <!-- <a class="btn" href="{% url 'modules:entry_list' %}">Zurück zur Liste</a> -->
-  </p>
+</div>
 
 <nav class="module-nav" aria-label="Modul Navigation">
   <div class="module-nav-inner">

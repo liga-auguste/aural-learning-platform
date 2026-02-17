@@ -1045,3 +1045,26 @@ input[type="file"]::file-selector-button:hover {
   margin-left: .5rem;
 }
 
+/* Completion button */
+
+/* Completion button states */
+.completion-btn.is-complete {
+  background: var(--accent-green);
+  color: var(--text-color);
+}
+
+/* Optional: leicht anderer Hover für completed, damit er nicht orange wird */
+.completion-btn.is-complete:hover {
+  background: color-mix(in srgb, var(--accent-green) 75%, var(--btn-hover));
+}
+
+/* Click "pop" animation */
+.completion-btn.is-animating {
+  animation: completion-pop 180ms ease-out;
+}
+
+@keyframes completion-pop {
+  0%   { transform: scale(1); }
+  60%  { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}

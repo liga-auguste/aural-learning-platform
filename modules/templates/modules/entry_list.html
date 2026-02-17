@@ -53,6 +53,53 @@
           </svg>
           <span>Löschen</span>
         </a>
+        <form method="post"
+      action="{% url 'modules:entry_toggle_complete' entry.slug %}"
+      style="display:inline;">
+  {% csrf_token %}
+  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+  <button type="submit"
+        class="svg btn btn-icon-text completion-btn {% if entry.id in completed_ids %}is-complete{% else %}is-incomplete{% endif %}"
+        aria-label="{% if entry.id in completed_ids %}Als nicht abgeschlossen markieren{% else %}Als abgeschlossen markieren{% endif %}"
+        title="{% if entry.id in completed_ids %}Rückgängig{% else %}Abschließen{% endif %}">
+
+
+    {% if entry.id in completed_ids %}
+      <!-- Abgeschlossen -->
+      <svg xmlns="http://www.w3.org/2000/svg"
+           width="20" height="20"
+           viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2"
+           stroke-linecap="round"
+           stroke-linejoin="round"
+           class="lucide lucide-circle-check">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="m9 12 2 2 4-4"/>
+      </svg>
+      <span>Abgeschlossen</span>
+    {% else %}
+      <!-- Nicht abgeschlossen -->
+      <svg xmlns="http://www.w3.org/2000/svg"
+           width="20" height="20"
+           viewBox="0 0 24 24"
+           fill="none"
+           stroke="currentColor"
+           stroke-width="2"
+           stroke-linecap="round"
+           stroke-linejoin="round"
+           class="lucide lucide-circle">
+        <circle cx="12" cy="12" r="10"/>
+      </svg>
+      <span>Abschließen</span>
+    {% endif %}
+
+  </button>
+</form>
+
+
       </div>
     </header>
 

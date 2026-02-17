@@ -1,13 +1,15 @@
 from django.contrib import admin
-from .models import Module, GlossaryEntry
+from .models import Module, GlossaryEntry, ModuleCompletion
 
 admin.site.register(GlossaryEntry)
+admin.site.register(ModuleCompletion)
 
 @admin.register(Module)
 class ModuleAdmin(admin.ModelAdmin):
     list_display = (
         "order",
         "title",
+        "has_completion",
         "terms_list",
         "has_homework",
         "pdf_count",
@@ -15,6 +17,10 @@ class ModuleAdmin(admin.ModelAdmin):
         "slug",
     )
     
+    @admin.display(boolean=True, description="Abgeschlossen")
+    def has_completion(self, obj):
+        return ModuleCompletion.objects.filter(module=obj).exists()
+
     @admin.display(boolean=True, description="Hausaufgabe")
     def has_homework(self, obj):
         return bool(obj.homework and obj.homework.strip())

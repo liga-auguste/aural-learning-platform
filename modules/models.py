@@ -3,7 +3,8 @@ from django.db.models import Max
 from django.core.validators import FileExtensionValidator
 from taggit.managers import TaggableManager
 from django.utils.text import slugify
-
+from django.conf import settings
+from django.utils import timezone
 
 def module_upload_path(instance, filename):
     return f"modules/{instance.pk}/{filename}"
@@ -96,6 +97,34 @@ class Module(models.Model):
             self.slug = candidate
 
         super().save(*args, **kwargs)
+
+class ModuleCompletion(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="module_completions",
+    )
+    module = models.ForeignKey(
+        Module,
+        on_delete=models.CASCADE,
+        related_name="completions",
+    )
+    completed_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "module"],
+                name="unique_completion_per_user_module",
+            )
+        ]
+        indexes = [
+            models.Index(fields=["user", "module"]),
+            models.Index(fields=["user"]),
+        ]
+
+    def __str__(self):
+        return f"{self.user} ✓ {self.module}"
         
 class GlossaryEntry(models.Model):
     title = models.CharField(max_length=200, unique=True)
