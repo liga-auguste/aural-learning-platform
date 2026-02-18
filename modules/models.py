@@ -5,6 +5,7 @@ from taggit.managers import TaggableManager
 from django.utils.text import slugify
 from django.conf import settings
 from django.utils import timezone
+from taggit.models import Tag
 
 def module_upload_path(instance, filename):
     return f"modules/{instance.pk}/{filename}"
@@ -122,6 +123,9 @@ class ModuleCompletion(models.Model):
             models.Index(fields=["user", "module"]),
             models.Index(fields=["user"]),
         ]
+        
+        verbose_name = "Fortschrittseintrag"
+        verbose_name_plural = "Fortschrittseinträge"
 
     def __str__(self):
         return f"{self.user} ✓ {self.module}"
@@ -136,7 +140,7 @@ class GlossaryEntry(models.Model):
         related_name="glossary_terms",
         blank=True
         )
-    exam_relevant = models.BooleanField(default=False)
+    exam_relevant = models.BooleanField("Prüfungsrelevanz", default=False)
         
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -154,4 +158,11 @@ class GlossaryEntry(models.Model):
         return self.title
         
     class Meta:
-        verbose_name_plural = "Glossary Entries"
+        verbose_name = "Lernbegriff"
+        verbose_name_plural = "Lernbegriffe"
+
+class Aufgabentyp(Tag):
+    class Meta:
+        proxy = True
+        verbose_name = "Aufgabentyp"
+        verbose_name_plural = "Aufgabentypen"

@@ -1,0 +1,57 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+  <div class="module">
+    <!-- <p>Klick auf ein Symbol toggelt „abgeschlossen“.</p> -->
+
+    <div style="overflow:auto; border:1px solid #ddd;">
+      <table class="adminlist" style="border-collapse: collapse; min-width: 900px;">
+        <thead>
+          <tr>
+            <th style="position: sticky; left: 0; background: var(--body-bg); z-index: 2;">
+              Benutzer
+            </th>
+            {% for m in modules %}
+              <th style="white-space: nowrap;">
+                {{ m.title|truncatechars:20 }}
+              </th>
+            {% endfor %}
+          </tr>
+        </thead>
+
+        <tbody>
+          {% for row in rows %}
+            {% with u=row.user completed_ids=row.completed_ids %}
+              <tr>
+                <th style="position: sticky; left: 0; background: var(--body-bg); z-index: 1;">
+                  {{ u.get_username }}
+                </th>
+
+                {% for m in modules %}
+                  <td style="text-align:center;">
+                    <form method="post"
+                          action="{% url 'admin:modules_module_progress_toggle' u.id m.id %}"
+                          style="margin:0;">
+                      {% csrf_token %}
+                      <button type="submit"
+                              title="Toggle"
+                              aria-label="Toggle Abschluss"
+                              style="background: transparent; border: 0; padding: 6px; cursor: pointer;">
+                        {% if m.id in completed_ids %}
+                          <img src="{% static 'admin/img/icon-yes.svg' %}" alt="Abgeschlossen" width="16" height="16">
+                        {% else %}
+                          <img src="{% static 'admin/img/icon-no.svg' %}" alt="Nicht abgeschlossen" width="16" height="16">
+                        {% endif %}
+                      </button>
+                    </form>
+                  </td>
+                {% endfor %}
+              </tr>
+            {% endwith %}
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
