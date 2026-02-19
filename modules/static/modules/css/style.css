@@ -23,6 +23,16 @@
 
   /* spacing */
   --space-actions: .75rem;
+
+  /* misc */
+  --surface-2: var(--lecture-bcg);
+  --border-subtle: var(--btn);
+
+  /* typography scale */
+  --fs-page-title: clamp(1.5rem, 2vw, 1.8rem);
+  --fs-card-title: 1.2rem;
+  --fs-body: 1rem;
+  --fs-muted: 0.9rem;
 }
 
 .darkmode {
@@ -34,6 +44,11 @@
   --lecture-hover: #555559;
   --tags: #505053;
   --accent-green: #667D69;
+
+  --surface-2: var(--lecture-bcg);
+  --border-subtle: var(--btn);
+  --sidebar-hover: rgba(255,255,255,.08);
+
 }
 
 * { box-sizing: border-box; }
@@ -46,6 +61,16 @@ body {
   padding-inline: clamp(0.75rem, 4vw, 2rem);
   color: var(--text-color);
   background-color: var(--bcg-col);
+}
+
+a {
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--btn-hover);
 }
 
 
@@ -77,10 +102,50 @@ body {
   -webkit-overflow-scrolling: touch; /* optional, gut für iOS */
 }
 
+/* ✅ Darkmode: eigener Hover-Background für guten Kontrast */
+.darkmode { 
+  --sidebar-hover: rgba(255,255,255,.10);
+}
+
+/* Hover/Focus: guter Kontrast (Light) */
+.sidebar a:hover,
+.sidebar a:focus-visible{
+  background-color: var(--btn);
+  color: var(--bcg-col);
+}
+
+/* ✅ Hover/Focus (Darkmode überschreibt Light-Regel) */
+.darkmode .sidebar a:hover,
+.darkmode .sidebar a:focus-visible{
+  background-color: var(--sidebar-hover);
+  color: var(--text-color);
+}
+
+/* Active Link bleibt klar sichtbar */
+.sidebar a.is-active{
+  background-color: color-mix(in srgb, var(--btn) 70%, transparent);
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+/* ✅ Active Link im Darkmode: neutraler, besser lesbar */
+.darkmode .sidebar a.is-active{
+  background-color: rgba(255,255,255,.12);
+  color: var(--text-color);
+}
+
 .sidebar.open { transform: translateX(0); }
 
 .sidebar li { width: 100%; }
-.sidebar a { width: 100%; }
+
+.sidebar a { 
+  width: 100%;
+  display: block;
+  padding: 0.45rem 0.55rem;
+  border-radius: var(--r-sm);
+  color: var(--text-color);
+  text-decoration: none;
+}
 
 .sidebar-section {
   margin-top: 1rem;
@@ -114,10 +179,39 @@ body {
   transition: background-color 0.2s ease;
 }
 
-.module-list li a:hover {
-  background-color: var(--lecture-hover);
-  color: var(--btn-hover);
+.module-list li a:hover,
+.module-list li a:focus {
+  background-color: var(--btn);
+  color: var(--bcg-col);
 }
+
+/* ✅ Module-list Hover im Darkmode wie oben */
+.darkmode .module-list li a:hover,
+.darkmode .module-list li a:focus {
+  background-color: var(--sidebar-hover);
+  color: var(--text-color);
+}
+
+/* (optional) statt underline lieber pill-active — wenn du willst */
+/* .module-link.is-active { text-decoration: underline; font-weight: 500; } */
+.module-link.is-active {
+  text-decoration: none;
+  font-weight: 600;
+  background-color: color-mix(in srgb, var(--btn) 70%, transparent);
+}
+
+/* ✅ Module Active im Darkmode */
+.darkmode .module-link.is-active{
+  background-color: rgba(255,255,255,.12);
+}
+
+.sidebar-modules-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 
 .module-link.is-active {
   text-decoration: underline;
@@ -254,8 +348,9 @@ nav a:hover { background-color: var(--btn); }
 
 .nav-container h1 {
   margin: 0;
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-  line-height: 1.2;
+  font-size: clamp(1.9rem, 3vw, 2.4rem);
+  font-weight: 700;
+  line-height: 1.15;
 }
 
 nav h1 { white-space: nowrap; }
@@ -324,12 +419,13 @@ nav h1 { white-space: nowrap; }
   border-radius: var(--r-card);
   display: flex;
   flex-direction: column;
+  transition: background-color 160ms ease, transform 160ms ease;
 }
 
 .lecture:hover {
   background-color: var(--lecture-hover);
-  transition: transform 0.5s ease, background-color 0.5s ease;
 }
+
 
 /* Button general styling */
 button,
@@ -486,35 +582,6 @@ body.darkmode dialog button {
   background-color: var(--btn-hover);
   transform: scale(1.03);
 }
-
-/* link-button-chaos */
-h1 a,
-h2 a,
-h3 a,
-div a {
-  color: var(--text-color);
-  text-decoration: none;
-}
-
-h1 a:link,
-h1 a:visited,
-h2 a:link,
-h2 a:visited,
-h3 a:link,
-h3 a:visited {
-  color: var(--text-color);
-}
-
-h1 a:hover,
-h2 a:hover,
-h3 a:hover {
-  color: var(--btn-hover);
-  background: none;
-}
-
-div a:hover:not(.btn) { color: var(--btn-hover); }
-
-
 
 /* Navbar Entry-Detail View – minimal hover */
 .module-nav a {
@@ -1016,24 +1083,6 @@ input[type="file"]::file-selector-button:hover {
 
 .field-value { display: flex; }
 
-/* Mobile: Action-Buttons nur mit Icons */
-@media (max-width: 640px) {
-  .btn.btn-icon-text span {
-    display: none;
-  }
-
-  .btn.btn-icon-text {
-    padding: .55rem;          /* kompakter */
-    min-width: 2.65rem;       /* gleiche Klickfläche */
-  }
-}
-
-@media (max-width: 480px) {
-  .btn.btn-icon-text span {
-    display: none;
-  }
-}
-
 /* Glossar Stuff */
 .tag-badge{
   font-size: .72rem;
@@ -1067,4 +1116,162 @@ input[type="file"]::file-selector-button:hover {
   0%   { transform: scale(1); }
   60%  { transform: scale(1.06); }
   100% { transform: scale(1); }
+}
+
+/* Page title */
+.page-title{
+  font-size: var(--fs-page-title);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+
+/* ===== Module cards: header + actions (icons only) ===== */
+
+/* Header layout: title left, actions right */
+.lecture .card-header{
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Title can shrink, actions keep their width */
+.lecture .card-title{
+  margin: 0;
+  min-width: 0;
+  flex: 1 1 auto;
+
+  font-size: var(--fs-card-title);
+  font-weight: 600;
+}
+
+.lecture .card-title a{
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Action cluster: single row, no wrap */
+.lecture .card-actions.btn-group{
+  flex-wrap: nowrap;
+  gap: .5rem;
+  align-items: center;
+  justify-content: flex-end;
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+/* Optional pill "plate" behind icons (mockup look) */
+.lecture .card-actions{
+  background: color-mix(in srgb, var(--btn) 55%, transparent);
+  padding: .35rem;
+  border-radius: var(--r-pill);
+}
+
+/* Icons only: hide labels */
+.lecture .card-actions .btn.btn-icon-text span,
+.lecture .card-actions button.btn.btn-icon-text span{
+  display: none;
+}
+
+/* Icon button sizing */
+.lecture .card-actions .btn.btn-icon-text,
+.lecture .card-actions button.btn.btn-icon-text{
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border-radius: var(--r-pill);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Prevent layout jitter from global hover scaling */
+.lecture .card-actions .btn:hover,
+.lecture .card-actions button:hover{
+  transform: none;
+}
+
+/* Actions: show only on hover/focus (desktop). Always visible on touch. */
+
+@media (hover: hover) and (pointer: fine) {
+  /* default hidden */
+  .lecture .card-actions {
+    opacity: 0;
+    transform: translateY(-2px);
+    transition: opacity 160ms ease, transform 160ms ease;
+  }
+
+  /* show on hover or keyboard focus */
+  .lecture:hover .card-actions,
+  .lecture:focus-within .card-actions {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* optional: desktop lift */
+  .lecture:hover {
+    transform: translateY(-2px);
+  }
+}
+
+@media (hover: none), (pointer: coarse) {
+  .lecture .card-actions {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+
+/* ===== Completed card styling ===== */
+
+.lecture.is-complete{
+  background: color-mix(in srgb, var(--accent-green) 20%, var(--lecture-bcg));
+  border-color: color-mix(in srgb, var(--accent-green) 55%, var(--btn));
+}
+
+/* etwas ruhigerer Hover für completed */
+.lecture.is-complete:hover{
+  background: color-mix(in srgb, var(--accent-green) 28%, var(--lecture-hover));
+}
+
+/* Whole card clickable (stretched link) */
+.lecture{ position: relative; }
+
+
+.lecture{
+  position: relative;
+}
+
+/* Overlay-Link füllt die Card */
+.lecture > .card-link{
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Normaler Inhalt soll Klicks NICHT abfangen */
+.lecture .card-header,
+.lecture .terms{
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Aber interaktive Elemente sollen weiterhin klickbar sein */
+.lecture .card-actions,
+.lecture .card-actions *,
+.lecture .terms a{
+  pointer-events: auto;
+}
+
+
+
+/* Nav-Titel soll keinen Hover-Hintergrund bekommen */
+nav h1 a:hover,
+nav h1 a:focus {
+  background: none;
+  color: var(--text-color);
 }

@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Modul bearbeiten{% endblock %}
 {% block content %}
-  <h2>{{ view.object|default:"Neues Modul" }}</h2>
+  <h2 class="page-title">{{ view.object|default:"Neues Modul" }}</h2>
  <form method="post" enctype="multipart/form-data">
   {% csrf_token %}
   {{ form.non_field_errors }}

@@ -2,7 +2,7 @@
 {% block title %}Alle Module{% endblock %}
 {% block content %}
 <header class="page-header flex-between">
-  <h2>Alle Module</h2>
+  <h2 class="page-title">Alle Module</h2>
 
   <div class="actions btn-group">
     <a class="btn" href="{% url 'modules:entry_create' %}">+ Neues Modul anlegen</a>
@@ -24,10 +24,12 @@
   {% if object_list %}
   {% for entry in object_list %}
 
-  <article class="lecture">
+  <article class="lecture {% if entry.id in completed_ids %}is-complete{% endif %}">
+    <a class="card-link"
+     href="{% url 'modules:entry_detail' entry.slug %}"
+     aria-label="Modul {{ entry.title }} öffnen"></a>
     <header class="card-header flex-between">
-      <h2 class="card-title"><a href="{% url 'modules:entry_detail' entry.slug %}">{{ entry.title }}</a></h2>
-      
+      <h2 class="card-title">{{ entry.title }}</h2>
       <div class="card-actions btn-group">
         <a class="svg btn btn-icon-text" href="{% url 'modules:entry_update' entry.pk %}" aria-label="Modul bearbeiten"
           title="Modul bearbeiten">
@@ -107,7 +109,7 @@
       {% for term in entry.terms.all %}
       <a href="{% url 'modules:entries_by_tag' term.slug %}" class="badge">{{ term.name }}</a>
       {% empty %}
-      <span class="muted">keine Begriffe</span>
+      <span class="muted">keine Aufgaben</span>
       {% endfor %}
     </div>
 
