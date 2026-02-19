@@ -1,42 +1,78 @@
- <ul class="sidebar" id="sidebar" aria-hidden="true">
-          <li>
-            <button class="icon-btn close-btn" aria-label="Menü schließen" type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x-icon lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-              </button>
-          </li>
-          <li><a href="{% url 'modules:term_list' %}">Alle Aufgabentypen</a></li>
-          <li><a href="{% url 'modules:entry_list' %}">Alle Module</a></li>
-          <li><a href="{% url 'about' %}">Über dieses Projekt</a></li>
+<ul class="sidebar" id="sidebar" aria-hidden="true">
 
-          <li class="sidebar-section">Module</li>
-
-            <li class="sidebar-scroll-li">
-                <div class="sidebar-modules-scroll">
-                    <ul class="module-list">
-                        {% for module in nav_modules %}
-                            <li>
-                                <a href="{% url 'modules:entry_detail' module.slug %}" class="module-link {% if request.resolver_match.url_name == 'entry_detail' and request.resolver_match.kwargs.slug == module.slug %}is-active{% endif %}">
-                                {{ module.title }}
-                                </a>
-
-                            </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </li>
-<!-- test scroll -->
-<!-- {% for i in "12345678901234567890" %}
-  <li class="debug">
-    <a href="#">99 Testmodul {{ forloop.counter }}</a>
+  <!-- Close -->
+  <li class="sidebar-top">
+    <button class="icon-btn close-btn" aria-label="Menü schließen" type="button">
+      <svg aria-hidden="true" focusable="false"
+           xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+           viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+           class="lucide lucide-x">
+        <path d="M18 6 6 18" />
+        <path d="m6 6 12 12" />
+      </svg>
+    </button>
   </li>
-{% endfor %} -->
 
+  <!-- Primary links (mit Icons) -->
+  <li>
+    <a href="{% url 'modules:term_list' %}">
+      <!-- clipboard-list -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-list-icon lucide-clipboard-list"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="M12 11h4"/><path d="M12 16h4"/><path d="M8 11h.01"/><path d="M8 16h.01"/></svg>
+      <span>Alle Aufgabentypen</span>
+    </a>
+  </li>
 
-          <!-- Abmelden -->
+  <li>
+    <a href="{% url 'modules:entry_list' %}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-book-open-icon lucide-book-open"><path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/></svg>
+      <span>Alle Module</span>
+    </a>
+  </li>
+
+  <li>
+    <!-- ⚠️ URL ggf. anpassen: Glossar/Begriffe -->
+    <a href="{% url 'modules:glossary_list' %}">
+      <!-- brain -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-graduation-cap-icon lucide-graduation-cap"><path d="M21.42 10.922a1 1 0 0 0-.019-1.838L12.83 5.18a2 2 0 0 0-1.66 0L2.6 9.08a1 1 0 0 0 0 1.832l8.57 3.908a2 2 0 0 0 1.66 0z"/><path d="M22 10v6"/><path d="M6 12.5V16a6 3 0 0 0 12 0v-3.5"/></svg>
+      <span>Lernbegriffe</span>
+    </a>
+  </li>
+  <li>
+    <a href="{% url 'about' %}">
+      <!-- info -->
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-info-icon lucide-info"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+      <span>Über dieses Projekt</span>
+    </a>
+  </li>
+
+  <!-- Section title -->
+  <li class="sidebar-section">
+    <div class="sidebar-title">Module</div>
+  </li>
+
+  <!-- Scroll area -->
+  <li class="sidebar-scroll-li">
+    <div class="sidebar-modules-scroll">
+      <ul class="module-list">
+        {% for module in nav_modules %}
           <li>
-               <form method="post" action="{% url 'admin:logout' %}">
-              {% csrf_token %}
-              <input class="btn" type="submit" value="Abmelden" />
-              </form>
+            <a href="{% url 'modules:entry_detail' module.slug %}"
+               class="module-link {% if request.resolver_match.url_name == 'entry_detail' and request.resolver_match.kwargs.slug == module.slug %}is-active{% endif %}">
+              {{ module.title }}
+            </a>
           </li>
- </ul>
+        {% endfor %}
+      </ul>
+    </div>
+  </li>
+
+  <!-- Logout -->
+  <li class="sidebar-footer">
+    <form method="post" action="{% url 'admin:logout' %}">
+      {% csrf_token %}
+      <input class="btn" type="submit" value="Abmelden" />
+    </form>
+  </li>
+
+</ul>

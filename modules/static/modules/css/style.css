@@ -80,7 +80,8 @@ a:hover {
   top: 0;
   right: 0;
   height: 100vh;
-  width: 250px;
+  width: 400px;
+  max-width: 90vw;
   z-index: 999;
 
   background-color: var(--lecture-bcg);
@@ -102,6 +103,31 @@ a:hover {
   -webkit-overflow-scrolling: touch; /* optional, gut für iOS */
 }
 
+.sidebar > li:first-child {
+  display: flex;
+  justify-content: flex-end;
+  position: sticky;
+  top: 0;
+  background: var(--lecture-bcg);
+  padding-top: .25rem;
+  padding-bottom: .5rem;
+  z-index: 1;
+}
+
+.sidebar a{
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+}
+
+.sidebar a svg{
+  width: 20px;
+  height: 20px;
+  flex: 0 0 20px;
+  opacity: .85;
+}
+
+
 /* ✅ Darkmode: eigener Hover-Background für guten Kontrast */
 .darkmode { 
   --sidebar-hover: rgba(255,255,255,.10);
@@ -110,7 +136,8 @@ a:hover {
 /* Hover/Focus: guter Kontrast (Light) */
 .sidebar a:hover,
 .sidebar a:focus-visible{
-  background-color: var(--btn);
+  background: color-mix(in srgb, var(--btn) 30%, transparent);
+  _background-color: var(--btn);
   color: var(--bcg-col);
 }
 
@@ -118,6 +145,7 @@ a:hover {
 .darkmode .sidebar a:hover,
 .darkmode .sidebar a:focus-visible{
   background-color: var(--sidebar-hover);
+  background: rgba(255,255,255,.08);
   color: var(--text-color);
 }
 
@@ -140,17 +168,19 @@ a:hover {
 
 .sidebar a { 
   width: 100%;
-  display: block;
-  padding: 0.45rem 0.55rem;
-  border-radius: var(--r-sm);
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  padding: 0.75rem 0.9rem;
+  border-radius: var(--r-card);
   color: var(--text-color);
   text-decoration: none;
 }
 
 .sidebar-section {
-  margin-top: 1rem;
-  padding-top: 0.5rem;
-  border-top: 1px solid var(--tags);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid color-mix(in srgb, var(--btn) 30%, transparent);
 }
 
 .sidebar-title {
@@ -164,10 +194,11 @@ a:hover {
 .module-list {
   list-style: none;
   margin: 0;
-  padding-left: 1rem;
+  padding-left: 0.65rem 0.9rem;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
+  border-radius: var(--r-card);
 }
 
 .module-list li a {
@@ -286,6 +317,11 @@ body.nav-open { overflow: hidden; }
 .messages .message.info::before { content: "i"; }
 
 /* Navbar */
+
+.title-short {
+  display: none;
+}
+
 nav {
   _background-color: var(--lecture-bcg);
   _box-shadow: 3px 3px 5px rgba(0,0,0,0.1);
@@ -343,19 +379,50 @@ nav a:hover { background-color: var(--btn); }
   align-items: center;
   min-height: fit-content;
   padding: 1rem 0;
-  gap: 1rem;
+  gap: .75rem;
 }
 
 .nav-container h1 {
+  flex: 1 1 auto;
+  min-width: 0;
   margin: 0;
   font-size: clamp(1.9rem, 3vw, 2.4rem);
   font-weight: 700;
   line-height: 1.15;
 }
 
-nav h1 { white-space: nowrap; }
+/* Ellipsis am Link (Text-Element) */
+.nav-container h1 a{
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-.close-btn { margin-bottom: 1rem; }
+/* Actions rechts: niemals schrumpfen/umbrechen */
+.nav-container .main{
+  flex: 0 0 auto;
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  flex-wrap: nowrap;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+nav ul.main {
+  width: auto;          /* WICHTIG: nimmt nicht mehr 100% */
+  margin-left: auto;    /* schiebt Icons nach rechts */
+}
+
+.close-btn { 
+  margin-bottom: 1rem;
+  align-items: end;
+}
+
+
 
 .icon-btn,
 .theme-switch {
@@ -511,6 +578,22 @@ input.btn:hover {
 .long-input { width: 100%; }
 
 /* small screens */
+@media (min-width: 480px) {
+  .title-long { 
+    display: none; 
+  }
+
+  .title-short { 
+    display: inline; 
+  }
+}
+
+@media (min-width: 340px) {
+  .title-short { 
+    font-size: 1.1rem; 
+  }
+}
+
 @media screen and (max-width: 765px) {
   .nav-container {
     padding: 0.4rem 0.5rem 0.4rem 0;
@@ -522,11 +605,8 @@ input.btn:hover {
   .form-row > label {
   margin-top: 1.25rem;
   margin-bottom: 1rem;
+  }
 }
-
-}
-
-
 
 /* medium screens */
 @media screen and (min-width: 766px) {
