@@ -39,50 +39,62 @@ class LockedView(LoginRequiredMixin):
 class EntryListView(LockedView, ListView):
     model = Module
     template_name = "modules/entry_list.html"
-    context_object_name = "entry"
+    context_object_name = "entry"  # optional besser: "entries"
 
     def get_queryset(self):
         tag_value = self.kwargs.get("tag_slug")
+        q = (self.request.GET.get("q") or "").strip()
+
         qs = (
             Module.objects
             .all()
             .prefetch_related("terms")
             .order_by("order", "id")
         )
+
+        if q:
+            qs = qs.filter(
+                Q(title__icontains=q) |
+                Q(inclass__icontains=q) |
+                Q(homework__icontains=q) |
+                Q(terms__name__icontains=q)
+            ).distinct()
+
         if not tag_value:
             return qs
 
-        # 1) Versuch: als Slug
-        qs_tag = Tag.objects.filter(slug=tag_value).first()
-        # 2) Fallback: als Name (mit Umlauten)
-        if not qs_tag:
-            qs_tag = Tag.objects.filter(name=tag_value).first()
-        # 3) Fallback: slugify(Name)
-        if not qs_tag:
-            qs_tag = Tag.objects.filter(slug=slugify(tag_value)).first()
+        qs_tag = (
+            Tag.objects.filter(slug=tag_value).first()
+            or Tag.objects.filter(name=tag_value).first()
+            or Tag.objects.filter(slug=slugify(tag_value)).first()
+        )
 
         if qs_tag:
-            return qs.filter(terms__in=[qs_tag])
-        # Wenn nichts passt, leere Liste zurückgeben (oder alle, wenn du magst)
+            return qs.filter(terms__in=[qs_tag]).distinct()
+
         return Module.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+
+        # Suchbegriff für Template (z.B. Input value / Anzeige)
+        context["q"] = (self.request.GET.get("q") or "").strip()
+
         tag_value = self.kwargs.get("tag_slug")
         if tag_value:
             context["current_tag"] = (
                 Tag.objects.filter(slug=tag_value).first()
                 or Tag.objects.filter(name=tag_value).first()
                 or Tag.objects.filter(slug=slugify(tag_value)).first()
-            )    
+            )
+
         completed_ids = set(
-        ModuleCompletion.objects.filter(user=self.request.user)
-        .values_list("module_id", flat=True)
+            ModuleCompletion.objects.filter(user=self.request.user)
+            .values_list("module_id", flat=True)
         )
         context["completed_ids"] = completed_ids
 
         return context
-
 
 class EntryDetailView(LockedView, DetailView):
     model = Module
@@ -232,3 +244,5 @@ class GlossaryListView(LockedView, ListView):
             .order_by("title")
         )
 
+class ExamRequirementsView(TemplateView):
+    template_name = "modules/exam_requirements.html"

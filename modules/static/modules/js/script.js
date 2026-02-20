@@ -124,3 +124,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
   updateButton();
 });
+
+// Navbar search
+
+document.addEventListener("DOMContentLoaded", () => {
+  const search = document.querySelector("[data-nav-search]");
+  if (!search) return;
+
+  const toggle = search.querySelector(".nav-search-toggle");
+  const form = search.querySelector("form.nav-search-form");
+  const input = form?.querySelector("input[name='q']");
+
+  const open = () => {
+    search.classList.add("is-open");
+    toggle?.setAttribute("aria-expanded", "true");
+    input?.focus();
+  };
+
+  const close = () => {
+    search.classList.remove("is-open");
+    toggle?.setAttribute("aria-expanded", "false");
+  };
+
+  toggle?.addEventListener("click", (e) => {
+    e.preventDefault();
+    search.classList.contains("is-open") ? close() : open();
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") close();
+  });
+
+  document.addEventListener("click", (e) => {
+    if (search.classList.contains("is-open") && !search.contains(e.target)) close();
+  });
+
+  if ((input?.value || "").trim() !== "") open();
+});

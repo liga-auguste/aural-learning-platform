@@ -127,8 +127,7 @@ a:hover {
   opacity: .85;
 }
 
-
-/* ✅ Darkmode: eigener Hover-Background für guten Kontrast */
+/* Darkmode: eigener Hover-Background für guten Kontrast */
 .darkmode { 
   --sidebar-hover: rgba(255,255,255,.10);
 }
@@ -141,7 +140,7 @@ a:hover {
   color: var(--bcg-col);
 }
 
-/* ✅ Hover/Focus (Darkmode überschreibt Light-Regel) */
+/* Hover/Focus (Darkmode überschreibt Light-Regel) */
 .darkmode .sidebar a:hover,
 .darkmode .sidebar a:focus-visible{
   background-color: var(--sidebar-hover);
@@ -156,7 +155,7 @@ a:hover {
   font-weight: 600;
 }
 
-/* ✅ Active Link im Darkmode: neutraler, besser lesbar */
+/* Active Link im Darkmode: neutraler, besser lesbar */
 .darkmode .sidebar a.is-active{
   background-color: rgba(255,255,255,.12);
   color: var(--text-color);
@@ -216,7 +215,7 @@ a:hover {
   color: var(--bcg-col);
 }
 
-/* ✅ Module-list Hover im Darkmode wie oben */
+/* Module-list Hover im Darkmode wie oben */
 .darkmode .module-list li a:hover,
 .darkmode .module-list li a:focus {
   background-color: var(--sidebar-hover);
@@ -231,7 +230,7 @@ a:hover {
   background-color: color-mix(in srgb, var(--btn) 70%, transparent);
 }
 
-/* ✅ Module Active im Darkmode */
+/* Module Active im Darkmode */
 .darkmode .module-link.is-active{
   background-color: rgba(255,255,255,.12);
 }
@@ -242,7 +241,6 @@ a:hover {
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-
 
 .module-link.is-active {
   text-decoration: underline;
@@ -257,6 +255,37 @@ a:hover {
 }
 
 body.nav-open { overflow: hidden; }
+
+/* Navbar Search */
+.nav-search{
+  gap: .5rem;
+}
+
+.nav-search__input{
+  width: clamp(180px, 22vw, 320px);
+}
+
+@media (max-width: 765px){
+  .nav-search__btn{ display: none; }     /* nur Lupe/Enter – optional */
+  .nav-search__input{ width: 100%; }
+}
+
+/* Suchformular standardmäßig verstecken */
+.nav-search-form{
+  display: none;
+}
+
+/* Wenn offen → anzeigen */
+.nav-search.is-open .nav-search-form{
+  display: flex;
+}
+
+/* Optional etwas Abstand */
+.nav-search{
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
 
 /* Messages – konsistent in Light/Dark */
 .messages { margin: .75rem 0 1.25rem; }
@@ -1354,4 +1383,107 @@ nav h1 a:hover,
 nav h1 a:focus {
   background: none;
   color: var(--text-color);
+}
+
+/* ===== Prüfungsanforderungen / Prüfungs-Card (ohne Inline-Styles) ===== */
+
+.exam-card__header{
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.exam-card__title{
+  margin: 0;
+}
+
+.exam-card__meta{
+  margin: 0;
+}
+
+.exam-card__body{
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.exam-subblock{
+  display: grid;
+  gap: 0.35rem;
+}
+
+.exam-subblock__title{
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Liste im gleichen Look, aber mit sauberem Abstand */
+.exam-list{
+  margin: 0 0 0 1.1rem;
+  line-height: 1.6;
+  padding: 0;
+}
+
+.exam-list--tight{
+  margin-top: 0;
+}
+
+/* Mobile: Titel + Badges untereinander */
+@media (max-width: 640px){
+  .exam-card__header{
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ===== Nav Search (icon → smooth expand) ===== */
+
+.nav-container .main .nav-search {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+
+/* Standard: eingeklappt */
+.nav-container .main .nav-search form.nav-search-form {
+  display: flex;              /* bleibt flex wegen .form-inline */
+  align-items: center;
+  gap: .5rem;
+
+  max-width: 0;
+  opacity: 0;
+  overflow: hidden;
+  pointer-events: none;
+
+  transition: max-width 220ms ease, opacity 160ms ease;
+}
+
+/* Open state */
+.nav-container .main .nav-search.is-open form.nav-search-form {
+  max-width: 520px;           /* genug Platz für Input + Button */
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Input im Overlay integriert */
+.nav-container .main .nav-search > form.nav-search-form input{
+  margin: 0;
+  width: min(46vw, 280px);
+
+  padding: .55rem .75rem;
+  border: 0;                     /* Rahmen weg */
+  border-radius: var(--r-pill);
+  background: transparent;        /* integriert */
+  color: var(--text-color);
+
+  outline: none;
+  box-shadow: none;
+}
+
+/* Subtiler Fokus */
+.nav-container .main .nav-search > form.nav-search-form input:focus{
+  border: var(--lecture-bcg)
 }

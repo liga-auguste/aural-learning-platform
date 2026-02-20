@@ -3,7 +3,7 @@ from .views import (
     HomeView,
     EntryListView, EntryDetailView,
     EntryCreateView, EntryUpdateView, EntryDeleteView,
-    TermListView, GlossaryListView, entry_pk_redirect, EntryToggleCompleteView,
+    TermListView, GlossaryListView, entry_pk_redirect, EntryToggleCompleteView,ExamRequirementsView,
 )
 
 app_name = "modules"
@@ -25,5 +25,8 @@ urlpatterns = [
     path("terms/", TermListView.as_view(), name="term_list"),
     path("glossar/", GlossaryListView.as_view(), name="glossary_list"),
     path("entries/<slug:slug>/toggle-complete/", EntryToggleCompleteView.as_view(), name="entry_toggle_complete"),
+    path("pruefungsanforderungen/", ExamRequirementsView.as_view(),    name="exam_requirements",
+    ),
+    
 ]
 

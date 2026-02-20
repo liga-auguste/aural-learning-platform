@@ -20,6 +20,16 @@
             <h1 class="title-short"><a href="{% url 'modules:entry_list' %}">Unterricht in Gehörbildung</a></h1>
             <h1 class="title-long"><a href="{% url 'modules:entry_list' %}">Gehörbildung</a></h1>
             <ul class="main">
+                
+                <li class="nav-search" data-nav-search>
+                  <button type="button" class="icon-btn nav-search-toggle" aria-label="Suche öffnen">
+                  <!-- Lupe -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"> <circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.3-4.3"></path></svg>
+
+                  </button>
+                  <form method="get" action="{% url 'modules:entry_list' %}" class="form-inline nav-search-form"> <input type="text" name="q" placeholder="Module durchsuchen…" value="{{ q|default:'' }}">
+                  </form>
+                </li>
                 <li>
                     <button id="themeSwitch" class="theme-switch">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-moon-icon lucide-moon"><path d="M20.985 12.486a9 9 0 1 1-9.473-9.472c.405-.022.617.46.402.803a6 6 0 0 0 8.268 8.268c.344-.215.825-.004.803.401"/></svg>
