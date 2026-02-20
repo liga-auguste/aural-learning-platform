@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h2>Prüfungsanforderungen</h2>
+  <section class="card exam-card" aria-labelledby="page-title-gehoerbildung">
+  <header class="exam-card__header">
+    <h2 id="page-title-gehoerbildung" class="page-title exam-card__title">
+      Gehörbildung
+    </h2>
+
+    <div class="terms exam-card__meta">
+      <span class="badge">schriftlich: 45&nbsp;Min</span>
+      <span class="badge">mündlich/praktisch: 10&nbsp;Min</span>
+    </div>
+  </header>
+
+  <!-- Einleitungstext -->
+  <div class="exam-card__intro">
+    <p>
+      Auf dieser Seite wird ein thematischer Auszug aus der Ausbildungs- und
+      Prüfungsordnung für C-Kirchenmusikerinnen und C-Kirchenmusiker (APO-CKM)
+      dargestellt. Die Inhalte beziehen sich auf die Prüfungsanforderungen im
+      Fach Gehörbildung gemäß § 13 der Ordnung.
+    </p>
+    <p>
+      Die Übersicht dient der strukturierten Information über Ablauf, Dauer
+      und inhaltliche Schwerpunkte der Prüfung.
+    </p>
+  </div>
+
+  <div class="exam-card__body">
+    <details class="tag-card exam-block" open>
+      <summary class="tag-pill exam-block__summary">
+        <span class="tag-name">aa) schriftlich</span>
+        <span class="tag-count">45</span>
+      </summary>
+
+      <div class="tag-panel exam-block__panel">
+        <article class="exam-subblock">
+          <h3 class="exam-subblock__title">
+            <span class="badge">aaa</span>
+            Fachrichtungen Orgel / Chorleitung / Kinderchorleitung /
+            Posaunenchorleitung
+          </h3>
+          <ul class="exam-list">
+            <li>ein- und zweistimmige Musikdiktate</li>
+            <li>Rhythmusdiktat</li>
+            <li>
+              Niederschrift einer kurzen Akkordfolge (in Akkordsymbolen,
+              Stufen- oder Funktionsbezeichnung)
+            </li>
+          </ul>
+        </article>
+
+        <article class="exam-subblock">
+          <h3 class="exam-subblock__title">
+            <span class="badge">bbb</span>
+            Fachrichtungen Klavier/Gitarre (Popularmusik) und Chorleitung (Popularmusik)
+          </h3>
+          <ul class="exam-list">
+            <li>Notieren von Parts aus einem vorgegebenen Arrangement</li>
+            <li>
+              Als Hilfsmittel darf ein Keyboard oder eine Gitarre verwendet werden
+            </li>
+          </ul>
+        </article>
+      </div>
+    </details>
+
+    <details class="tag-card exam-block">
+      <summary class="tag-pill exam-block__summary">
+        <span class="tag-name">bb) mündlich / praktisch</span>
+        <span class="tag-count">10</span>
+      </summary>
+
+      <div class="tag-panel exam-block__panel">
+        <ul class="exam-list exam-list--tight">
+          <li>Erkennen und Singen von Intervallen</li>
+          <li>Tonleitern (einschl. Kirchentonarten) und Akkorden</li>
+          <li>Vom-Blatt-Klopfen vorgegebener Rhythmen</li>
+          <li>Vom-Blatt-Singen einer Chorstimme</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</section>
+  
+{% endblock %}
