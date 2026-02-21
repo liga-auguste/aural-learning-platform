@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% load module_extras %}
+
+{% block content %}
+<h1>Schüler</h1>
+
+<ul>
+  {% for s in students %}
+    <li>
+      <a href="{% url 'modules:teacher_student_detail' s.id %}">{{ s.username }}</a> 
+      — Fortschritt: {{ completed_map|get_item:s.id|default:0 }} / {{ total_modules }}
+    </li>
+  {% empty %}
+    <li>Keine Schüler vorhanden.</li>
+  {% endfor %}
+</ul>
+
+{% endblock %}

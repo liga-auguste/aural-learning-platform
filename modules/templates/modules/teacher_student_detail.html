@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Fortschritt von {{ student.username }}</h1>
+
+<p>
+  <a href="{% url 'modules:teacher_student_list' %}">← Zurück zur Schülerliste</a>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Modul</th>
+      <th>Status</th>
+      <th>Aktion</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for m in modules %}
+      <tr>
+        <td>
+          <a href="{% url 'modules:entry_detail' slug=m.slug %}">
+            {{ m.title }}
+          </a>
+        </td>
+
+        <td>
+          {% if m.id in completed_ids %}
+            ✅ Abgeschlossen
+          {% else %}
+            ❌ Offen
+          {% endif %}
+        </td>
+
+        <td>
+          <form method="post" action="{% url 'modules:teacher_toggle_completion' student.id m.slug %}">
+            {% csrf_token %}
+
+            {% if m.id in completed_ids %}
+              <button type="submit">Zurücksetzen</button>
+            {% else %}
+              <button type="submit">Als abgeschlossen markieren</button>
+            {% endif %}
+          </form>
+        </td>
+      </tr>
+    {% empty %}
+      <tr>
+        <td colspan="3">Keine Module vorhanden.</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

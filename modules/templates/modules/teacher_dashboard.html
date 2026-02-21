@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="teacher-dashboard">
+  <header class="dashboard-header">
+    <h2>Lehrer-Bereich</h2>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Schüler</div>
+        <div class="kpi-value">{{ student_count }}</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-label">Module</div>
+        <div class="kpi-value">{{ module_count }}</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-label">Abschlüsse</div>
+        <div class="kpi-value">{{ completion_count }}</div>
+      </div>
+    </div>
+  </header>
+
+  <div class="tile-grid">
+    <a class="tile" href="{% url 'modules:entry_list' %}">
+      <div class="tile-title">Alle Module</div>
+      <div class="tile-sub">Inhalte ansehen</div>
+    </a>
+
+    <a class="tile" href="{% url 'modules:teacher_student_list' %}">
+      <div class="tile-title">Schülerfortschritt</div>
+      <div class="tile-sub">Übersicht & Details</div>
+    </a>
+
+    <a class="tile" href="{% url 'modules:exam_requirements' %}">
+      <div class="tile-title">Prüfungsanforderungen</div>
+      <div class="tile-sub">Curriculum ansehen</div>
+    </a>
+
+    <a class="tile" href="{% url 'modules:glossary_list' %}">
+      <div class="tile-title">Glossar</div>
+      <div class="tile-sub">Begriffe nachschlagen</div>
+    </a>
+  </div>
+
+  <section class="dashboard-notes">
+    <h2>Als nächstes</h2>
+    <ul>
+      <li>Uploads/Abgaben pro Schüler und Modul</li>
+      <li>Freischaltung von Skripten/Lösungen (Visibility)</li>
+      <li>Notizen/Kommentare für Feedback</li>
+    </ul>
+  </section>
+</section>
+
+{% endblock %}
