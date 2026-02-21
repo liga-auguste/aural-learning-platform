@@ -7,10 +7,14 @@ from django.views.generic import TemplateView
 
 from modules.views import contact_view
 
+from accounts.views import RoleBasedLoginView
+
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include(("modules.urls", "modules"), namespace="modules")),   # Root auf modules
+    path("accounts/login/", RoleBasedLoginView.as_view(), name="login"),
     path("accounts/", include("django.contrib.auth.urls")),
+    path("", include(("modules.urls", "modules"), namespace="modules")),
+
     path("about/", TemplateView.as_view(template_name="about.html"), name="about"),
     path("impressum/", TemplateView.as_view(template_name="impressum.html"), name="impressum"),
     path("datenschutz/", TemplateView.as_view(template_name="datenschutz.html"), name="datenschutz"),

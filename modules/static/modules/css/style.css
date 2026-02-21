@@ -503,25 +503,33 @@ nav ul.main {
 /* Stylings body */
 .lectures-container {
   display: grid;
-  gap: 1rem;
-  grid-template-columns: 1fr 1fr;
+  gap: .9rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   align-items: stretch;
 }
 
 .lecture {
+  position: relative;
   background-color: var(--lecture-bcg);
-  padding: 0.75rem;
-  border: 1px solid var(--btn);
-  border-radius: var(--r-card);
+  padding: 1.1rem 1.15rem;
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+  border-radius: var(--r-card, 1rem);
   display: flex;
   flex-direction: column;
-  transition: background-color 160ms ease, transform 160ms ease;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
 }
 
 .lecture:hover {
   background-color: var(--lecture-hover);
 }
 
+.lecture:hover,
+.lecture:focus-within {
+  background-color: var(--lecture-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.10);
+}
 
 /* Button general styling */
 button,
@@ -634,6 +642,12 @@ input.btn:hover {
   .form-row > label {
   margin-top: 1.25rem;
   margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 820px) {
+  .lectures-container {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -1340,14 +1354,13 @@ input[type="file"]::file-selector-button:hover {
   border-color: color-mix(in srgb, var(--accent-green) 55%, var(--btn));
 }
 
-/* etwas ruhigerer Hover für completed */
-.lecture.is-complete:hover{
+/* etwas ruhigerer Hover/Focus für completed */
+.lecture.is-complete:hover,
+.lecture.is-complete:focus-within{
   background: color-mix(in srgb, var(--accent-green) 28%, var(--lecture-hover));
 }
 
-/* Whole card clickable (stretched link) */
-.lecture{ position: relative; }
-
+/* ===== Whole card clickable (stretched link) ===== */
 
 .lecture{
   position: relative;
@@ -1375,7 +1388,6 @@ input[type="file"]::file-selector-button:hover {
 .lecture .terms a{
   pointer-events: auto;
 }
-
 
 
 /* Nav-Titel soll keinen Hover-Hintergrund bekommen */
@@ -1486,4 +1498,126 @@ nav h1 a:focus {
 /* Subtiler Fokus */
 .nav-container .main .nav-search > form.nav-search-form input:focus{
   border: var(--lecture-bcg)
+}
+
+/* ============ Teacher Dashboard ============= */
+
+.teacher-dashboard {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.dashboard-header h1 {
+  margin: 0 0 1rem 0;
+}
+
+/* KPI row */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.kpi {
+  background: var(--lecture-bcg);
+  border-radius: var(--r-card, 1rem);
+  padding: 0.9rem 1rem;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.kpi-label {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.kpi-value {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-top: 0.25rem;
+}
+
+/* Tiles */
+.tile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.9rem;
+}
+
+.tile {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+
+  background: var(--lecture-bcg);
+  border-radius: var(--r-card, 1rem);
+  padding: 1.1rem 1.15rem;
+
+  border: 1px solid rgba(0,0,0,0.05);
+  box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+}
+
+.tile:hover,
+.tile:focus-visible {
+  background-color: var(--lecture-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 14px 34px rgba(0,0,0,0.10);
+  outline: none;
+}
+
+.tile-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.tile-sub {
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+/* "Als nächstes" section */
+.dashboard-notes {
+  margin-top: 1.4rem;
+  background: var(--bcg-col);
+  border-radius: var(--r-card, 1rem);
+  padding: 1rem 1.1rem;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.dashboard-notes h2 {
+  margin-top: 0;
+}
+
+/* Responsive */
+@media (max-width: 820px) {
+  .kpi-row {
+    grid-template-columns: 1fr;
+  }
+  .tile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ======= Role Icon ======== */
+
+.role-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.35rem;
+  opacity: 0.65;
+  transform: translateY(1px);
+}
+
+.role-icon svg {
+  display: block;
+}
+
+.title-short a:hover .role-icon,
+.title-long a:hover .role-icon {
+  opacity: 0.9;
 }

@@ -1,6 +1,6 @@
 from entries.models import Entry
 from django.db.models import Max
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
@@ -22,6 +22,11 @@ from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from .forms import ContactForm
+
+from accounts.mixins import TeacherRequiredMixin
+from django.contrib.auth import get_user_model
+
+from django.shortcuts import redirect
 
 def entry_pk_redirect(request, pk):
     entry = get_object_or_404(Module, pk=pk)
@@ -167,14 +172,14 @@ class EntryToggleCompleteView(LockedView, View):
         return redirect("modules:entry_list")
 
 
-class EntryCreateView(LockedView, SuccessMessageMixin, CreateView):
+class EntryCreateView(TeacherRequiredMixin, SuccessMessageMixin, CreateView):
     model = Module
     form_class = ModuleForm
     template_name = "modules/entry_form.html"
     success_url = reverse_lazy("modules:entry_list")
     success_message = "Das Modul wurde erstellt!"
 
-class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
+class EntryUpdateView(TeacherRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Module
     form_class = ModuleForm
     template_name = "modules/entry_form.html"
@@ -183,7 +188,7 @@ class EntryUpdateView(LockedView, SuccessMessageMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy("modules:entry_detail", kwargs={"slug": self.object.slug})
 
-class EntryDeleteView(LockedView, SuccessMessageMixin, DeleteView):
+class EntryDeleteView(TeacherRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Module
     template_name = "modules/entry_confirm_delete.html"
     success_url = reverse_lazy("modules:entry_list")
@@ -246,3 +251,108 @@ class GlossaryListView(LockedView, ListView):
 
 class ExamRequirementsView(TemplateView):
     template_name = "modules/exam_requirements.html"
+    
+class TeacherStudentListView(TeacherRequiredMixin, ListView):
+    template_name = "modules/teacher_student_list.html"
+    context_object_name = "students"
+
+    def get_queryset(self):
+        User = get_user_model()
+        return User.objects.filter(role=User.STUDENT).order_by("username")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        total_modules = Module.objects.count()
+
+        completed_counts = (
+            ModuleCompletion.objects
+            .values("user_id")
+            .annotate(c=Count("id"))
+        )
+        completed_map = {row["user_id"]: row["c"] for row in completed_counts}
+
+        context["total_modules"] = total_modules
+        context["completed_map"] = completed_map
+
+        return context
+
+class TeacherStudentDetailView(TeacherRequiredMixin, TemplateView):
+    template_name = "modules/teacher_student_detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        User = get_user_model()
+
+        # Schüler laden (nur STUDENT erlaubt)
+        student = get_object_or_404(
+            User,
+            pk=self.kwargs["pk"],
+            role=User.STUDENT
+        )
+
+        modules = Module.objects.order_by("order", "id")
+
+        completed_ids = set(
+            ModuleCompletion.objects
+            .filter(user=student)
+            .values_list("module_id", flat=True)
+        )
+
+        context["student"] = student
+        context["modules"] = modules
+        context["completed_ids"] = completed_ids
+
+        return context
+    
+class TeacherToggleCompletionView(TeacherRequiredMixin, View):
+    def post(self, request, pk, slug):
+        User = get_user_model()
+
+        student = get_object_or_404(User, pk=pk, role=User.STUDENT)
+        module = get_object_or_404(Module, slug=slug)
+
+        completion = ModuleCompletion.objects.filter(
+            user=student,
+            module=module
+        ).first()
+
+        if completion:
+            completion.delete()
+        else:
+            ModuleCompletion.objects.create(user=student, module=module)
+
+        return redirect("modules:teacher_student_detail", pk=student.pk)
+
+class TeacherDashboardView(TeacherRequiredMixin, TemplateView):
+    template_name = "modules/teacher_dashboard.html"
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        User = get_user_model()
+        
+        student_count = User.objects.filter(
+            role=User.STUDENT
+        ).count()
+        
+        module_count = Module.objects.count()
+        
+        completion_count = ModuleCompletion.objects.count()
+        
+        context["student_count"] = student_count
+        context["module_count"] = module_count
+        context["completion_count"] = completion_count
+        
+        return context
+
+class RoleBasedHomeRedirectView(View):
+    def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect("login")  # falls dein login-URL-Name "login" ist
+
+        if request.user.is_teacher:
+            return redirect("modules:teacher_dashboard")
+
+        return redirect("modules:entry_list")
