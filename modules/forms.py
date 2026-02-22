@@ -2,6 +2,7 @@ from django import forms
 from django.forms.widgets import ClearableFileInput
 from modules.models import Module
 from .models import GlossaryEntry
+from taggit.forms import TagField, TagWidget
 
 class PrettyFileInput(ClearableFileInput):
     template_name = "widgets/pretty_clearable_file_input.html"
@@ -14,15 +15,27 @@ class ModuleForm(forms.ModelForm):
     glossary_entries = forms.ModelMultipleChoiceField(
     queryset=GlossaryEntry.objects.all().order_by("title"),
     required=False,
-    label="Glossar:",
+    label="Lernbegriffe:",
     help_text="Begriffe, die in diesem Modul erklärt und angezeigt werden",
     widget=forms.CheckboxSelectMultiple,
 )
+    tasktype = TagField(
+        required=False,
+        label="Aufgabentypen",
+        widget=TagWidget(attrs={
+            "placeholder": "z.B. Intervalle spielen, Vom Blatt"
+        }),
+        help_text="Mehrwort-Tags sind ok. Bitte mit Komma trennen."
+    )
     
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
         if self.instance and self.instance.pk:
             self.fields["glossary_entries"].initial = self.instance.glossary_terms.all()
+
+            names = list(self.instance.tasktype.names())
+            self.initial["tasktype"] = ", ".join(names)
             
     def save(self, commit=True):
         module = super().save(commit=commit)
@@ -30,12 +43,26 @@ class ModuleForm(forms.ModelForm):
             module.glossary_terms.set(self.cleaned_data.get("glossary_entries") or [])
         
         return module
+    
+    def clean_tasktype(self):
+        raw = self.cleaned_data.get("tasktype") or ""
 
+        # Falls TagField bereits Liste geliefert hat
+        if isinstance(raw, (list, tuple)):
+            cleaned = [str(p).strip().strip('"').strip("'") for p in raw]
+            return [p for p in cleaned if p]
 
+        # Falls String (z.B. '"Intervalle spielen"')
+        raw = str(raw).replace('"', "").replace("'", "")
+        parts = [p.strip() for p in raw.split(",")]
+        return [p for p in parts if p]
     
     class Meta:
         model = Module
-        fields = ["title", "inclass", "homework", "terms", "pdf_1", "pdf_2", "pdf_3", "pdf_4", 
+        fields = ["title", "inclass", "homework",
+            "tasktype",
+            "glossary_entries",
+            "pdf_1", "pdf_2", "pdf_3", "pdf_4", 
             "audio_1","audio_1_title",
             "audio_2","audio_2_title",
             "audio_3","audio_3_title",
@@ -45,7 +72,7 @@ class ModuleForm(forms.ModelForm):
             "title": "Titel des Moduls",
             "inclass": "Unterricht",
             "homework": "Hausaufgabe",
-            "terms": "Aufgaben",
+            "tasktype": "Aufgabentypen",
             "pdf_1": "Skript",
             "pdf_2": "Lösung zum Skript",
             "pdf_3": "Hausaufgabe",

@@ -34,22 +34,23 @@
   {% endif %}
 </div>
 
-
   <div class="form-row">
-    <label>Aufgaben</label>
-    <div class="terms">
-    {% for term in object.terms.all %}
-      <span class="badge">{{ term.name }}</span>
+  <label>Aufgabentypen</label>
+  <div class="terms">
+    {% for tag in object.tasktype.all %}
+      <a href="{% url 'modules:entries_by_tag' tag.slug %}" class="badge">
+        {{ tag.name }}
+      </a>
     {% empty %}
-      <span class="muted">keine Aufgaben</span>
+      <span class="muted">keine Aufgabentypen</span>
     {% endfor %}
   </div>
-  </div>
+</div>
 
   {% with glossary_terms=object.glossary_terms.all %}
   {% if glossary_terms %}
     <div class="form-row span-2">
-      <label>Begriffe (Glossar)</label>
+      <label>Lernbegriffe</label>
 
       <div class="form-value form-value--plain">
         <div class="tag-grid">
@@ -83,31 +84,39 @@
   {% endif %}
 {% endwith %}
 
-
   <div class="form-row span-2">
   <label>Materialien</label>
 
   <div>
     {% if object.pdf_1 or object.pdf_2 or object.pdf_3 or object.pdf_4 %}
       <div class="materials-nav">
+
+        {# Skript – für alle sichtbar #}
         {% if object.pdf_1 %}
           <a class="btn" href="{{ object.pdf_1.url }}" target="_blank" rel="noopener">Skript</a>
         {% endif %}
-        {% if object.pdf_2 %}
+
+        {# Lösung zum Skript – nur Lehrkraft #}
+        {% if object.pdf_2 and request.user.is_staff %}
           <a class="btn" href="{{ object.pdf_2.url }}" target="_blank" rel="noopener">Lösung zum Skript</a>
         {% endif %}
+
+        {# Hausaufgabe – für alle sichtbar #}
         {% if object.pdf_3 %}
           <a class="btn" href="{{ object.pdf_3.url }}" target="_blank" rel="noopener">Hausaufgabe</a>
         {% endif %}
-        {% if object.pdf_4 %}
+
+        {# Lösung zur Hausaufgabe – nur Lehrkraft #}
+        {% if object.pdf_4 and request.user.is_staff %}
           <a class="btn" href="{{ object.pdf_4.url }}" target="_blank" rel="noopener">Lösung zur Hausaufgabe</a>
         {% endif %}
+
       </div>
     {% else %}
       <span class="muted">keine Dateien vorhanden</span>
     {% endif %}
-    </div>
   </div>
+</div>
 
   {# ================= AUDIO ================= #}
 
@@ -193,75 +202,96 @@
 
 <div class="form-actions">
 
-  <a class="svg btn btn-icon-text" href="{% url 'modules:entry_update' object.pk %}" aria-label="Modul bearbeiten"
-          title="Modul bearbeiten">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-square-pen-icon lucide-square-pen">
-            <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-            <path
-              d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
-          </svg>
-          <span>Bearbeiten</span>
-  </a>
+  {# ================= TEACHER ONLY ================= #}
+  {% if request.user.is_staff %}
 
-  <!-- <a class="btn" href="{% url 'modules:entry_update' object.pk %}">Bearbeiten</a> -->
-
-  <a class="svg btn btn-icon-text" href="{% url 'modules:entry_delete' object.pk %}" aria-label="Modul löschen"
-          title="Modul löschen">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-            class="lucide lucide-trash2-icon lucide-trash-2">
-            <path d="M10 11v6" />
-            <path d="M14 11v6" />
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
-            <path d="M3 6h18" />
-            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-          </svg>
-          <span>Löschen</span>
-  </a>
-
-  <!-- <a class="btn" href="{% url 'modules:entry_delete' object.pk %}">Löschen</a> -->
-  
-<form method="post"
-      action="{% url 'modules:entry_toggle_complete' object.slug %}"
-      style="display:inline;">
-  {% csrf_token %}
-  <input type="hidden" name="next" value="{{ request.get_full_path }}">
-
-  <button type="submit"
-          class="svg btn btn-icon-text completion-btn {% if is_completed %}is-complete{% else %}is-incomplete{% endif %}"
-          aria-label="{% if is_completed %}Als nicht abgeschlossen markieren{% else %}Als abgeschlossen markieren{% endif %}"
-          title="{% if is_completed %}Rückgängig{% else %}Abschließen{% endif %}">
-
-    {% if is_completed %}
+    <a class="svg btn btn-icon-text"
+       href="{% url 'modules:entry_update' object.pk %}"
+       aria-label="Modul bearbeiten"
+       title="Modul bearbeiten">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-           viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-           class="lucide lucide-circle-check">
-        <circle cx="12" cy="12" r="10"/>
-        <path d="m9 12 2 2 4-4"/>
+           viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round"
+           class="lucide lucide-square-pen-icon lucide-square-pen">
+        <path d="M12 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+        <path d="M18.375 2.625a1 1 0 0 1 3 3l-9.013 9.014a2 2 0 0 1-.853.505l-2.873.84a.5.5 0 0 1-.62-.62l.84-2.873a2 2 0 0 1 .506-.852z" />
       </svg>
-      <span>Abgeschlossen</span>
-    {% else %}
+      <span>Bearbeiten</span>
+    </a>
+
+    <a class="svg btn btn-icon-text"
+       href="{% url 'modules:entry_delete' object.pk %}"
+       aria-label="Modul löschen"
+       title="Modul löschen">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
-           viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-           class="lucide lucide-circle">
-        <circle cx="12" cy="12" r="10"/>
+           viewBox="0 0 24 24" fill="none"
+           stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round"
+           class="lucide lucide-trash2-icon lucide-trash-2">
+        <path d="M10 11v6" />
+        <path d="M14 11v6" />
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6" />
+        <path d="M3 6h18" />
+        <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
       </svg>
-      <span>Abschließen</span>
-    {% endif %}
-  </button>
-</form>
+      <span>Löschen</span>
+    </a>
+
+  {% endif %}
+  {# ================================================= #}
 
 
-  <a class="svg btn btn-icon-text" href="{% url 'modules:entry_list' %}" aria-label="Zurück zur Liste"
-          title="zurück zur Liste">
-          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-list-icon lucide-list"><path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/><path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/></svg>
-          <span>Zurück zur Liste</span>
+  {# ===== Toggle Complete (Schüler + ggf. Teacher) ===== #}
+  <form method="post"
+        action="{% url 'modules:entry_toggle_complete' object.slug %}"
+        style="display:inline;">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.get_full_path }}">
+
+    <button type="submit"
+            class="svg btn btn-icon-text completion-btn {% if is_completed %}is-complete{% else %}is-incomplete{% endif %}"
+            aria-label="{% if is_completed %}Als nicht abgeschlossen markieren{% else %}Als abgeschlossen markieren{% endif %}"
+            title="{% if is_completed %}Rückgängig{% else %}Abschließen{% endif %}">
+
+      {% if is_completed %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-circle-check">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+        <span>Abgeschlossen</span>
+      {% else %}
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+             viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+             class="lucide lucide-circle">
+          <circle cx="12" cy="12" r="10"/>
+        </svg>
+        <span>Abschließen</span>
+      {% endif %}
+    </button>
+  </form>
+
+
+  {# ===== Zurück zur Liste ===== #}
+  <a class="svg btn btn-icon-text"
+     href="{% url 'modules:entry_list' %}"
+     aria-label="Zurück zur Liste"
+     title="zurück zur Liste">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+         viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="2"
+         stroke-linecap="round" stroke-linejoin="round"
+         class="lucide lucide-list-icon lucide-list">
+      <path d="M3 5h.01"/><path d="M3 12h.01"/><path d="M3 19h.01"/>
+      <path d="M8 5h13"/><path d="M8 12h13"/><path d="M8 19h13"/>
+    </svg>
+    <span>Zurück zur Liste</span>
   </a>
-  <!-- <a class="btn" href="{% url 'modules:entry_list' %}">Zurück zur Liste</a> -->
+
 </div>
 
 <nav class="module-nav" aria-label="Modul Navigation">

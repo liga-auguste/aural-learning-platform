@@ -49,7 +49,7 @@ class ModuleAdmin(admin.ModelAdmin):
         "order",
         "title",
         # "has_completion",  # <- empfehle ich rauszunehmen (siehe Hinweis unten)
-        "terms_list",
+        "tasktype_list",
         "has_homework",
         "pdf_count",
         "audio_count",
@@ -76,12 +76,13 @@ class ModuleAdmin(admin.ModelAdmin):
     list_editable = ("order",)
     list_display_links = ("title",)
     ordering = ("order", "id")
-    search_fields = ("title", "inclass", "homework", "terms__name")
+    search_fields = ("title", "inclass", "homework", "tasktype__name")
     prepopulated_fields = {"slug": ("title",)}
 
-    def terms_list(self, obj):
-        return ", ".join(obj.terms.names())
-    terms_list.short_description = "Begriffe"
+    @admin.display(description="Aufgabentypen")
+    def tasktype_list(self, obj):
+        names = obj.tasktype.names()
+        return ", ".join(names) if names else "–"
 
     change_list_template = "admin/modules/module_change_list.html"
       

@@ -4,11 +4,12 @@
 <header class="page-header flex-between">
   <h2 class="page-title">Alle Module</h2>
 
-  <div class="actions btn-group">
-    <a class="btn" href="{% url 'modules:entry_create' %}">+ Neues Modul anlegen</a>
-  </div>
+  {% if request.user.is_staff %}
+    <div class="actions btn-group">
+      <a class="btn" href="{% url 'modules:entry_create' %}">+ Neues Modul anlegen</a>
+    </div>
+  {% endif %}
 </header>
-
 
 <div class="tag-filter">
   {% if current_tag %}
@@ -28,9 +29,13 @@
     <a class="card-link"
      href="{% url 'modules:entry_detail' entry.slug %}"
      aria-label="Modul {{ entry.title }} öffnen"></a>
-    <header class="card-header flex-between">
+    
+     <header class="card-header flex-between">
+
       <h2 class="card-title">{{ entry.title }}</h2>
+
       <div class="card-actions btn-group">
+        {% if request.user.is_staff %}
         <a class="svg btn btn-icon-text" href="{% url 'modules:entry_update' entry.pk %}" aria-label="Modul bearbeiten"
           title="Modul bearbeiten">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
@@ -55,6 +60,7 @@
           </svg>
           <span>Löschen</span>
         </a>
+        {% endif %}
         <form method="post"
       action="{% url 'modules:entry_toggle_complete' entry.slug %}"
       style="display:inline;">
@@ -103,10 +109,11 @@
 
 
       </div>
+      
     </header>
 
     <div class="terms">
-      {% for term in entry.terms.all %}
+      {% for term in entry.tasktype.all %}
       <a href="{% url 'modules:entries_by_tag' term.slug %}" class="badge">{{ term.name }}</a>
       {% empty %}
       <span class="muted">keine Aufgaben</span>

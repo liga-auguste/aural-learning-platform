@@ -9,6 +9,7 @@
   --lecture-hover: #dadfe7;
   --tags: #c1cbd7;
   --accent-green: #A7C1A3;
+  --sidebar-hover: color-mix(in srgb, var(--btn) 30%, transparent);
 
   /* radius scales */
   --r-sm: .4rem;
@@ -190,10 +191,18 @@ a:hover {
   opacity: 0.8;
 }
 
+.sidebar .module-link {
+  display: block;
+  padding: 0.6rem 0.75rem;  /* ähnlich wie deine normalen Links */
+  border-radius: 0.75rem;
+  text-decoration: none;
+}
+
 .module-list {
   list-style: none;
   margin: 0;
-  padding-left: 0.65rem 0.9rem;
+  padding: 0;
+  margin: 0;
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -209,17 +218,10 @@ a:hover {
   transition: background-color 0.2s ease;
 }
 
-.module-list li a:hover,
-.module-list li a:focus {
-  background-color: var(--btn);
-  color: var(--bcg-col);
-}
 
-/* Module-list Hover im Darkmode wie oben */
-.darkmode .module-list li a:hover,
-.darkmode .module-list li a:focus {
-  background-color: var(--sidebar-hover);
-  color: var(--text-color);
+/* Darkmode keeps the same token, just different value */
+.darkmode{
+  --sidebar-hover: rgba(255,255,255,.08);
 }
 
 /* (optional) statt underline lieber pill-active — wenn du willst */
@@ -236,6 +238,8 @@ a:hover {
 }
 
 .sidebar-modules-scroll {
+  padding: 0.25rem 0;
+
   flex: 1;
   min-height: 0;
   overflow-y: auto;

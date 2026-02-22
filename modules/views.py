@@ -53,7 +53,7 @@ class EntryListView(LockedView, ListView):
         qs = (
             Module.objects
             .all()
-            .prefetch_related("terms")
+            .prefetch_related("tasktype")
             .order_by("order", "id")
         )
 
@@ -62,7 +62,7 @@ class EntryListView(LockedView, ListView):
                 Q(title__icontains=q) |
                 Q(inclass__icontains=q) |
                 Q(homework__icontains=q) |
-                Q(terms__name__icontains=q)
+                Q(tasktype__name__icontains=q)
             ).distinct()
 
         if not tag_value:
@@ -75,7 +75,7 @@ class EntryListView(LockedView, ListView):
         )
 
         if qs_tag:
-            return qs.filter(terms__in=[qs_tag]).distinct()
+            return qs.filter(tasktype__in=[qs_tag]).distinct()
 
         return Module.objects.none()
 
@@ -222,17 +222,16 @@ def contact_view(request):
         form = ContactForm()
     return render(request, "contact.html", {"form": form})
 
-class TermListView(ListView):
+class TaskTypeListView(ListView):
     model = Tag
-    template_name = "entries/term_list.html"
+    template_name = "modules/tasktype_list.html"
     context_object_name = "tags"
 
     def get_queryset(self):
         tags = Tag.objects.all().order_by("name")
 
-        # jedem Tag die passenden Entries anhängen
         for tag in tags:
-            tag.modules = Module.objects.filter(terms=tag).only("id", "title")
+            tag.modules = Module.objects.filter(tasktype=tag).only("id", "title", "slug")
 
         return tags
 

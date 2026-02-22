@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Alle Aufgabentypen</h2>
+
+<div class="tag-grid">
+  {% for tag in tags %}
+  <details class="tag-card">
+    <summary class="tag-pill">
+      <span class="tag-name">{{ tag.name }}</span>
+      <span class="tag-count">{{ tag.modules|length }}</span>
+    </summary>
+
+    <div class="tag-panel">
+      {% for module in tag.modules %}
+      <h3 class="tag-module">
+        <a href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a>
+      </h3>
+      {% empty %}
+      <p class="muted">Kommt in keinem Modul vor.</p>
+      {% endfor %}
+    </div>
+  </details>
+  {% empty %}
+  <p>Keine Aufgaben vorhanden.</p>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -21,7 +21,7 @@ class Module(models.Model):
     slug = models.SlugField(max_length=220, unique=True, blank=True, null=True)
     inclass = models.TextField("Unterricht")
     homework = models.TextField("Hausaufgabe", blank=True, null=True)
-    terms = TaggableManager(verbose_name="Begriffe", blank=True)
+    tasktype = TaggableManager(verbose_name="Aufgabentypen", blank=True)
 
     pdf_1 = models.FileField(
         "Skript", upload_to=module_upload_path, validators=[pdf_validator],
@@ -134,11 +134,7 @@ class GlossaryEntry(models.Model):
     slug = models.SlugField(max_length=200, unique=True, blank=True)
     short_definition = models.CharField(max_length=300, blank=True)
     definition = models.TextField()
-    modules = models.ManyToManyField(
-        "modules.Module",
-        related_name="glossary_terms",
-        blank=True
-        )
+    modules = models.ManyToManyField("modules.Module",related_name="glossary_terms", blank=True)
     exam_relevant = models.BooleanField("Prüfungsrelevanz", default=False)
         
     def save(self, *args, **kwargs):
