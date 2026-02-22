@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     
     "taggit",
+    "adminsortable2",
     
     "accounts.apps.AccountsConfig",
     "modules.apps.ModulesConfig",

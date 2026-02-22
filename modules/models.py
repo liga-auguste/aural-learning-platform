@@ -128,6 +128,12 @@ class ModuleCompletion(models.Model):
 
     def __str__(self):
         return f"{self.user} ✓ {self.module}"
+
+class ProgressMatrixProxy(ModuleCompletion):
+    class Meta:
+        proxy = True
+        verbose_name = "Fortschritts-Matrix"
+        verbose_name_plural = "Fortschritts-Matrix"
         
 class GlossaryEntry(models.Model):
     title = models.CharField(max_length=200, unique=True)
@@ -161,3 +167,9 @@ class Aufgabentyp(Tag):
         proxy = True
         verbose_name = "Aufgabentyp"
         verbose_name_plural = "Aufgabentypen"
+        
+class ProgressMatrix:
+    class Meta:
+        verbose_name = "Fortschritts-Matrix"
+        verbose_name_plural = "Fortschritts-Matrix"
+        app_label = "modules"

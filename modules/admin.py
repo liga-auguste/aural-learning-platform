@@ -5,7 +5,7 @@ from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html
 
-from .models import Module, GlossaryEntry, ModuleCompletion
+from .models import Module, GlossaryEntry, ModuleCompletion, ProgressMatrixProxy
 from collections import defaultdict
 from taggit.models import Tag
 from .models import Aufgabentyp
@@ -14,6 +14,8 @@ try:
     admin.site.unregister(Tag)
 except admin.sites.NotRegistered:
     pass
+
+from adminsortable2.admin import SortableAdminMixin
 
 @admin.register(Aufgabentyp)
 class AufgabentypAdmin(admin.ModelAdmin):
@@ -44,7 +46,7 @@ class ModuleCompletionAdmin(admin.ModelAdmin):
 
 # --- Module ---
 @admin.register(Module)
-class ModuleAdmin(admin.ModelAdmin):
+class ModuleAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_display = (
         "order",
         "title",
@@ -73,7 +75,6 @@ class ModuleAdmin(admin.ModelAdmin):
     def audio_count(self, obj):
         return sum(bool(getattr(obj, f"audio_{i}")) for i in range(1, 5))
 
-    list_editable = ("order",)
     list_display_links = ("title",)
     ordering = ("order", "id")
     search_fields = ("title", "inclass", "homework", "tasktype__name")
@@ -83,8 +84,6 @@ class ModuleAdmin(admin.ModelAdmin):
     def tasktype_list(self, obj):
         names = obj.tasktype.names()
         return ", ".join(names) if names else "–"
-
-    change_list_template = "admin/modules/module_change_list.html"
       
     # ---------- Matrix: Custom URLs ----------
     def get_urls(self):
@@ -137,3 +136,18 @@ class ModuleAdmin(admin.ModelAdmin):
             obj.delete()
 
         return redirect(reverse("admin:modules_module_progress_matrix"))
+
+@admin.register(ProgressMatrixProxy)
+class ProgressMatrixProxyAdmin(admin.ModelAdmin):
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def changelist_view(self, request, extra_context=None):
+        return redirect(reverse("admin:modules_module_progress_matrix"))
+

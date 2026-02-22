@@ -5,10 +5,10 @@
   --text-color: #2d3142;
   --lecture-bcg: #ebebeb;
   --btn-hover: #ef8354;
-  --btn: #a9b3c6;
+  --btn: #C2C9D6;
   --lecture-hover: #dadfe7;
   --tags: #c1cbd7;
-  --accent-green: #A7C1A3;
+  --accent-green: #ABB6B9;
   --sidebar-hover: color-mix(in srgb, var(--btn) 30%, transparent);
 
   /* radius scales */
@@ -34,6 +34,17 @@
   --fs-card-title: 1.2rem;
   --fs-body: 1rem;
   --fs-muted: 0.9rem;
+
+  /* Glassy surfaces like dashboard plates */
+  --surface-glass: color-mix(in srgb, var(--lecture-bcg) 72%, transparent);
+  --surface-glass-2: color-mix(in srgb, var(--lecture-bcg) 30%, transparent);;
+
+  /* Subtle borders like tiles/cards */
+  --border-glass: color-mix(in srgb, var(--btn) 35%, transparent);
+
+  /* Shadows like tiles */
+  --shadow-tile: 0 10px 26px rgba(0,0,0,0.08);
+  --shadow-tile-soft: 0 6px 18px rgba(0,0,0,0.06);
 }
 
 .darkmode {
@@ -50,7 +61,14 @@
   --border-subtle: var(--btn);
   --sidebar-hover: rgba(255,255,255,.08);
 
+  --surface-glass: rgba(255,255,255,.06);
+  --surface-glass-2: rgba(255,255,255,.04);
+  --border-glass: rgba(255,255,255,.10);
+
+  --shadow-tile: 0 10px 26px rgba(0,0,0,0.35);
+  --shadow-tile-soft: 0 6px 18px rgba(0,0,0,0.22);
 }
+
 
 * { box-sizing: border-box; }
 
@@ -222,14 +240,6 @@ a:hover {
 /* Darkmode keeps the same token, just different value */
 .darkmode{
   --sidebar-hover: rgba(255,255,255,.08);
-}
-
-/* (optional) statt underline lieber pill-active — wenn du willst */
-/* .module-link.is-active { text-decoration: underline; font-weight: 500; } */
-.module-link.is-active {
-  text-decoration: none;
-  font-weight: 600;
-  background-color: color-mix(in srgb, var(--btn) 70%, transparent);
 }
 
 /* Module Active im Darkmode */
@@ -467,14 +477,21 @@ nav ul.main {
   justify-content: center;
   line-height: 1;
   padding: .4rem;
-  border-radius: var(--r-sm);
-  cursor: pointer;
+  _border-radius: var(--r-sm);
+  _cursor: pointer;
 }
 
-.icon-btn { background: none; border: 0; cursor: pointer; }
+.icon-btn { 
+  background: none; 
+  border: 0; 
+  cursor: pointer; 
+
+}
 
 .icon-btn svg,
-.theme-switch svg { display: block; }
+.theme-switch svg { 
+  display: block;
+}
 
 /* Darkmode switch */
 .theme-switch {
@@ -486,16 +503,26 @@ nav ul.main {
   display: flex;
   justify-content: center;
   align-items: center;
-  _position: fixed;
   top: 20px;
   right: 20px;
   z-index: 5;
 }
 
-.theme-switch svg { fill: var(--text-color); }
-.theme-switch svg:last-child { display: none; }
-.darkmode .theme-switch svg:first-child { display: none; }
-.darkmode .theme-switch svg:last-child { display: block; }
+.theme-switch svg { 
+  fill: var(--text-color); 
+}
+
+.theme-switch svg:last-child { 
+  display: none; 
+}
+
+.darkmode .theme-switch svg:first-child { 
+  display: none; 
+
+}
+.darkmode .theme-switch svg:last-child { 
+  display: block; 
+}
 
 /* Tag filter */
 .tag-filter {
@@ -540,7 +567,12 @@ button,
 a.btn,
 input.btn {
   margin-top: 0;
-  border: none;
+
+  background: color-mix(in srgb, var(--btn) 22%, var(--bcg-col));
+  border: 1px solid color-mix(in srgb, var(--btn) 28%, transparent);
+
+  font-weight: 500;
+
   background-color: var(--btn);
   color: var(--text-color);
   text-decoration: none;
@@ -555,8 +587,9 @@ input.btn {
 button:hover,
 a.btn:hover,
 input.btn:hover {
-  background-color: var(--btn-hover);
-  transform: scale(1.03);
+  background: color-mix(in srgb, var(--btn) 30%, var(--bcg-col));
+  box-shadow: 0 10px 26px rgba(0,0,0,0.08);
+  transform: none;
 }
 
 .btn-align {
@@ -564,9 +597,9 @@ input.btn:hover {
   padding-right: 2rem;
 }
 
-.svg { color: var(--text-color); }
-
-.materials-nav .btn { background-color: var(--accent-green); }
+.svg { 
+  color: var(--text-color); 
+}
 
 .btn.btn-icon-text {
   display: inline-flex;
@@ -576,8 +609,50 @@ input.btn:hover {
   line-height: 1;
   white-space: nowrap;
 }
-.btn.btn-icon-text svg { display: block; flex: 0 0 auto; }
-.btn.btn-icon-text span { line-height: 1; }
+.btn.btn-icon-text svg { 
+  display: block; 
+  flex: 0 0 auto; 
+}
+.btn.btn-icon-text span { 
+  line-height: 1; 
+}
+
+/* ========= btn-primary =========== */
+.btn-primary{
+  background: color-mix(in srgb, var(--accent-green) 50%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-green) 60%, transparent);
+}
+.btn-primary:hover{
+  background: color-mix(in srgb, var(--accent-green) 70%, transparent);
+}
+
+
+/* ========= Danger Button ========== */
+.btn-danger{
+  background: color-mix(in srgb, var(--btn-hover) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--btn-hover) 60%, transparent);
+}
+
+.btn-danger:hover{
+  background: var(--btn-hover);
+  border-color: var(--btn-hover);
+}
+
+/* ===== Danger button (Delete) ===== */
+a.btn.btn-danger,
+button.btn.btn-danger,
+input.btn.btn-danger{
+  background: color-mix(in srgb, var(--btn-hover) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--btn-hover) 55%, transparent);
+}
+
+a.btn.btn-danger:hover,
+button.btn.btn-danger:hover,
+input.btn.btn-danger:hover{
+  background: color-mix(in srgb, var(--btn-hover) 75%, transparent);
+  border-color: color-mix(in srgb, var(--btn-hover) 75%, transparent);
+  box-shadow: var(--shadow-tile-soft);
+}
 
 /* Tags und styling */
 .terms {
@@ -588,13 +663,16 @@ input.btn:hover {
 }
 
 .badge {
-  background: var(--tags);
+  background: color-mix(in srgb, var(--tags) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--btn) 25%, transparent);
   color: var(--text-color);
   padding: 0.2rem 0.6rem;
   border-radius: var(--r-input);
 }
 
-.muted { color: #888; }
+.muted { 
+  color: #888; 
+}
 
 /* Input styling */
 .form-inline {
@@ -739,10 +817,18 @@ body.darkmode dialog button {
   column-gap: 1.25rem;
   row-gap: 0.9rem;
   align-items: start;
+
+  padding: 1.1rem 1.15rem;
+  border-radius: var(--r-card);
+  background: var(--surface-glass-2);
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-tile);
 }
 
 /* Kinder der form-row direkt im Grid platziert */
-.form-row { display: contents; }
+.form-row { 
+  display: contents; 
+}
 
 /* Label links, sauber ausgerichtet */
 .form-row > label {
@@ -763,9 +849,12 @@ body.darkmode dialog button {
 .form-row select {
   width: 100%;
   padding: .6rem .75rem;
-  border: 1px solid rgba(0,0,0,.15);
   border-radius: var(--r-input);
-  background: var(--lecture-bcg);
+  
+  border: 1px solid var(--border-glass);
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-tile-soft);
+
   color: var(--text-color);
   outline: none;
 }
@@ -774,9 +863,12 @@ body.darkmode dialog button {
 .form-row .form-value {
   width: 100%;
   padding: .6rem .75rem;
-  border: 1px solid rgba(0,0,0,.15);
+
+  border: 1px solid var(--border-glass);
+  background: var(--surface-glass);
+  box-shadow: var(--shadow-tile-soft);
+  
   border-radius: var(--r-input);
-  background: var(--lecture-bcg);
   color: var(--text-color);
 }
 
@@ -798,9 +890,11 @@ body.darkmode dialog button {
 
 .form-row input:focus,
 .form-row textarea:focus,
-.form-row select:focus {
-  border-color: var(--btn-hover);
-  box-shadow: 0 0 0 3px rgba(239,131,84,.15);
+.form-row select:focus{
+  border-color: color-mix(in srgb, var(--btn) 55%, var(--btn-hover));
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--btn) 30%, transparent),
+    var(--shadow-tile-soft);
 }
 
 /* Fehler */
@@ -901,6 +995,37 @@ input, textarea, select, button {
 .tagify, .tagify__input {
   font-family: inherit;
   font-size: 1rem;
+}
+
+/* ===== Taggit / Select2 chips (ruhig, nicht grün) ===== */
+.select2-container--default .select2-selection--multiple{
+  background: var(--surface-glass);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--r-input);
+  min-height: 44px;
+  padding: .25rem .35rem;
+}
+
+/* die einzelnen "chips" */
+.select2-container--default .select2-selection--multiple .select2-selection__choice{
+  background: color-mix(in srgb, var(--btn) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--btn) 35%, transparent);
+  color: var(--text-color);
+  border-radius: var(--r-pill);
+  padding: .2rem .55rem;
+  margin: .25rem .25rem 0 0;
+  box-shadow: none;
+}
+
+/* das kleine X zum entfernen */
+.select2-container--default .select2-selection__choice__remove{
+  color: inherit;
+  opacity: .65;
+  margin-right: .35rem;
+}
+.select2-container--default .select2-selection__choice__remove:hover{
+  opacity: 1;
+  background: none;
 }
 
 /* Footer */
@@ -1047,12 +1172,14 @@ input[type="file"]::file-selector-button:hover {
 
 .pdf-row { display: flex; }
 
-/* Begriffe */
+/* Lernbegriffe */
 .tag-grid{
   display: grid;
   gap: .75rem;
   margin-top: .75rem;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
+  background: transparent; 
 }
 
 .tag-card{
@@ -1060,6 +1187,7 @@ input[type="file"]::file-selector-button:hover {
   border-radius: var(--r-card);
   background: var(--lecture-bcg);
   overflow: hidden;
+
 }
 
 /* Summary = Pill/Kachel-Header */
@@ -1076,14 +1204,6 @@ input[type="file"]::file-selector-button:hover {
   font-weight: 600;
   user-select: none;
 }
-
-.form-value.form-value--plain{
-  border: none;
-  background: transparent;
-  padding: 0;
-}
-
-
 /* Pfeil/Marker in Webkit ausblenden */
 .tag-pill::-webkit-details-marker { display: none; }
 
@@ -1198,11 +1318,14 @@ input[type="file"]::file-selector-button:hover {
   line-height: 1.2;
 }
 
-.form-value.audio-block {
-  background: transparent;
-  border: none;
-  padding: 0;
+.form-value.audio-block{
+  background: var(--surface-glass);     /* oder transparent, je nach Geschmack */
+  border: 1px solid var(--border-glass);
+  border-radius: var(--r-input);
+  padding: .6rem .75rem;
+  box-shadow: var(--shadow-tile-soft);
 }
+.audio-player{ width: 100%; }
 
 
 /* Misc */
@@ -1624,4 +1747,16 @@ nav h1 a:focus {
 .title-short a:hover .role-icon,
 .title-long a:hover .role-icon {
   opacity: 0.9;
+}
+
+.materials-nav{
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+  padding: 0;            /* <- wichtig */
+  margin: 0;             /* <- wichtig */
 }
