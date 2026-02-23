@@ -43,7 +43,7 @@ INSTALLED_APPS = [
     
     "taggit",
     "adminsortable2",
-    
+
     "accounts.apps.AccountsConfig",
     "modules.apps.ModulesConfig",
     "entries.apps.EntriesConfig",
