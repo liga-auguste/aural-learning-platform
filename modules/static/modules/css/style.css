@@ -105,32 +105,33 @@ a:hover {
 
   background-color: var(--lecture-bcg);
   box-shadow: -10px 0 10px rgba(0, 0, 0, 0.1);
-
+  
   display: flex;
   flex-direction: column;
-  align-items: stretch;
+  _align-items: stretch;
   justify-content: flex-start;
   padding: 1.5rem 1rem;
   gap: 0.75rem;
-
+  
   transform: translateX(100%); /* rechts versteckt */
   transition: transform 0.25s ease;
-
+  
   overflow-y: auto;
   min-height: 0;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch; /* optional, gut für iOS */
 }
 
-.sidebar > li:first-child {
-  display: flex;
+.sidebar-top {
+  display: inline-flex;
   justify-content: flex-end;
+  align-self: flex-end;
   position: sticky;
   top: 0;
-  background: var(--lecture-bcg);
-  padding-top: .25rem;
+  background: transparent;
   padding-bottom: .5rem;
-  z-index: 1;
+  z-index: 2;
+  
 }
 
 .sidebar a{
@@ -180,9 +181,9 @@ a:hover {
   color: var(--text-color);
 }
 
-.sidebar.open { transform: translateX(0); }
-
-.sidebar li { width: 100%; }
+.sidebar.open { 
+  transform: translateX(0); 
+}
 
 .sidebar a { 
   width: 100%;
@@ -247,25 +248,9 @@ a:hover {
   background-color: rgba(255,255,255,.12);
 }
 
-.sidebar-modules-scroll {
-  padding: 0.25rem 0;
-
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-}
-
 .module-link.is-active {
   text-decoration: underline;
   font-weight: 500;
-}
-
-.sidebar-modules-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overscroll-behavior: contain;
 }
 
 body.nav-open { overflow: hidden; }

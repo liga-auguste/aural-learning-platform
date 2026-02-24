@@ -21,3 +21,5 @@ venv/
 
 # WICHTIG: Migrations NICHT ignorieren!
 # */migrations/  <-- NICHT aufnehmen
+*.sql
+*dump*.json
