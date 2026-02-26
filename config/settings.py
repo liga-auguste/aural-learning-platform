@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     
+    "storages",
     "taggit",
     "adminsortable2",
 
@@ -170,3 +171,20 @@ if IS_PRODUCTION:
     SECURE_HSTS_PRELOAD = False
     
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
+
+R2_ACCOUNT_ID = os.environ.get("R2_ACCOUNT_ID", "")
+R2_ACCESS_KEY_ID = os.environ.get("R2_ACCESS_KEY_ID", "")
+R2_SECRET_ACCESS_KEY = os.environ.get("R2_SECRET_ACCESS_KEY", "")
+R2_ENDPOINT_URL = os.environ.get("R2_ENDPOINT_URL", "")
+
+R2_BUCKET_STUDENT = os.environ.get("R2_BUCKET_STUDENT", "")
+R2_BUCKET_TEACHER = os.environ.get("R2_BUCKET_TEACHER", "")
+R2_BUCKET_SUBMISSIONS = os.environ.get("R2_BUCKET_SUBMISSIONS", "")
+
+# Shared S3-compatible settings for Cloudflare R2
+R2_S3_CONFIG = {
+    "access_key": R2_ACCESS_KEY_ID,
+    "secret_key": R2_SECRET_ACCESS_KEY,
+    "endpoint_url": R2_ENDPOINT_URL,
+    "region_name": "auto",
+}
