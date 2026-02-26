@@ -6,6 +6,7 @@ from django.utils.text import slugify
 from django.conf import settings
 from django.utils import timezone
 from taggit.models import Tag
+from .storages import student_storage, teacher_storage
 
 def module_upload_path(instance, filename):
     return f"modules/{instance.pk}/{filename}"
@@ -24,17 +25,37 @@ class Module(models.Model):
     tasktype = TaggableManager(verbose_name="Aufgabentypen", blank=True)
 
     pdf_1 = models.FileField(
-        "Skript", upload_to=module_upload_path, validators=[pdf_validator],
-                             blank=True, null=True)
+        "Skript", 
+        upload_to=module_upload_path, 
+        validators=[pdf_validator],
+        blank=True,
+        null=True, 
+        storage=student_storage
+        )
     pdf_2 = models.FileField(
-        "Lösung zum Skript", upload_to=module_upload_path, validators=[pdf_validator],
-                             blank=True, null=True)
+        "Lösung zum Skript",
+        upload_to=module_upload_path, 
+        validators=[pdf_validator],
+        blank=True, 
+        null=True, 
+        storage=teacher_storage
+        )
     pdf_3 = models.FileField(
-        "Hausaufgabe", upload_to=module_upload_path, validators=[pdf_validator],
-                             blank=True, null=True)
+        "Hausaufgabe", 
+        upload_to=module_upload_path, 
+        validators=[pdf_validator],
+        blank=True, 
+        null=True,
+        storage=student_storage
+        )
     pdf_4 = models.FileField(
-        "Lösung zur Hausaufgabe", upload_to=module_upload_path, validators=[pdf_validator],
-                             blank=True, null=True)
+        "Lösung zur Hausaufgabe", 
+        upload_to=module_upload_path, 
+        validators=[pdf_validator],
+        blank=True, 
+        null=True, 
+        storage=teacher_storage
+        )
 
     order = models.PositiveIntegerField(db_index=True, blank=True, null=True)
     
@@ -44,6 +65,7 @@ class Module(models.Model):
         validators=[audio_validator],
         blank=True,
         null=True,
+        storage=student_storage
     )
     audio_2 = models.FileField(
         "Audio Hausaufgabe 2",
@@ -51,6 +73,7 @@ class Module(models.Model):
         validators=[audio_validator],
         blank=True,
         null=True,
+        storage=student_storage
     )
     audio_3 = models.FileField(
         "Audio Hausaufgabe 3",
@@ -58,6 +81,7 @@ class Module(models.Model):
         validators=[audio_validator],
         blank=True,
         null=True,
+        storage=student_storage
     )
     audio_4 = models.FileField(
         "Audio Hausaufgabe 4",
@@ -65,6 +89,7 @@ class Module(models.Model):
         validators=[audio_validator],
         blank=True,
         null=True,
+        storage=student_storage
     )
 
     audio_1_title = models.CharField("Titel Audio 1", max_length=120, blank=True)
