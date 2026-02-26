@@ -22,42 +22,20 @@ def _require(setting_name: str) -> str:
 
 
 class R2BaseStorage(S3Boto3Storage):
-    """
-    Base storage for Cloudflare R2 (S3-compatible) using django-storages.
-
-    We override connection params so we don't have to rely on AWS_* settings.
-    """
-
-    # Good defaults for S3-compatible storages
     default_acl = None
     file_overwrite = False
 
-    # Make URLs predictable; you can adjust if you later add a custom domain
     custom_domain = None
-    querystring_auth = True  # keep True for private objects (teacher/submissions)
+    querystring_auth = True
 
     def __init__(self, *args, **kwargs):
-        # Credentials + endpoint from settings (ENV-backed)
-        self._r2_access_key = _require("R2_ACCESS_KEY_ID")
-        self._r2_secret_key = _require("R2_SECRET_ACCESS_KEY")
-        self._r2_endpoint_url = _require("R2_ENDPOINT_URL")
-        self._r2_region_name = "auto"
-        super().__init__(*args, **kwargs)
+        # django-storages expects these attributes for credentials/endpoint
+        self.access_key = _require("R2_ACCESS_KEY_ID")
+        self.secret_key = _require("R2_SECRET_ACCESS_KEY")
+        self.endpoint_url = _require("R2_ENDPOINT_URL")
+        self.region_name = "auto"
 
-    def get_connection_params(self):
-        """
-        Inject Cloudflare R2 endpoint + credentials into the boto3 connection.
-        """
-        params = super().get_connection_params()
-        params.update(
-            {
-                "aws_access_key_id": self._r2_access_key,
-                "aws_secret_access_key": self._r2_secret_key,
-                "region_name": self._r2_region_name,
-                "endpoint_url": self._r2_endpoint_url,
-            }
-        )
-        return params
+        super().__init__(*args, **kwargs)
 
 
 class StudentMaterialsR2Storage(R2BaseStorage):
