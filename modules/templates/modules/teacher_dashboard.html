@@ -44,6 +44,12 @@
       <div class="tile-title">Glossar</div>
       <div class="tile-sub">Begriffe nachschlagen</div>
     </a>
+
+    <a class="tile" href="{% url 'modules:teacher_submissions_dashboard' %}">
+      <div class="tile-title">Hausaufgaben verwalten</div>
+      <div class="tile-sub">Freigeschaltet: {{ enabled_units }} / {{ total_units }}</div>
+    </a>
+
   </div>
 
   <section class="dashboard-notes">

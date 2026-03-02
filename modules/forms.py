@@ -23,7 +23,7 @@ class ModuleForm(forms.ModelForm):
         required=False,
         label="Aufgabentypen",
         widget=TagWidget(attrs={
-            "placeholder": "z.B. Intervalle spielen, Vom Blatt"
+            "placeholder": "z.B. Intervalle spielen, Einstimmiger Diktat"
         }),
         help_text="Mehrwort-Tags sind ok. Bitte mit Komma trennen."
     )

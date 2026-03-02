@@ -49,5 +49,12 @@ urlpatterns = [
     path("teacher/students/", views.TeacherStudentListView.as_view(), name="teacher_student_list"),
     path("teacher/students/<int:pk>/", views.TeacherStudentDetailView.as_view(), name="teacher_student_detail"),
     path("teacher/students/<int:pk>/modules/<slug:slug>/toggle/", views.TeacherToggleCompletionView.as_view(), name="teacher_toggle_completion"),
+    
+    path("units/<int:unit_id>/upload/", views.upload_submission_file, name="upload_submission_file"),
+    path("submission-files/<int:file_id>/delete/", views.delete_submission_file, name="delete_submission_file"),
+    path("teacher/units/<int:pk>/toggle-submissions/", views.TeacherToggleUnitSubmissionsView.as_view(),
+    name="teacher_toggle_unit_submissions",),
+    path( "teacher/submissions/", views.TeacherSubmissionsDashboardView.as_view(), name="teacher_submissions_dashboard",
+),
 ]
 

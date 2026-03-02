@@ -5,7 +5,7 @@ from django.template.response import TemplateResponse
 from django.contrib.auth import get_user_model
 from django.utils.html import format_html
 
-from .models import Module, GlossaryEntry, ModuleCompletion, ProgressMatrixProxy
+from .models import Module, GlossaryEntry, ModuleCompletion, ProgressMatrixProxy, Unit, Submission, SubmissionFile
 from collections import defaultdict
 from taggit.models import Tag
 from .models import Aufgabentyp
@@ -151,3 +151,22 @@ class ProgressMatrixProxyAdmin(admin.ModelAdmin):
     def changelist_view(self, request, extra_context=None):
         return redirect(reverse("admin:modules_module_progress_matrix"))
 
+@admin.register(Unit)
+class UnitAdmin(admin.ModelAdmin):
+    list_display = ("number", "date", "kind", "module", "title")
+    list_filter = ("kind", "module")
+    search_fields = ("title", "notes", "module__title")
+    ordering = ("date",)
+    
+class SubmissionFileInline(admin.TabularInline):
+    model = SubmissionFile
+    extra = 0
+    readonly_fields = ("uploaded_at",)
+
+
+@admin.register(Submission)
+class SubmissionAdmin(admin.ModelAdmin):
+    list_display = ("unit", "student", "status", "submitted_at", "updated_at")
+    list_filter = ("status", "unit")
+    search_fields = ("student__username", "student__first_name", "student__last_name")
+    inlines = [SubmissionFileInline]

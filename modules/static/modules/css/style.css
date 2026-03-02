@@ -1750,3 +1750,57 @@ nav h1 a:focus {
   padding: 0;            /* <- wichtig */
   margin: 0;             /* <- wichtig */
 }
+
+/* ===============================
+   Teacher Submission Status Block
+   =============================== */
+
+.teacher-submission-status {
+  margin-top: 1.25rem;
+  padding: 1rem 1.25rem;
+
+  border-radius: 16px;
+  background-color: var(--lecture-bcg);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.teacher-submission-status h3 {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.teacher-submission-status p {
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.teacher-submission-status .status-line {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.teacher-submission-status .status-ok {
+  color: #2e7d32; /* sanftes Grün */
+  font-weight: 500;
+}
+
+.teacher-submission-status .status-off {
+  color: #c62828; /* sanftes Rot */
+  font-weight: 500;
+}
+
+.teacher-submission-status .status-neutral {
+  opacity: 0.6;
+}
+
+/* Darkmode feinjustieren */
+.darkmode .teacher-submission-status {
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}

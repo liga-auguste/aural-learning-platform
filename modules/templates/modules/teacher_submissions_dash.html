@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h1>Abgaben verwalten</h1>
+
+<p>Freigeschaltet: {{ enabled_units }} / {{ total_units }}</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Einheit</th>
+      <th>Modul</th>
+      <th>Status</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for u in units %}
+      <tr>
+        <td>
+          {% if u.number %}{{ u.number }}{% else %}—{% endif %}
+          {% if u.date %} ({{ u.date }}){% endif %}
+        </td>
+        <td>
+          {% if u.module %}
+            {{ u.module.title }}
+          {% else %}
+            —
+          {% endif %}
+        </td>
+        <td>
+          {% if u.submissions_enabled %}
+            ✅ freigeschaltet
+          {% else %}
+            ⛔ gesperrt
+          {% endif %}
+        </td>
+        <td>
+          <form method="post"
+                action="{% url 'modules:teacher_toggle_unit_submissions' u.id %}">
+            {% csrf_token %}
+            <button type="submit">
+              {% if u.submissions_enabled %}
+                Sperren
+              {% else %}
+                Freischalten
+              {% endif %}
+            </button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

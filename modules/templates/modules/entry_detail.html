@@ -200,6 +200,85 @@
 
 </div>
 
+<h2>Abgabe</h2>
+
+{# ===== LEHRKRAFT / STAFF ===== #}
+{% if request.user.is_authenticated and request.user.is_teacher %}
+
+  <div class="teacher-submission-status">
+
+    <div class="status-line">
+      <strong>Hausaufgabe:</strong>
+      {% if object.pdf_3 %}
+        <span class="status-ok">✓ PDF vorhanden</span>
+      {% else %}
+        <span class="status-off">✕ kein PDF</span>
+      {% endif %}
+    </div>
+
+    <div class="status-line">
+      <strong>Unterrichtseinheit:</strong>
+      {% if unit %}
+        <span class="status-ok">✓ verknüpft: {{ unit }}</span>
+      {% else %}
+        <span class="status-off">✕ keine Unit</span>
+      {% endif %}
+    </div>
+
+    <div class="status-line">
+      <strong>Freischaltung:</strong>
+      {% if unit and unit.submissions_enabled %}
+        <span class="status-ok">✓ aktiviert</span>
+      {% elif unit %}
+        <span class="status-off">✕ deaktiviert</span>
+      {% else %}
+        <span class="status-neutral">—</span>
+      {% endif %}
+    </div>
+  </div>
+
+{% elif request.user.is_authenticated and request.user.is_student %}
+
+  {% if not unit %}
+    <p class="muted">Für dieses Modul ist noch keine Unterrichtseinheit geplant.</p>
+
+  {% elif not unit.submissions_enabled %}
+    <p class="muted"><strong>Abgabe noch nicht freigeschaltet.</strong></p>
+
+  {% elif can_edit %}
+    <form action="{% url 'modules:upload_submission_file' unit.id %}" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" name="files" accept="application/pdf" multiple>
+      <button type="submit">PDF(s) hochladen</button>
+    </form>
+
+  {% else %}
+    <p><strong>Uploads sind gesperrt.</strong></p>
+    {% if lock_at %}
+      <p class="muted">Änderungen waren möglich bis: {{ lock_at }}</p>
+    {% endif %}
+  {% endif %}
+
+  {% if submission and submission.files.all %}
+    <h3>Deine hochgeladenen Dateien</h3>
+    <ul>
+      {% for f in submission.files.all %}
+        <li>
+          <a href="{{ f.file.url }}" target="_blank">PDF öffnen</a>
+          {% if can_edit %}
+            <form action="{% url 'modules:delete_submission_file' f.id %}" method="post" style="display:inline">
+              {% csrf_token %}
+              <button type="submit">entfernen</button>
+            </form>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+{% endif %}
+
+
 <div class="form-actions">
 
   {# ================= TEACHER ONLY ================= #}

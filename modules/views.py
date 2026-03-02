@@ -1,32 +1,44 @@
-from entries.models import Entry
-from django.db.models import Max
-from django.db.models import Q, Count
-from django.contrib.auth.mixins import LoginRequiredMixin
+# =============================
+# Django Core
+# =============================
+from django.conf import settings
+from django.core.mail import send_mail
 from django.contrib import messages
+from django.contrib.auth import get_user_model
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.urls import reverse_lazy
+from django.db.models import Q, Count
+from django.http import HttpResponseForbidden
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.utils import timezone
+from django.utils.text import slugify
+from django.views import View
+from django.views.decorators.http import require_POST
 from django.views.generic import (
     TemplateView, ListView, DetailView,
     CreateView, UpdateView, DeleteView,
 )
-from django.views import View
 
-from .models import Module, GlossaryEntry, ModuleCompletion
-from .forms import ModuleForm
-
-from django.utils.text import slugify
+# =============================
+# Third Party
+# =============================
 from taggit.models import Tag
 
-from django.conf import settings
-from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
-from .forms import ContactForm
-
+# =============================
+# Local Apps
+# =============================
 from accounts.mixins import TeacherRequiredMixin
-from django.contrib.auth import get_user_model
-
-from django.shortcuts import redirect
+from .forms import ModuleForm, ContactForm
+from .models import (
+    Module,
+    GlossaryEntry,
+    ModuleCompletion,
+    Unit,
+    Submission,
+    SubmissionFile,
+)
 
 def entry_pk_redirect(request, pk):
     entry = get_object_or_404(Module, pk=pk)
@@ -107,7 +119,7 @@ class EntryDetailView(LockedView, DetailView):
     slug_url_kwarg = "slug"
     template_name = "modules/entry_detail.html"
     context_object_name = "entry"
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         obj = self.object
@@ -115,35 +127,44 @@ class EntryDetailView(LockedView, DetailView):
         if obj.order is None:
             context["prev_entry"] = None
             context["next_entry"] = None
-            return context
-
-        context["prev_entry"] = (
-            Module.objects
-            .filter(
-                Q(order__lt=obj.order) |
-                Q(order=obj.order, id__lt=obj.id)
+        else:
+            context["prev_entry"] = (
+                Module.objects
+                .filter(Q(order__lt=obj.order) | Q(order=obj.order, id__lt=obj.id))
+                .order_by("-order", "-id")
+                .first()
             )
-            .order_by("-order", "-id")
-            .first()
-        )
-
-        context["next_entry"] = (
-            Module.objects
-            .filter(
-                Q(order__gt=obj.order) |
-                Q(order=obj.order, id__gt=obj.id)
+            context["next_entry"] = (
+                Module.objects
+                .filter(Q(order__gt=obj.order) | Q(order=obj.order, id__gt=obj.id))
+                .order_by("order", "id")
+                .first()
             )
-            .order_by("order", "id")
-            .first()
-        )
 
         context["is_completed"] = ModuleCompletion.objects.filter(
             user=self.request.user,
             module=obj,
         ).exists()
-        
-        return context
 
+        unit = getattr(obj, "unit", None)
+        context["unit"] = unit
+
+        submission = None
+        can_edit = False
+        lock_at = None
+
+        if unit and self.request.user.is_authenticated and getattr(self.request.user, "is_student", False):
+            submission, _ = Submission.objects.get_or_create(unit=unit, student=self.request.user)
+            can_edit = submission.is_editable_by_student()
+            lock_at = submission.get_lock_at()
+
+        context["submission"] = submission
+        context["can_edit"] = can_edit
+        context["lock_at"] = lock_at
+        context["now"] = timezone.now()
+
+        return context
+    
 class EntryToggleCompleteView(LockedView, View):
     def post(self, request, slug):
         module = get_object_or_404(Module, slug=slug)
@@ -344,6 +365,12 @@ class TeacherDashboardView(TeacherRequiredMixin, TemplateView):
         context["module_count"] = module_count
         context["completion_count"] = completion_count
         
+        context["units"] = (
+            Unit.objects
+            .select_related("module")
+            .order_by("number", "date", "id")
+        )
+        
         return context
 
 class RoleBasedHomeRedirectView(View):
@@ -355,3 +382,98 @@ class RoleBasedHomeRedirectView(View):
             return redirect("modules:teacher_dashboard")
 
         return redirect("modules:entry_list")
+
+@login_required
+@require_POST
+def upload_submission_file(request, unit_id):
+    unit = get_object_or_404(Unit, pk=unit_id)
+
+    # 1) Nur Schüler
+    if not getattr(request.user, "is_student", False):
+        return HttpResponseForbidden("Nur Schüler dürfen Dateien hochladen.")
+
+    submission, _ = Submission.objects.get_or_create(
+        unit=unit,
+        student=request.user,
+    )
+
+    # 2) Nur eigene Submission
+    if submission.student_id != request.user.id:
+        return HttpResponseForbidden("Keine Berechtigung.")
+
+    # 3) Lock-Regel
+    if not submission.is_editable_by_student():
+        return HttpResponseForbidden("Uploads sind gesperrt (36h vor nächstem Unterricht).")
+
+    files = request.FILES.getlist("files")
+    if not files:
+        # zurück zum Modul
+        if unit.module:
+            return redirect("modules:entry_detail", slug=unit.module.slug)
+        return redirect("modules:entry_list")
+
+    for f in files:
+        SubmissionFile.objects.create(submission=submission, file=f)
+
+    if unit.module:
+        return redirect("modules:entry_detail", slug=unit.module.slug)
+    return redirect("modules:entry_list")
+
+
+@login_required
+@require_POST
+def delete_submission_file(request, file_id):
+    sf = get_object_or_404(SubmissionFile, pk=file_id)
+    submission = sf.submission
+
+    # 1) Nur Schüler
+    if not getattr(request.user, "is_student", False):
+        return HttpResponseForbidden("Nur Schüler dürfen Dateien löschen.")
+
+    # 2) Nur eigene Submission
+    if submission.student_id != request.user.id:
+        return HttpResponseForbidden("Keine Berechtigung.")
+
+    # 3) Lock-Regel
+    if not submission.is_editable_by_student():
+        return HttpResponseForbidden("Löschen ist gesperrt (36h vor nächstem Unterricht).")
+
+    slug = submission.unit.module.slug if submission.unit.module else None
+    sf.delete()
+
+    if slug:
+        return redirect("modules:entry_detail", slug=slug)
+    return redirect("modules:entry_list")
+
+class TeacherToggleUnitSubmissionsView(TeacherRequiredMixin, View):
+    def post(self, request, pk):
+        unit = get_object_or_404(Unit, pk=pk)
+
+        unit.submissions_enabled = not unit.submissions_enabled
+        unit.save(update_fields=["submissions_enabled"])
+
+        next_url = request.POST.get("next")
+        if next_url:
+            return redirect(next_url)
+
+        return redirect("modules:teacher_dashboard")
+    
+class TeacherSubmissionsDashboardView(TeacherRequiredMixin, TemplateView):
+    template_name = "modules/teacher_submissions_dash.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        units = (
+            Unit.objects
+            .select_related("module")
+            .prefetch_related("submissions")
+            .order_by("number", "date", "id")
+        )
+
+        context["units"] = units
+
+        context["total_units"] = units.count()
+        context["enabled_units"] = units.filter(submissions_enabled=True).count()
+
+        return context
