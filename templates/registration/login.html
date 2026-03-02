@@ -16,13 +16,11 @@
     {% csrf_token %}
 
     <div class="form-row">
-      <label for="{{ form.username.id_for_label }}">Benutzername</label>
       {{ form.username }}
       {% for error in form.username.errors %}<div class="error">{{ error }}</div>{% endfor %}
     </div>
 
     <div class="form-row">
-      <label for="{{ form.password.id_for_label }}">Passwort</label>
       {{ form.password }}
       {% for error in form.password.errors %}<div class="error">{{ error }}</div>{% endfor %}
     </div>
@@ -35,7 +33,7 @@
       <input type="hidden" name="next" value="{{ next }}">
     {% endif %}
 
-    <button class="btn" type="submit">Login</button>
+    <button class="btn btn-primary" type="submit">Anmelden</button>
 
     <p class="muted">
       Passwort vergessen?

@@ -143,3 +143,4 @@ class ContactForm(forms.Form):
         if self.cleaned_data.get("hp_field"):
             raise forms.ValidationError("Spam erkannt.")
         return ""
+    

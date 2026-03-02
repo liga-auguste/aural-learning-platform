@@ -120,6 +120,11 @@ a:hover {
   min-height: 0;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch; /* optional, gut für iOS */
+
+  height: 100vh;     /* Fallback */
+  max-height: 100dvh;    /* wichtig für Mobile */
+
+  padding-bottom: calc(2.5rem + env(safe-area-inset-bottom));
 }
 
 .sidebar-top {

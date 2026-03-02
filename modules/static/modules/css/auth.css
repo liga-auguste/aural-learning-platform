@@ -3,7 +3,7 @@
   --text-color: #2d3142;
   --lecture-bcg: #ebebeb;
   --btn-hover: #ef8354;
-  --btn: #a9b3c6;
+  --btn: #bfc7d5;
   --lecture-hover: #dadfe7;
   --tags: #c1cbd7;
 }
@@ -13,7 +13,7 @@
   --text-color: rgb(193, 194, 198);
   --lecture-bcg: #3c3c3f;
   --btn-hover: #be4f1f;
-  --btn: #34435b;
+  --btn: #2c3749;
   --lecture-hover: #555559;
   --tags: #505053;
 }
@@ -28,23 +28,30 @@
   margin: 3rem auto;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: center;        /* Wrapper bleibt zentriert auf der Seite */
   justify-content: center;
   padding: 2rem;
 }
 
-.auth-wrapper .form-row {
-  display: grid;
-  gap: 0.4rem;
-  margin-bottom: 1rem;
-}
-
 /* Formular */
 .auth-wrapper form {
+  width: 100%;
   background: rgba(255, 255, 255, 0.9);
   padding: 2rem;
   border-radius: 1rem;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+
+  /* sorgt für konsistente Ausrichtung aller Kinder */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* Form Rows */
+.auth-wrapper .form-row {
+  width: 100%;
+  display: block;             /* kein Grid nötig (du hast keine Labels mehr) */
+  margin-bottom: 1rem;
 }
 
 /* Inputs */
@@ -56,10 +63,10 @@
   padding: 0.6rem 0.7rem;
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 0.9rem;
-  background: var(--lecture-bcg, #eee);
+  background: rgba(255,255,255,0.9);
   color: inherit;
   box-sizing: border-box;
-  letter-spacing: normal; /* sorgt bei Passwort für gleiches Rendering */
+  letter-spacing: normal;
 }
 
 /* Fokuszustand */
@@ -86,24 +93,80 @@
   border: 1px solid #f99;
   padding: 0.5rem 0.7rem;
   border-radius: 0.4rem;
+  margin-top: 0.5rem;
 }
 
 .auth-wrapper .muted {
   color: #666;
   font-size: 0.95rem;
+  margin: 1rem 0 0;
+  text-align: left;           /* Linkzeile sitzt sauber an derselben Kante */
 }
 
-.auth-wrapper .form-remember {
+/* Remember row */
+.auth-wrapper .form-row.form-remember {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: flex-start;
+  gap: 0.6rem;
+  margin: 0.25rem 0 1.25rem;  /* etwas Abstand zu Inputs und Button */
+}
+
+.auth-wrapper .form-row.form-remember label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-weight: 600;
 }
 
 /* Buttons and Links */
 .auth-wrapper .btn {
-  padding: 0.6rem 1rem;
-  border-radius: 0.5rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border-radius: 0.95rem;
+
+  color: var(--text-color);
+  background: #A9B3C6;
+  
+
+  border: 1px solid rgba(0, 0, 0, 0.10);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.10); /* leichter als vorher */
+
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-align: center; /* <- wichtig, sonst wirkt er "komisch" */
+  cursor: pointer;
+
+  transition: background-color .2s ease, box-shadow .2s ease, transform .06s ease, color .2s ease, border-color .2s ease;
 }
+
+.auth-wrapper .btn:hover {
+  background: var(--btn-hover);
+  color: white;
+  border-color: rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+.auth-wrapper .btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+}
+
+.auth-wrapper .btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(239, 131, 84, 0.18), 0 8px 18px rgba(0, 0, 0, 0.14);
+}
+
+/* Darkmode Button */
+.darkmode .auth-wrapper .btn {
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
+}
+
+.darkmode .auth-wrapper .btn:hover {
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.60);
+}
+
 
 a.auth {
   text-decoration: none;
@@ -115,39 +178,36 @@ a.auth:hover {
 }
 
 body.no-sidebar .menu-btn {
-  pointer-events: none;   /* verhindert Klicks */
-  opacity: 0.4;           /* optional: ausgegraut, damit man sieht, dass sie inaktiv ist */
-  cursor: default;        /* kein Hand-Cursor */
+  pointer-events: none;
+  opacity: 0.4;
+  cursor: default;
 }
 
 /* ===============================
    Login – Darkmode Overrides
    =============================== */
 .darkmode .auth-wrapper form {
-  background: rgba(28, 28, 28, 0.92);            /* dunkle, leicht transparente Karte */
-  border: 1px solid rgba(255, 255, 255, 0.08);    /* zarte Kontur für Kontrast */
+  background: rgba(28, 28, 28, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.45);
 }
 
-/* Inputs im Darkmode: etwas hellere Ränder + passende Fläche */
 .darkmode .auth-wrapper input[type="text"],
 .darkmode .auth-wrapper input[type="password"],
 .darkmode .auth-wrapper input[type="email"] {
   border-color: rgba(255, 255, 255, 0.18);
-  background: var(--lecture-bcg);                 /* kommt aus .darkmode */
+  background: var(--lecture-bcg);
   color: var(--text-color);
 }
 
-/* Fokus-Ring im Darkmode (benutzt deine Akzentfarbe) */
 .darkmode .auth-wrapper input[type="text"]:focus,
 .darkmode .auth-wrapper input[type="password"]:focus,
 .darkmode .auth-wrapper input[type="email"]:focus {
   border-color: var(--btn-hover);
-  box-shadow: 0 0 0 3px rgba(190, 79, 31, 0.25);  /* var(--btn-hover) ≈ #be4f1f */
+  box-shadow: 0 0 0 3px rgba(190, 79, 31, 0.25);
   outline: none;
 }
 
-/* Autofill im Darkmode angleichen */
 .darkmode .auth-wrapper input:-webkit-autofill,
 .darkmode .auth-wrapper input:-webkit-autofill:hover,
 .darkmode .auth-wrapper input:-webkit-autofill:focus {
@@ -156,10 +216,11 @@ body.no-sidebar .menu-btn {
   -webkit-text-fill-color: var(--text-color);
 }
 
-/* Placeholder-Farbe anpassen (optional, bessere Lesbarkeit) */
+/* Placeholder-Farbe */
 .auth-wrapper input::placeholder {
   color: #8a8f98;
 }
+
 .darkmode .auth-wrapper input::placeholder {
   color: #a2a7b0;
 }
@@ -171,19 +232,31 @@ body.no-sidebar .menu-btn {
   color: #f2dddd;
 }
 
-/* Muted-Text im Darkmode etwas heller */
+/* Muted-Text im Darkmode */
 .darkmode .auth-wrapper .muted {
   color: #aeb3bb;
 }
 
-/* Checkbox-Akzent passend zur Akzentfarbe (Light & Dark) */
+/* Checkbox-Akzent passend zur Akzentfarbe */
 .auth-wrapper input[type="checkbox"] {
   accent-color: var(--btn-hover);
+  width: 18px;
+  height: 18px;
 }
 
-/* Optional: weiche Übergänge beim Theme-Switch */
+/* weiche Übergänge */
 .auth-wrapper form,
 .auth-wrapper input,
 .auth-wrapper .error {
   transition: background-color .25s ease, border-color .25s ease, box-shadow .25s ease, color .25s ease;
 }
+
+/* Placeholder-Opacity für auth-input (falls du die Klasse nutzt) */
+.auth-wrapper .auth-input::placeholder {
+  opacity: 0.6;
+}
+
+.darkmode .auth-wrapper .auth-input::placeholder {
+  opacity: 0.7;
+}
+

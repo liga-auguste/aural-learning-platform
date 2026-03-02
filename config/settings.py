@@ -20,7 +20,7 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 IS_PRODUCTION = os.getenv("DJANGO_ENV") == "production"
 
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.178.94"]
 
 render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 if render_host:
