@@ -1,56 +1,91 @@
 {% extends "base.html" %}
 {% block content %}
 
-<h1>Abgaben verwalten</h1>
+<section class="teacher-dashboard">
+  <header class="dashboard-header">
+    <h2>Hausaufgaben verwalten</h2>
 
-<p>Freigeschaltet: {{ enabled_units }} / {{ total_units }}</p>
+    <p>
+      Freigeschaltet: {{ enabled_units }} / {{ total_units }}
+      {% if active_module %}
+        · Im Moment aktiv: Modul {{ active_module.order }}
+      {% endif %}
+    </p>
+  </header>
 
-<table>
-  <thead>
-    <tr>
-      <th>Einheit</th>
-      <th>Modul</th>
-      <th>Status</th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for u in units %}
+  <table>
+    <thead>
       <tr>
-        <td>
-          {% if u.number %}{{ u.number }}{% else %}—{% endif %}
-          {% if u.date %} ({{ u.date }}){% endif %}
-        </td>
-        <td>
-          {% if u.module %}
-            {{ u.module.title }}
-          {% else %}
-            —
-          {% endif %}
-        </td>
-        <td>
-          {% if u.submissions_enabled %}
-            ✅ freigeschaltet
-          {% else %}
-            ⛔ gesperrt
-          {% endif %}
-        </td>
-        <td>
-          <form method="post"
-                action="{% url 'modules:teacher_toggle_unit_submissions' u.id %}">
+        <th>Einheit</th>
+        <th>Modul</th>
+        <th>Status</th>
+        <th>Aktionen</th>
+        <th>Abgaben</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for u in units %}
+        <tr>
+          <td>
+            {% if u.number %}{{ u.number }}{% else %}—{% endif %}
+            {% if u.date %} ({{ u.date|date:"d.m.Y H:i" }}){% endif %}
+          </td>
+
+          <td>
+            {% if u.module %}
+              Modul {{ u.module.order }}: {{ u.module.title }}
+            {% else %}
+              —
+            {% endif %}
+          </td>
+
+          <td>
+            {% if u.submissions_enabled %}
+              ✅ freigeschaltet
+            {% else %}
+              ⛔ gesperrt
+            {% endif %}
+          </td>
+
+          
+
+          <td>
+          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+
+            {# 1️⃣ Freischalten / Sperren #}
+          <form method="post" action="{% url 'modules:teacher_toggle_unit_submissions' u.id %}">
             {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.path }}">
             <button type="submit">
-              {% if u.submissions_enabled %}
-                Sperren
-              {% else %}
-                Freischalten
-              {% endif %}
+            {% if u.submissions_enabled %}
+            Sperren
+            {% else %}
+            Freischalten
+            {% endif %}
             </button>
           </form>
-        </td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+
+    {# 2️⃣ PDFs herunterladen (nur wenn eine Unit existiert) #}
+    <a href="{% url 'modules:teacher_unit_submissions_downloads' u.id %}">
+      <button type="button">
+        PDFs herunterladen
+      </button>
+    </a>
+
+  </div>
+          </td>
+
+          <td>
+            {{ u.submissions_count }} / {{ student_count }}
+              {% if u.files_count %}
+              <div class="muted">{{ u.files_count }} Datei{{ u.files_count|pluralize:"en" }}</div>
+              {% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
 
 {% endblock %}

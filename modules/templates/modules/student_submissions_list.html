@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="teacher-dashboard">
+  <header class="dashboard-header">
+    <h2>Meine Abgaben</h2>
+
+    <div class="kpi-row">
+      <div class="kpi">
+        <div class="kpi-label">Freigeschaltet</div>
+        <div class="kpi-value">{{ counts.enabled_units }}</div>
+        <div class="kpi-sub">Hausaufgaben insgesamt</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-label">Offen</div>
+        <div class="kpi-value">{{ counts.open }}</div>
+        <div class="kpi-sub">noch nicht eingereicht</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-label">In Korrektur</div>
+        <div class="kpi-value">{{ counts.submitted }}</div>
+        <div class="kpi-sub">{{ counts.corrected }} korrigiert</div>
+      </div>
+
+      <div class="kpi">
+        <div class="kpi-label">Gesperrt</div>
+        <div class="kpi-value">{{ counts.locked }}</div>
+        <div class="kpi-sub">36h-Regel aktiv</div>
+      </div>
+    </div>
+  </header>
+
+  {# -------------------------
+     1) GESPERRT
+     ------------------------- #}
+  <section class="dashboard-notes">
+    <h2>Gesperrt</h2>
+    {% if counts.locked == 0 %}
+      <p>Keine gesperrten Hausaufgaben 🎉</p>
+    {% else %}
+      <div class="tile-grid">
+        {% for row in rows %}
+          {% if row.status == "locked" %}
+            <a class="tile" href="#">
+              {# TODO: sinnvoller Link (z.B. Unit-Detail oder Abgaben-Info) #}
+
+              <div class="tile-title">
+                Einheit {{ row.unit.number|default:"—" }}
+                <span class="badge badge--locked">gesperrt</span>
+              </div>
+
+              <div class="tile-sub">
+                Modul: {{ row.module.title }}
+                {% if row.lock_at %}
+                  · gesperrt seit {{ row.lock_at|date:"d.m.Y H:i" }}
+                {% endif %}
+              </div>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+  {# -------------------------
+     2) OFFEN
+     ------------------------- #}
+  <section class="dashboard-notes">
+    <h2>Offen</h2>
+    {% if counts.open == 0 %}
+      <p>Keine offenen Hausaufgaben.</p>
+    {% else %}
+      <div class="tile-grid">
+        {% for row in rows %}
+          {% if row.status == "open" %}
+            <a class="tile" href="#">
+              {# TODO: Link zur Unit/Submission-Startseite (Upload/Abgabe starten) #}
+
+              <div class="tile-title">
+                Einheit {{ row.unit.number|default:"—" }}
+                <span class="badge badge--open">offen</span>
+              </div>
+
+              <div class="tile-sub">
+                Modul: {{ row.module.title }}
+                {% if row.unit.date %}
+                  · Termin: {{ row.unit.date|date:"d.m.Y" }}
+                {% endif %}
+              </div>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+  {# -------------------------
+     3) IN KORREKTUR (SUBMITTED)
+     ------------------------- #}
+  <section class="dashboard-notes">
+    <h2>In Korrektur</h2>
+    {% if counts.submitted == 0 %}
+      <p>Aktuell ist nichts in Korrektur.</p>
+    {% else %}
+      <div class="tile-grid">
+        {% for row in rows %}
+          {% if row.status == "submitted" %}
+            <a class="tile" href="#">
+              {# TODO: Link zur Submission-Detailseite (Dateien anzeigen, ggf. Notiz) #}
+
+              <div class="tile-title">
+                Einheit {{ row.unit.number|default:"—" }}
+                <span class="badge badge--submitted">in Korrektur</span>
+              </div>
+
+              <div class="tile-sub">
+                Modul: {{ row.module.title }}
+                {% if row.submission.submitted_at %}
+                  · eingereicht: {{ row.submission.submitted_at|date:"d.m.Y H:i" }}
+                {% endif %}
+                {% if row.submission and row.submission.files.all|length %}
+                  · Dateien: {{ row.submission.files.all|length }}
+                {% endif %}
+              </div>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+  {# -------------------------
+     4) KORRIGIERT
+     ------------------------- #}
+  <section class="dashboard-notes">
+    <h2>Korrigiert</h2>
+    {% if counts.corrected == 0 %}
+      <p>Noch keine korrigierten Abgaben.</p>
+    {% else %}
+      <div class="tile-grid">
+        {% for row in rows %}
+          {% if row.status == "corrected" %}
+            <a class="tile" href="#">
+              {# TODO: Link zur Submission-Detailseite (Feedback/Downloads) #}
+
+              <div class="tile-title">
+                Einheit {{ row.unit.number|default:"—" }}
+                <span class="badge badge--corrected">korrigiert</span>
+              </div>
+
+              <div class="tile-sub">
+                Modul: {{ row.module.title }}
+                {% if row.submission.updated_at %}
+                  · aktualisiert: {{ row.submission.updated_at|date:"d.m.Y H:i" }}
+                {% endif %}
+                {% if row.submission and row.submission.files.all|length %}
+                  · Dateien: {{ row.submission.files.all|length }}
+                {% endif %}
+              </div>
+            </a>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+  </section>
+
+</section>
+
+{% endblock %}

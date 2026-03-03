@@ -207,3 +207,5 @@ LOGGING = {
         },
     },
 }
+# Development-only
+DISABLE_SUBMISSION_LOCK = DEBUG

@@ -1,14 +1,18 @@
 from django.urls import path
-from .views import (
-    HomeView,
-    EntryListView, EntryDetailView,
-    EntryCreateView, EntryUpdateView, EntryDeleteView,
-    GlossaryListView, entry_pk_redirect, EntryToggleCompleteView,ExamRequirementsView, TaskTypeListView
-)
+from django.views.generic import RedirectView
 
 from . import views
-
-from django.views.generic import RedirectView
+from .views import (
+    EntryListView, EntryDetailView,
+    EntryCreateView, EntryUpdateView, EntryDeleteView,
+    GlossaryListView,
+    ExamRequirementsView,
+    TaskTypeListView,
+    StudentDashboardView,
+    StudentSubmissionsListView, StudentSubmissionsDetailView,
+    entry_pk_redirect,
+    EntryToggleCompleteView,
+)
 
 app_name = "modules"
 
@@ -52,9 +56,11 @@ urlpatterns = [
     
     path("units/<int:unit_id>/upload/", views.upload_submission_file, name="upload_submission_file"),
     path("submission-files/<int:file_id>/delete/", views.delete_submission_file, name="delete_submission_file"),
-    path("teacher/units/<int:pk>/toggle-submissions/", views.TeacherToggleUnitSubmissionsView.as_view(),
-    name="teacher_toggle_unit_submissions",),
-    path( "teacher/submissions/", views.TeacherSubmissionsDashboardView.as_view(), name="teacher_submissions_dashboard",
-),
+    path("teacher/submissions/", views.TeacherSubmissionsDashboardView.as_view(), name="teacher_submissions_dashboard",),
+    path("teacher/units/<int:pk>/toggle-submissions/", views.TeacherToggleUnitSubmissionsView.as_view(), name="teacher_toggle_unit_submissions",),
+    path("teacher/units/<int:pk>/downloads/", views.SubmissionsDownloadView.as_view(), name="teacher_unit_submissions_downloads",),
+    path("student/", StudentDashboardView.as_view(), name="student_dashboard"),
+    path("student/submissions/", StudentSubmissionsListView.as_view(), name="student_submissions_list"),
+    path("student/submissions/<int:pk>/", StudentSubmissionsDetailView.as_view(), name="student_submission_detail",),
+    # path( "teacher/units/<int:pk>/submissions/", views.TeacherUnitSubmissionsView.as_view(), name="teacher_unit_submissions",),
 ]
-

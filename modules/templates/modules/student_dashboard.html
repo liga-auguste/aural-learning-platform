@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<section class="teacher-dashboard">
+  <header class="dashboard-header">
+  <h2>Mein Lernbereich</h2>
+
+  <div class="kpi-row">
+
+  {# KPI 1: Module abgeschlossen #}
+  <a class="kpi" href="{% url 'modules:entry_list' %}">
+    <div class="kpi-label">Module abgeschlossen</div>
+    <div class="kpi-value">{{ completed_count }}</div>
+    <div class="kpi-sub">von {{ course_target }} Modulen</div>
+  </a>
+
+
+  {# KPI 2: Weiterlernen #}
+  {% if next_module %}
+    <a class="kpi" href="{% url 'modules:entry_detail' next_module.slug %}">
+      <div class="kpi-label">Weiterlernen</div>
+      <div class="kpi-value">Modul {{ next_module.order }}</div>
+      <div class="kpi-sub">{{ next_module.title }}</div>
+    </a>
+  {% else %}
+    <a class="kpi" href="{% url 'modules:entry_list' %}">
+      <div class="kpi-label">Weiterlernen</div>
+      <div class="kpi-value">✓</div>
+      <div class="kpi-sub">Alles erledigt – wiederholen?</div>
+    </a>
+  {% endif %}
+
+
+  {# KPI 3: Hausaufgaben #}
+  <a class="kpi" href="{% url 'modules:student_submissions_list' %}">
+    <div class="kpi-label">Hausaufgaben</div>
+
+    {% if homework_enabled_units_count == 0 %}
+      <div class="kpi-value">–</div>
+      <div class="kpi-sub">nichts freigeschaltet</div>
+
+    {% elif homework_locked_count > 0 %}
+      <div class="kpi-value">{{ homework_locked_count }}</div>
+      <div class="kpi-sub">gesperrt · {{ homework_submitted_count }} in Korrektur</div>
+
+    {% elif homework_submitted_count > 0 %}
+      <div class="kpi-value">{{ homework_submitted_count }}</div>
+      <div class="kpi-sub">in Korrektur · {{ homework_corrected_count }} korrigiert</div>
+
+    {% elif homework_open_count > 0 %}
+      <div class="kpi-value">{{ homework_open_count }}</div>
+      <div class="kpi-sub">offen · {{ homework_corrected_count }} korrigiert</div>
+
+    {% else %}
+      <div class="kpi-value">✓</div>
+      <div class="kpi-sub">alles erledigt</div>
+    {% endif %}
+  </a>
+
+</div>
+
+  <div class="course-progress">
+    <div class="course-progress__row">
+      <div class="course-progress__label">
+        Gesamtziel: {{ completed_count }} / {{ course_target }}
+      </div>
+      <div class="course-progress__percent">
+        {{ course_progress_percent }}%
+      </div>
+    </div>
+
+    <div class="course-progress__bar" role="progressbar"
+         aria-valuenow="{{ course_progress_percent }}" aria-valuemin="0" aria-valuemax="100">
+      <div class="course-progress__fill" style="width: {{ course_progress_percent }}%;"></div>
+    </div>
+  </div>
+
+</header>
+
+    </div>
+
+  <div class="tile-grid">
+
+    <!-- 3️⃣ Glossar -->
+    <a class="tile" href="{% url 'modules:glossary_list' %}">
+      <!-- TODO: Link zum Glossar -->
+      <div class="tile-title">Glossar</div>
+      <div class="tile-sub">
+        Begriffe nachschlagen
+      </div>
+    </a>
+
+
+    <!-- 4️⃣ Aufgabentypen -->
+    <a class="tile" href="{% url 'modules:tasktype_list' %}">
+      <!-- TODO: Link zu Übungstypen -->
+      <div class="tile-title">Aufgabentypen</div>
+      <div class="tile-sub">
+        Bestimmte Übungen gezielt trainieren
+      </div>
+    </a>
+
+    {% if next_module %}
+    <a class="tile" href="{% url 'modules:entry_detail' next_module.slug %}">
+  {% else %}
+    <a class="tile" href="{% url 'modules:entry_list' %}">
+  {% endif %}
+      <div class="tile-title">Weiterlernen</div>
+      <div class="tile-sub">{{ window_open_count }}
+          {% if next_module %}
+          Nächstes: {{ next_module.title }}
+          {% else %}
+          🎉 Alles erledigt!
+          {% endif %}
+      </div>
+    </a>
+
+  </div>
+
+  <section class="dashboard-notes">
+    <h2>Hinweis</h2>
+    <ul>
+      <li>Module können selbstständig als erledigt markiert werden.</li>
+      <li>Hausaufgaben sind unabhängig vom Modul-Fortschritt.</li>
+      <li>Du kannst jederzeit Inhalte wiederholen.</li>
+    </ul>
+  </section>
+</section>
+
+{% endblock %}

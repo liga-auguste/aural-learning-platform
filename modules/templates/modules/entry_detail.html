@@ -200,9 +200,11 @@
 
 </div>
 
-<h2>Abgabe</h2>
+ <h2>Abgabe</h2>
 
-{# ===== LEHRKRAFT / STAFF ===== #}
+<!-- {# =========================
+   LEHRKRAFT
+   ========================= #} -->
 {% if request.user.is_authenticated and request.user.is_teacher %}
 
   <div class="teacher-submission-status">
@@ -235,50 +237,112 @@
         <span class="status-neutral">—</span>
       {% endif %}
     </div>
+
   </div>
 
+
+{# =========================
+   SCHÜLER
+   ========================= #}
 {% elif request.user.is_authenticated and request.user.is_student %}
 
+  <p class="muted">
+  DEBUG:
+  unit={{ unit|default:"None" }},
+  enabled={{ unit.submissions_enabled|default:"-" }},
+  can_edit={{ can_edit }},
+  lock_at={{ lock_at|default:"-" }},
+  submission={{ submission.id|default:"-" }}
+</p>
+
   {% if not unit %}
-    <p class="muted">Für dieses Modul ist noch keine Unterrichtseinheit geplant.</p>
+    <p class="muted">
+      Für dieses Modul ist noch keine Unterrichtseinheit geplant.
+    </p>
 
   {% elif not unit.submissions_enabled %}
-    <p class="muted"><strong>Abgabe noch nicht freigeschaltet.</strong></p>
-
-  {% elif can_edit %}
-    <form action="{% url 'modules:upload_submission_file' unit.id %}" method="post" enctype="multipart/form-data">
-      {% csrf_token %}
-      <input type="file" name="files" accept="application/pdf" multiple>
-      <button type="submit">PDF(s) hochladen</button>
-    </form>
+    <p class="muted">
+      <strong>Abgabe noch nicht freigeschaltet.</strong>
+    </p>
 
   {% else %}
-    <p><strong>Uploads sind gesperrt.</strong></p>
-    {% if lock_at %}
-      <p class="muted">Änderungen waren möglich bis: {{ lock_at }}</p>
-    {% endif %}
-  {% endif %}
+    <section class="card homework">
 
-  {% if submission and submission.files.all %}
-    <h3>Deine hochgeladenen Dateien</h3>
-    <ul>
-      {% for f in submission.files.all %}
-        <li>
-          <a href="{{ f.file.url }}" target="_blank">PDF öffnen</a>
-          {% if can_edit %}
-            <form action="{% url 'modules:delete_submission_file' f.id %}" method="post" style="display:inline">
-              {% csrf_token %}
-              <button type="submit">entfernen</button>
-            </form>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ul>
+      <header class="card-header flex-between">
+        <h3>Hausaufgaben Upload</h3>
+
+      </header>
+
+      {% if not can_edit %}
+        <p class="muted">
+          Uploads sind aktuell gesperrt.
+        </p>
+      {% endif %}
+
+      {# ===== Upload-Form ===== #}
+      <form method="post"
+            action="{% url 'modules:upload_submission_file' unit.id %}"
+            enctype="multipart/form-data"
+            class="upload-form">
+        {% csrf_token %}
+
+        <div class="form-row">
+          <label for="files">Dateien auswählen</label>
+          <input id="files"
+                 type="file"
+                 name="files"
+                 multiple
+                 accept=".pdf,application/pdf"
+                 {% if not can_edit %}disabled{% endif %}>
+        </div>
+
+        <div class="btn-group">
+          <button class="btn"
+                  type="submit"
+                  {% if not can_edit %}disabled{% endif %}>
+            PDF(s) hochladen
+          </button>
+        </div>
+
+        <p class="muted" style="margin-top:.5rem;">
+          Mehrere PDFs sind möglich.
+        </p>
+      </form>
+
+      {# ===== Bereits hochgeladene Dateien ===== #}
+      <div class="uploaded-files">
+        <h4>Meine hochgeladenen Dateien</h4>
+
+        {% if submission and submission.files.exists %}
+          <ul class="file-list">
+            {% for f in submission.files.all %}
+              <li class="file-row flex-between">
+                <a href="{{ f.file.url }}" target="_blank" rel="noopener">
+                  {{ f.file.name|cut:"submissions/" }}
+                </a>
+
+                {% if can_edit %}
+                  <form method="post"
+                        action="{% url 'modules:delete_submission_file' f.id %}"
+                        style="display:inline;">
+                    {% csrf_token %}
+                    <button class="btn btn-danger" type="submit">
+                      Entfernen
+                    </button>
+                  </form>
+                {% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="muted">Noch keine Dateien hochgeladen.</p>
+        {% endif %}
+      </div>
+
+    </section>
   {% endif %}
 
 {% endif %}
-
-
 <div class="form-actions">
 
   {# ================= TEACHER ONLY ================= #}

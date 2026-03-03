@@ -1804,3 +1804,79 @@ nav h1 a:focus {
 .darkmode .teacher-submission-status {
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
+
+/* --- Badges (Status) --- */
+.badge {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  line-height: 1.2;
+  vertical-align: middle;
+  border: 1px solid transparent;
+}
+
+/* Offen: neutral */
+.badge--open {
+  background: var(--tags);
+  color: var(--text-color);
+}
+
+/* In Korrektur: highlight */
+.badge--submitted {
+  background: var(--btn-hover);
+  color: var(--bcg-col);
+}
+
+/* Korrigiert: positiv (falls du kein grün hast, nimm lecture-hover als “soft”) */
+.badge--corrected {
+  background: var(--lecture-hover);
+  color: var(--text-color);
+  border-color: var(--tags);
+}
+
+/* Gesperrt: stärkerer Kontrast */
+.badge--locked {
+  background: var(--text-color);
+  color: var(--bcg-col);
+}
+
+.course-progress {
+  margin: 0.75rem 0 1.25rem;
+}
+
+.course-progress__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.course-progress__label {
+  opacity: 0.9;
+}
+
+.course-progress__percent { 
+  opacity: 0.75; 
+}
+
+.course-progress__bar {
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--tags);
+  overflow: hidden;
+}
+
+.course-progress__fill {
+  height: 100%;
+  background: var(--btn-hover);
+  border-radius: 999px;
+}
+
+.upload-form { margin-top: 1rem; }
+.file-list { list-style: none; padding: 0; margin: .75rem 0 0; }
+.file-row { padding: .5rem 0; border-bottom: 1px solid rgba(0,0,0,.08); }
+.uploaded-files { margin-top: 1.25rem; }

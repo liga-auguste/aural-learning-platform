@@ -405,47 +405,15 @@ class Submission(models.Model):
         u = self.unit.number if self.unit.number is not None else "—"
         return f"Abgabe: Einheit {u} – {self.student}"
 
-    # ---------
-    # 36h-Regel
-    # ---------
-    def get_next_unit(self):
-        """
-        Nächste Einheit nach Datum. (Robust bei Terminverschiebungen.)
-        Wenn diese Unit (oder andere) kein Datum hat -> None.
-        """
-        if not self.unit.date:
-            return None
-
-        return (
-            self.unit.__class__.objects
-            .filter(date__isnull=False, date__gt=self.unit.date)
-            .order_by("date")
-            .first()
-        )
-
-    def get_lock_at(self):
-        """
-        Zeitpunkt, ab dem der Schüler nicht mehr ändern darf:
-        36h vor der nächsten Einheit.
-        Wenn es keine nächste Einheit gibt -> None (nur durch Freischaltung begrenzt).
-        """
-        next_unit = self.get_next_unit()
-        if not next_unit:
-            return None
-        return next_unit.date - timedelta(hours=36)
-
     def is_editable_by_student(self, now=None) -> bool:
         """
+        TEMPORÄR: Lock komplett deaktiviert.
         True = Schüler darf Files hinzufügen/löschen/ersetzen.
 
-        Reihenfolge:
-        1) Manuelle Freischaltung (Unit.submissions_enabled) muss aktiv sein.
-        2) Nach "korrigiert" keine Änderungen.
-        3) 36h-Lock (falls nächste Unit mit Datum existiert).
+        Regeln:
+        1) Unit muss freigeschaltet sein (unit.submissions_enabled)
+        2) Nach "korrigiert" keine Änderungen (optional, aber sinnvoll)
         """
-        if now is None:
-            now = timezone.now()
-
         # 1) ✅ manuelle Freischaltung
         if not getattr(self.unit, "submissions_enabled", False):
             return False
@@ -454,11 +422,7 @@ class Submission(models.Model):
         if self.status == self.CORRECTED:
             return False
 
-        # 3) 36h-Regel (optional: nur wenn next unit existiert)
-        lock_at = self.get_lock_at()
-        if lock_at is None:
-            return True
-        return now < lock_at
+        return True
 
     def clean(self):
         super().clean()
@@ -471,7 +435,6 @@ class Submission(models.Model):
 def submission_file_upload_path(instance: "SubmissionFile", filename: str) -> str:
     """
     Speicherpfad: sauber sortierbar nach Einheit/Datum/Schüler.
-
     Robust auch dann, wenn unit.date noch nicht gesetzt ist.
     """
     unit = instance.submission.unit
@@ -515,29 +478,30 @@ class SubmissionFile(models.Model):
         ]
 
     def __str__(self):
-        return f"PDF zu {self.submission_id}"
+        return f"Datei zu Submission #{self.submission_id}"
 
     def clean(self):
         super().clean()
 
-        # ✅ Punkt 2 wirkt hier automatisch,
-        # sobald Submission.is_editable_by_student() den submissions_enabled-Check enthält.
+        # Sperren: nicht freigeschaltet / 36h-Regel / bereits korrigiert
         if self.submission_id and not self.submission.is_editable_by_student():
             raise ValidationError(
-                "Uploads/Änderungen sind gesperrt (Abgabe nicht freigeschaltet, 36h-Regel oder bereits korrigiert)."
+                "Uploads/Änderungen sind gesperrt (nicht freigeschaltet, 36h-Regel oder bereits korrigiert)."
             )
 
     def save(self, *args, **kwargs):
         creating = self._state.adding
 
-        # ✅ sorgt dafür, dass clean() wirklich ausgeführt wird
+        # sicherstellen, dass clean() + Field-Validatoren laufen
         self.full_clean()
-
         super().save(*args, **kwargs)
 
-        # Upload = eingereicht: beim ersten File submitted_at setzen
-        if creating and self.submission.submitted_at is None:
-            Submission.objects.filter(pk=self.submission_id, submitted_at__isnull=True).update(
+        # beim ersten Upload: Submission als eingereicht markieren
+        if creating:
+            Submission.objects.filter(
+                pk=self.submission_id,
+                submitted_at__isnull=True,
+            ).update(
                 submitted_at=timezone.now(),
                 status=Submission.SUBMITTED,
             )

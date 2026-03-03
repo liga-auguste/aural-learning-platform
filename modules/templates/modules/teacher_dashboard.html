@@ -22,6 +22,23 @@
         <div class="kpi-value">{{ completion_count }}</div>
       </div>
     </div>
+
+    <div class="course-progress">
+  <div class="course-progress__row">
+    <div class="course-progress__label">
+     Kursfortschritt: {{ teacher_completed_modules_count }} / {{ teacher_target }} Module
+    </div>
+    <div class="course-progress__percent">
+      {{ teacher_progress_percent }}%
+    </div>
+  </div>
+
+  <div class="course-progress__bar" role="progressbar"
+       aria-valuenow="{{ teacher_progress_percent }}" aria-valuemin="0" aria-valuemax="100">
+    <div class="course-progress__fill" style="width: {{ teacher_progress_percent }}%;"></div>
+  </div>
+</div>
+
   </header>
 
   <div class="tile-grid">
@@ -47,19 +64,17 @@
 
     <a class="tile" href="{% url 'modules:teacher_submissions_dashboard' %}">
       <div class="tile-title">Hausaufgaben verwalten</div>
-      <div class="tile-sub">Freigeschaltet: {{ enabled_units }} / {{ total_units }}</div>
+      <div class="tile-sub">
+    {% if active_module %}
+    Im Moment aktiv: Modul {{ active_module.order }}
+    {% else %}
+      · Im Moment aktiv: —
+    {% endif %}
+      </div>
     </a>
 
   </div>
 
-  <section class="dashboard-notes">
-    <h2>Als nächstes</h2>
-    <ul>
-      <li>Uploads/Abgaben pro Schüler und Modul</li>
-      <li>Freischaltung von Skripten/Lösungen (Visibility)</li>
-      <li>Notizen/Kommentare für Feedback</li>
-    </ul>
-  </section>
 </section>
 
 {% endblock %}

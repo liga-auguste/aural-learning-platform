@@ -1,6 +1,8 @@
 # =============================
 # Django Core
 # =============================
+import io
+import zipfile
 from django.conf import settings
 from django.core.mail import send_mail
 from django.contrib import messages
@@ -9,7 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.db.models import Q, Count
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils import timezone
@@ -20,6 +22,7 @@ from django.views.generic import (
     TemplateView, ListView, DetailView,
     CreateView, UpdateView, DeleteView,
 )
+from datetime import timedelta
 
 # =============================
 # Third Party
@@ -29,7 +32,7 @@ from taggit.models import Tag
 # =============================
 # Local Apps
 # =============================
-from accounts.mixins import TeacherRequiredMixin
+from accounts.mixins import TeacherRequiredMixin, StudentRequiredMixin
 from .forms import ModuleForm, ContactForm
 from .models import (
     Module,
@@ -156,7 +159,7 @@ class EntryDetailView(LockedView, DetailView):
         if unit and self.request.user.is_authenticated and getattr(self.request.user, "is_student", False):
             submission, _ = Submission.objects.get_or_create(unit=unit, student=self.request.user)
             can_edit = submission.is_editable_by_student()
-            lock_at = submission.get_lock_at()
+            lock_at = None
 
         context["submission"] = submission
         context["can_edit"] = can_edit
@@ -347,40 +350,149 @@ class TeacherToggleCompletionView(TeacherRequiredMixin, View):
 
 class TeacherDashboardView(TeacherRequiredMixin, TemplateView):
     template_name = "modules/teacher_dashboard.html"
-        
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        User = get_user_model()
+
+        # -----------------------------
+        # 1️⃣ Kursfortschritt (Module)
+        # -----------------------------
+        COURSE_TARGET_MODULES = 40
+
+        teacher_completed_modules_count = ModuleCompletion.objects.filter(
+            user=self.request.user
+        ).count()
+
+        teacher_target = COURSE_TARGET_MODULES
+        teacher_progress_percent = round(
+            (teacher_completed_modules_count / teacher_target) * 100
+        ) if teacher_target else 0
+
+        teacher_progress_percent = min(100, teacher_progress_percent)
+
+        context["teacher_completed_modules_count"] = teacher_completed_modules_count
+        context["teacher_target"] = teacher_target
+        context["teacher_progress_percent"] = teacher_progress_percent
+
+        # -----------------------------
+        # 2️⃣ Dashboard-KPIs
+        # -----------------------------
+        context["student_count"] = User.objects.filter(
+            role=User.STUDENT
+        ).count()
+
+        context["module_count"] = Module.objects.count()
+
+        context["completion_count"] = ModuleCompletion.objects.count()
+
+        # -----------------------------
+        # 3️⃣ Aktive Einheit (Organisation, nicht Fortschritt)
+        # -----------------------------
+        active_unit = (
+            Unit.objects
+            .filter(submissions_enabled=True)
+            .select_related("module")
+            .order_by("date", "number", "id")
+            .first()
+        )
+
+        context["active_unit"] = active_unit
+        context["active_module"] = active_unit.module if active_unit else None
+
+        return context
+
+class StudentDashboardView(StudentRequiredMixin, TemplateView):
+    template_name = "modules/student_dashboard.html"
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        User = get_user_model()
-        
-        student_count = User.objects.filter(
-            role=User.STUDENT
-        ).count()
-        
-        module_count = Module.objects.count()
-        
-        completion_count = ModuleCompletion.objects.count()
-        
-        context["student_count"] = student_count
-        context["module_count"] = module_count
-        context["completion_count"] = completion_count
-        
-        context["units"] = (
-            Unit.objects
-            .select_related("module")
-            .order_by("number", "date", "id")
+        user = self.request.user
+
+        completed_ids = ModuleCompletion.objects.filter(
+            user=self.request.user
+        ).values_list("module_id", flat=True)
+
+        next_module = (
+            Module.objects
+            .exclude(id__in=completed_ids)
+            .order_by("order", "id")
+            .first()
         )
+
+        total_modules = Module.objects.count()
+
+        completed_count = ModuleCompletion.objects.filter(
+            user=self.request.user
+        ).count()
+
+        window_size = 10
         
+        all_modules = list(
+            Module.objects.order_by("order", "id")
+        )
+
+        start_index = 0
+
+        if next_module:
+            for i, module in enumerate(all_modules):
+                if module.id == next_module.id:
+                    start_index = i
+                    break
+
+        window_modules = all_modules[start_index:start_index + window_size]
+
+
+        window_completed_count = sum(
+            1 for m in window_modules if m.id in completed_ids
+        )
+
+        window_total = len(window_modules)
+        window_open_count = window_total - window_completed_count
+        
+        context["window_total"] = window_total
+        context["window_completed_count"] = window_completed_count
+        context["window_open_count"] = window_open_count
+        
+        context["total_modules"] = total_modules
+        context["completed_count"] = completed_count
+        context["next_module"] = next_module
+        
+        COURSE_TARGET_MODULES = 40  # fixes Kursziel
+
+        completed_count = ModuleCompletion.objects.filter(user=user).count()
+
+        course_target = COURSE_TARGET_MODULES
+        course_progress_percent = round((completed_count / course_target) * 100)
+
+        # Optional: nicht über 100% hinaus anzeigen
+        course_progress_percent = min(100, course_progress_percent)
+
+        context["course_target"] = course_target
+        context["course_progress_percent"] = course_progress_percent
+        context["completed_count"] = completed_count
+
         return context
+        
 
 class RoleBasedHomeRedirectView(View):
     def get(self, request):
-        if not request.user.is_authenticated:
-            return redirect("login")  # falls dein login-URL-Name "login" ist
 
-        if request.user.is_teacher:
+        # 1️⃣ Nicht eingeloggt → Login
+        if not request.user.is_authenticated:
+            return redirect("login")
+
+        # 2️⃣ Lehrer
+        if getattr(request.user, "is_teacher", False):
             return redirect("modules:teacher_dashboard")
 
+        # 3️⃣ Schüler
+        if getattr(request.user, "is_student", False):
+            return redirect("modules:student_dashboard")
+
+        # 4️⃣ Fallback (falls es weitere Rollen gibt)
         return redirect("modules:entry_list")
 
 @login_required
@@ -388,29 +500,26 @@ class RoleBasedHomeRedirectView(View):
 def upload_submission_file(request, unit_id):
     unit = get_object_or_404(Unit, pk=unit_id)
 
-    # 1) Nur Schüler
     if not getattr(request.user, "is_student", False):
         return HttpResponseForbidden("Nur Schüler dürfen Dateien hochladen.")
+
+    files = request.FILES.getlist("files")
+    if not files:
+        messages.warning(request, "Bitte wähle mindestens eine Datei aus.")
+        if unit.module:
+            return redirect("modules:entry_detail", slug=unit.module.slug)
+        return redirect("modules:entry_list")
 
     submission, _ = Submission.objects.get_or_create(
         unit=unit,
         student=request.user,
     )
 
-    # 2) Nur eigene Submission
     if submission.student_id != request.user.id:
         return HttpResponseForbidden("Keine Berechtigung.")
 
-    # 3) Lock-Regel
     if not submission.is_editable_by_student():
         return HttpResponseForbidden("Uploads sind gesperrt (36h vor nächstem Unterricht).")
-
-    files = request.FILES.getlist("files")
-    if not files:
-        # zurück zum Modul
-        if unit.module:
-            return redirect("modules:entry_detail", slug=unit.module.slug)
-        return redirect("modules:entry_list")
 
     for f in files:
         SubmissionFile.objects.create(submission=submission, file=f)
@@ -418,7 +527,6 @@ def upload_submission_file(request, unit_id):
     if unit.module:
         return redirect("modules:entry_detail", slug=unit.module.slug)
     return redirect("modules:entry_list")
-
 
 @login_required
 @require_POST
@@ -457,6 +565,7 @@ class TeacherToggleUnitSubmissionsView(TeacherRequiredMixin, View):
             return redirect(next_url)
 
         return redirect("modules:teacher_dashboard")
+
     
 class TeacherSubmissionsDashboardView(TeacherRequiredMixin, TemplateView):
     template_name = "modules/teacher_submissions_dash.html"
@@ -464,16 +573,216 @@ class TeacherSubmissionsDashboardView(TeacherRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        User = get_user_model()
+        student_count = User.objects.filter(role=User.STUDENT).count()
+        context["student_count"] = student_count
+
         units = (
             Unit.objects
             .select_related("module")
             .prefetch_related("submissions")
-            .order_by("number", "date", "id")
+            .annotate(
+                submissions_count=Count("submissions", distinct=True),
+                files_count=Count("submissions__files", distinct=True),
+            )
+        .order_by("number", "date", "id")
         )
 
+        context["units"] = units
+        context["total_units"] = units.count()
+        context["enabled_units"] = units.filter(submissions_enabled=True).count()
+        
         context["units"] = units
 
         context["total_units"] = units.count()
         context["enabled_units"] = units.filter(submissions_enabled=True).count()
+        
+        return context
+    
+class StudentSubmissionsListView(StudentRequiredMixin, TemplateView):
+    template_name = "modules/student_submissions_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        now = timezone.now()
+
+        # ------------------------------------------------------------
+        # 1) Alle freigeschalteten Units (Hausaufgaben-relevant) holen
+        # ------------------------------------------------------------
+        enabled_units_qs = (
+            Unit.objects
+            .filter(submissions_enabled=True)
+            .select_related("module")
+            .order_by("date", "number", "id")
+        )
+
+        enabled_units = list(enabled_units_qs)
+
+        # ------------------------------------------------------------
+        # 2) Alle Submissions des Users für diese Units holen
+        #    (inkl. Dateien, damit du in der Liste ggf. Downloads zeigen kannst)
+        # ------------------------------------------------------------
+        submissions_qs = (
+            Submission.objects
+            .filter(student=user, unit__in=enabled_units)
+            .select_related("unit", "unit__module")
+            .prefetch_related("files")
+        )
+
+        # Dictionary: unit_id -> submission
+        submissions_by_unit_id = {s.unit_id: s for s in submissions_qs}
+
+        # ------------------------------------------------------------
+        # 3) "Nächste Unit nach Datum" vorberechnen (für 36h-Lock)
+        #    Wir betrachten nur Units mit date != NULL.
+        # ------------------------------------------------------------
+        units_with_date = [u for u in enabled_units if getattr(u, "date", None)]
+        units_with_date.sort(key=lambda u: u.date)
+
+        # Map: unit_id -> lock_at (datetime) oder None
+        lock_at_by_unit_id = {}
+
+        for i, unit in enumerate(units_with_date):
+            next_unit = units_with_date[i + 1] if i + 1 < len(units_with_date) else None
+            if next_unit is None:
+                lock_at_by_unit_id[unit.id] = None
+            else:
+                lock_at_by_unit_id[unit.id] = next_unit.date - timedelta(hours=36)
+
+        # Units ohne date -> kein Lock (None)
+        for unit in enabled_units:
+            lock_at_by_unit_id.setdefault(unit.id, None)
+
+        # ------------------------------------------------------------
+        # 4) Zeilen bauen: pro Unit ein "Row"-Objekt mit Status + Links
+        # ------------------------------------------------------------
+        rows = []
+        counts = {
+            "enabled_units": len(enabled_units),
+            "open": 0,
+            "locked": 0,
+            "submitted": 0,
+            "corrected": 0,
+        }
+
+        for unit in enabled_units:
+            submission = submissions_by_unit_id.get(unit.id)
+            lock_at = lock_at_by_unit_id.get(unit.id)
+
+            if submission:
+                # Es gibt eine Submission: Status kommt aus Submission.status
+                if submission.status == Submission.CORRECTED:
+                    status_key = "corrected"
+                else:
+                    status_key = "submitted"
+            else:
+                # Keine Submission vorhanden -> offen oder gesperrt
+                if lock_at is not None and now >= lock_at:
+                    status_key = "locked"
+                else:
+                    status_key = "open"
+
+            counts[status_key] += 1
+
+            rows.append({
+                "unit": unit,
+                "module": unit.module,
+                "submission": submission,     # None wenn noch nicht abgegeben
+                "status": status_key,         # open | locked | submitted | corrected
+                "lock_at": lock_at,           # None wenn nicht berechenbar
+            })
+
+        # Optional: sortiere, wie du’s im UI willst (z.B. gesperrt zuerst)
+        status_order = {"locked": 0, "open": 1, "submitted": 2, "corrected": 3}
+        rows.sort(key=lambda r: (status_order.get(r["status"], 99),
+                                 r["unit"].date is None,  # dated zuerst
+                                 r["unit"].date or timezone.datetime.min.replace(tzinfo=timezone.get_current_timezone()),
+                                 r["unit"].id))
+
+        # ------------------------------------------------------------
+        # 5) Context für Template + KPI-Kachel
+        # ------------------------------------------------------------
+        context["rows"] = rows
+        context["counts"] = counts
+
+        # Diese Keys sind praktisch fürs Dashboard-KPI (falls du sie hier wiederverwenden willst)
+        context["homework_enabled_units_count"] = counts["enabled_units"]
+        context["homework_open_count"] = counts["open"]
+        context["homework_locked_count"] = counts["locked"]
+        context["homework_submitted_count"] = counts["submitted"]
+        context["homework_corrected_count"] = counts["corrected"]
 
         return context
+    
+class StudentSubmissionsDetailView(StudentRequiredMixin, DetailView):
+    """
+    Detailansicht einer Abgabe für Schüler:
+    - zeigt nur die Abgabe des eingeloggten Schülers
+    - inklusive Dateien (prefetch)
+    """
+    model = Submission
+    template_name = "modules/student_submission_detail.html"
+    context_object_name = "submission"
+
+    def get_queryset(self):
+        # Nur eigene Abgaben + die zugehörigen Objekte effizient laden
+        return (
+            Submission.objects
+            .filter(student=self.request.user)
+            .select_related("unit", "unit__module")
+            .prefetch_related("files")
+        )
+        
+class SubmissionsDownloadView(TeacherRequiredMixin, View):
+    """
+    Download-ZIP für eine Unit:
+    - teacher-only
+    - packt alle PDF-Dateien aus SubmissionFile in ein ZIP
+    """
+
+    def get(self, request, pk):
+        unit = get_object_or_404(Unit.objects.select_related("module"), pk=pk)
+
+        # Alle Dateien der Unit holen (über Submission -> SubmissionFile)
+        files_qs = (
+            SubmissionFile.objects
+            .filter(submission__unit=unit)
+            .select_related("submission", "submission__student")
+            .order_by("submission__student__username", "id")
+        )
+
+        # Nur PDFs
+        pdf_files = []
+        for sf in files_qs:
+            name = (sf.file.name or "").lower()
+            if name.endswith(".pdf"):
+                pdf_files.append(sf)
+
+        if not pdf_files:
+            raise Http404("Keine PDF-Abgaben für diese Einheit vorhanden.")
+
+        buf = io.BytesIO()
+
+        with zipfile.ZipFile(buf, "w", compression=zipfile.ZIP_DEFLATED) as zf:
+            for sf in pdf_files:
+                student = getattr(sf.submission, "student", None)
+                username = getattr(student, "username", "unknown")
+
+                # Dateiname im ZIP: <unit>__<username>__<original>.pdf
+                original = (sf.file.name.split("/")[-1] or "file.pdf")
+                arcname = f"unit_{unit.pk}__{username}__{original}"
+
+                # Dateiinhalt lesen (funktioniert auch mit Remote Storage)
+                with sf.file.open("rb") as f:
+                    zf.writestr(arcname, f.read())
+
+        buf.seek(0)
+
+        ts = timezone.now().strftime("%Y%m%d_%H%M%S")
+        module_part = f"module_{unit.module.order}_" if unit.module_id and unit.module.order is not None else ""
+        filename = f"{module_part}unit_{unit.pk}_submissions_{ts}.zip"
+
+        resp = HttpResponse(buf.getvalue(), content_type="application/zip")
+        resp["Content-Disposition"] = f'attachment; filename="{filename}"'
+        return resp
