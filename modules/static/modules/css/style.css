@@ -1720,6 +1720,442 @@ nav h1 a:focus {
   }
 }
 
+/* ================================
+   Teacher Submissions Dashboard
+   ================================ */
+
+/* Outer table: mehr Luft zwischen Units */
+.teacher-dashboard table{
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 .8rem; /* spacing zwischen Unit-Blöcken */
+}
+
+
+/* Details "Card" */
+.unit-details__box{
+  margin-top: .5rem;
+  padding: 1rem;
+  border-radius: var(--r-card);
+  border: 1px solid var(--border-glass);
+  background: var(--surface-glass-2);
+  box-shadow: var(--shadow-tile-soft);
+}
+
+/* Accordion summary wie deine "tag-pill" (du hast das Pattern schon!) */
+.unit-summary{
+  list-style: none;
+  cursor: pointer;
+
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+
+  padding: .55rem .8rem;
+  border-radius: var(--r-pill);
+
+  background: color-mix(in srgb, var(--btn) 30%, transparent);
+  border: 1px solid color-mix(in srgb, var(--btn) 30%, transparent);
+  font-weight: 600;
+  user-select: none;
+}
+
+/* Marker weg, damit es clean aussieht */
+.unit-summary::-webkit-details-marker{ display: none; }
+
+/* Open state: etwas Akzent */
+.unit-accordion[open] .unit-summary{
+  border-color: color-mix(in srgb, var(--btn-hover) 55%, transparent);
+  background: color-mix(in srgb, var(--btn-hover) 25%, transparent);
+}
+
+/* Inner submissions table */
+.submissions-table{
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.submissions-table th{
+  text-align: left;
+  font-size: .9rem;
+  opacity: .75;
+  padding: .35rem .5rem;
+}
+
+.submissions-table td{
+  _padding: .55rem .5rem;
+  border-top: none;
+  vertical-align: middle;
+}
+
+/* Hover pro Schülerzeile */
+.submissions-table tbody tr:hover{
+  background: color-mix(in srgb, var(--btn) 18%, transparent);
+}
+
+/* Name etwas stärker */
+.submissions-table td:first-child{
+  font-weight: 600;
+}
+
+/* sub actions */
+.sub-actions{
+  display: flex;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+.sub-actions form{ margin: 0; } /* verhindert Form-Spacing */
+.sub-actions button{ white-space: nowrap; }
+
+button:disabled{
+  opacity: .45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+@media (max-width: 760px){
+  .teacher-dashboard table{
+    border-spacing: 0 .6rem;
+  }
+
+  .unit-details__box{
+    _overflow-x: auto;
+  }
+}
+
+/* Details wrapper acts like table row spacing */
+.unit-accordion{
+  display: block;
+  margin: 0 0 .8rem 0;
+}
+
+/* summary looks like your old unit-row */
+.unit-row--summary{
+  list-style: none;
+  cursor: pointer;
+}
+.unit-row--summary::-webkit-details-marker{ display:none; }
+
+/* grid = columns */
+.unit-grid{
+  display: grid;
+  grid-template-columns: 1.4fr .6fr .9fr 1.1fr;
+}
+
+/* cells styled like your table cells */
+.unit-cell{
+  background: transparent;
+  _border: 1px solid var(--border-glass);
+  padding: .95rem .9rem;
+  display: flex;
+  align-items: flex-start;
+  min-width: 0;
+}
+.unit-cell--module{ font-weight: 600; }
+.unit-title{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unit-cell--module .muted{
+  display: block;
+  margin-top:.2rem;
+  font-size:.9rem;
+}
+
+.file-check{
+  display:inline-grid;
+  place-items:center;
+  width:1.35rem; height:1.35rem;
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--accent-green) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-green) 65%, transparent);
+  font-weight: 800;
+}
+
+
+/* rounded corners at ends */
+.unit-cell:first-child{
+  _border-top-left-radius: var(--r-card);
+  _border-bottom-left-radius: var(--r-card);
+}
+.unit-cell:last-child{
+  _border-top-right-radius: var(--r-card);
+  _border-bottom-right-radius: var(--r-card);
+}
+
+/* hover state */
+.unit-accordion > summary:hover .unit-cell{
+  _background: var(--surface-glass-2);
+  _box-shadow: var(--shadow-tile-soft);
+}
+
+.unit-cell--module .unit-meta{
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  min-width: 0;                   /* für ellipsis */
+}
+
+.unit-cell--module .unit-title{
+  font-weight: 600;
+  line-height: 1.2;
+
+  /* optional ellipsis */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.unit-cell--module .unit-sub{
+  display: block;
+  line-height: 1.2;
+}
+
+/* open state */
+.unit-accordion[open] > summary .unit-cell{
+  border-color: color-mix(in srgb, var(--btn-hover) 25%, var(--border-glass));
+}
+
+/* ===== Homework row: file check + mini statusbar ===== */
+
+.subm-files{
+  white-space: nowrap;
+}
+
+.file-check{
+  display: inline-grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: var(--r-sm);
+  background: color-mix(in srgb, var(--accent-green) 55%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-green) 60%, transparent);
+  font-weight: 800;
+}
+
+.file-check.is-empty{
+  background: color-mix(in srgb, var(--btn) 45%, transparent);
+  border-color: color-mix(in srgb, var(--btn) 55%, transparent);
+  font-weight: 600;
+  opacity: .8;
+}
+
+.subm-statusbar{
+  display: grid;
+  gap: .35rem;
+  min-width: 180px;
+}
+
+.subm-statusbar__labels{
+  font-size: .92rem;
+  opacity: .9;
+}
+
+/* reuse your existing bar, just make it slimmer in this context */
+.subm-statusbar .course-progress__bar{
+  height: 8px;
+}
+
+/* optional: different fill “moods” without new colors */
+.course-progress__fill.is-submitted{
+  background: var(--btn-hover);
+}
+
+.course-progress__fill.is-corrected{
+  background: var(--accent-green);
+}
+
+/* mobile: stack */
+@media (max-width: 860px){
+  .unit-grid{
+    grid-template-columns: 1fr;
+  }
+  .unit-cell{
+    border-radius: 0;
+  }
+
+  .unit-cell:first-child{ border-top-left-radius: var(--r-card); border-top-right-radius: var(--r-card); }
+  .unit-cell:last-child{ border-bottom-left-radius: var(--r-card); border-bottom-right-radius: var(--r-card); }
+}
+
+/* Mobile: weniger Spalten/Buttons, damit nix overflowt */
+@media (max-width: 620px){
+
+  /* Spalte "Datei vorhanden" komplett weg */
+  .teacher-submissions .submissions-table td.subm-files,
+  .teacher-submissions .submissions-table th.subm-files{
+    display: none;
+  }
+
+  /* "Als korrigiert markieren" auf Mobile ausblenden (Öffnen bleibt) */
+  .teacher-submissions .submissions-table .mark-corrected{
+    display: none;
+  }
+}
+
+@media (max-width: 640px){
+  .teacher-submissions .subm-statusbar {
+    min-width: 0;
+  }
+}
+
+/* One Card */
+
+/* ===========================
+   Unit accordion = ONE card
+   =========================== */
+
+/* Ganze Einheit ist eine Card */
+.unit-accordion{
+  border-radius: var(--r-card);
+  background: var(--surface-glass);              /* weich, integriert */
+  border: 1px solid var(--border-glass);
+  box-shadow: var(--shadow-tile-soft);
+  overflow: hidden;                              /* damit Kanten sauber sind */
+  margin: 0 0 1rem 0;                            /* Abstand nur zwischen Units */
+}
+
+/* Summary ist nur der Header-Bereich (kein eigener Shadow) */
+.unit-row--summary{
+  list-style: none;
+  cursor: pointer;
+  user-select: none;
+  padding: 1rem 1.1rem;
+  background: color-mix(in srgb, var(--lecture-bcg) 70%, transparent);
+}
+
+/* Marker ausblenden */
+.unit-row--summary::-webkit-details-marker{ display:none; }
+
+/* Grid innen: keine Linien mehr */
+.unit-grid{
+  display: grid;
+  grid-template-columns: 1.4fr .6fr .9fr 1.1fr;  /* Modul | Datum | Status | Aktionen */
+  gap: 1rem;
+  align-items: center;
+}
+
+/* Die bisherigen Spaltentrenner entfernen */
+.unit-cell{
+  border-left: none !important;
+}
+
+/* Optional: wenn du bisher vertikale Trennlinien hattest */
+.unit-cell + .unit-cell{
+  border-left: none;
+}
+
+
+/* Detailbereich fließt direkt drunter */
+.unit-details__box{
+  margin: 0;                                     /* wichtig: keine Lücke */
+  padding: .9rem 1.1rem 1.1rem;
+  background: transparent;                        /* keine zweite Card */
+  border-top: 1px solid color-mix(in srgb, var(--border-glass) 80%, transparent);
+}
+
+/* Inner table: keine Card Optik, nur content */
+.submissions-table{
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Zeilen-Linien sehr subtil oder aus */
+.submissions-table td,
+.submissions-table th{
+  padding: .5rem .4rem;
+  border-top: none;
+
+}
+
+
+/* Bulk Button: wirkt wie "Footer" der Card */
+.unit-bulk{
+  margin-top: .9rem;
+}
+
+/* Wenn du willst: Aktionen rechts bündig sauber */
+.unit-cell--actions .sub-actions{
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+
+
+
+/* Toggle */
+.toggle{
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle input{
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+/* Track */
+.toggle__track{
+  width: 3.1rem;
+  height: 1.75rem;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--btn) 65%, transparent);
+  border: 1px solid var(--border-glass);
+  position: relative;
+  transition: background-color .18s ease, border-color .18s ease;
+  box-shadow: var(--shadow-tile-soft);
+}
+
+/* Knob */
+.toggle__track::after{
+  content:"";
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: 999px;
+  background: var(--bcg-col);
+  position: absolute;
+  top: 50%;
+  left: .2rem;
+  transform: translateY(-50%);
+  transition: left .18s ease;
+  border: 1px solid color-mix(in srgb, var(--btn) 35%, transparent);
+}
+
+/* Checked state */
+.toggle input:checked + .toggle__track{
+  background: color-mix(in srgb, var(--btn-hover) 35%, var(--btn) 65%);
+  border-color: color-mix(in srgb, var(--btn-hover) 35%, var(--border-glass));
+}
+
+.toggle input:checked + .toggle__track::after{
+  left: 1.55rem;
+}
+
+/* Label text */
+.toggle__label{
+  font-weight: 600;
+  font-size: .95rem;
+  opacity: .9;
+}
+
+/* Focus */
+.toggle input:focus-visible + .toggle__track{
+  outline: none;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--btn-hover) 20%, transparent), var(--shadow-tile-soft);
+}
+
+
+
+
 /* ======= Role Icon ======== */
 
 .role-icon {
@@ -1880,3 +2316,121 @@ nav h1 a:focus {
 .file-list { list-style: none; padding: 0; margin: .75rem 0 0; }
 .file-row { padding: .5rem 0; border-bottom: 1px solid rgba(0,0,0,.08); }
 .uploaded-files { margin-top: 1.25rem; }
+
+/* =========================================
+   Teacher Submissions – Summary row layout
+   passt zu deinem <summary> + .unit-grid
+   ========================================= */
+
+.teacher-submissions .unit-row--summary{
+  list-style: none;
+  cursor: pointer;
+}
+
+/* Safari/Chrome marker weg */
+.teacher-submissions .unit-row--summary::-webkit-details-marker{ display: none; }
+
+.teacher-submissions .unit-grid{
+  display: grid;
+  grid-template-columns: 1.4fr .7fr .8fr 1fr; /* Modul | Datum | Toggle | Aktionen */
+  gap: .9rem;
+
+  align-items: center;
+
+  background: var(--lecture-bcg);
+  _border: 1px solid color-mix(in srgb, var(--btn) 28%, transparent);
+  _border-radius: var(--r-card);
+  padding: 1rem 1.1rem;
+
+  _box-shadow: var(--shadow-tile-soft);
+}
+
+/* Zellen dürfen schrumpfen (wichtig gegen overflow) */
+.teacher-submissions .unit-cell{
+  min-width: 0;
+}
+
+/* Modulblock: Text darf umbrechen/ellipsis */
+.teacher-submissions .unit-title{
+  font-weight: 700;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.teacher-submissions .unit-sub.muted{
+  display: block;        /* erzwingt neue Zeile */
+  margin-top: .25rem;
+  line-height: 1.2;
+  white-space: normal;
+}
+
+/* Actions nicht überbreit */
+.teacher-submissions .unit-cell--actions .sub-actions{
+  display: flex;
+  justify-content: flex-end;
+  gap: .5rem;
+  flex-wrap: wrap;
+}
+
+.teacher-submissions .unit-cell--actions button{
+  white-space: nowrap;
+}
+
+/* Toggle-Zelle: wrap erlaubt, damit label nicht rausläuft */
+.teacher-submissions .unit-cell--status .toggle{
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+/* =========================================
+   Mobile – echte “Card”-Anordnung
+   ========================================= */
+@media (max-width: 640px){
+
+  .teacher-submissions table{
+    border-collapse: separate;
+    border-spacing: 0 .7rem;
+  }
+
+  .teacher-submissions .unit-grid{
+    grid-template-columns: 1fr;     /* alles untereinander */
+    gap: .5rem;
+    padding: .3rem;
+  }
+
+  /* Reihenfolge: Modul, Datum, Toggle, Button */
+  .teacher-submissions .unit-cell--module{ order: 1; }
+  .teacher-submissions .unit-cell--date{ order: 2; font-weight: 600; }
+  .teacher-submissions .unit-cell--status{ order: 3; }
+  .teacher-submissions .unit-cell--actions{ order: 4; }
+
+  /* Titel darf auf Mobile umbrechen (kein Ellipsis-Zwang) */
+  .teacher-submissions .unit-title{
+    white-space: normal;
+  }
+
+  /* Toggle + Label sollen nicht aneinander kleben */
+  .teacher-submissions .unit-cell--status .toggle__label{
+    white-space: nowrap;
+  }
+
+  /* Button volle Breite, damit nix rausläuft */
+  .teacher-submissions .unit-cell--actions .sub-actions{
+    justify-content: stretch;
+  }
+
+  .teacher-submissions .unit-cell--actions a,
+  .teacher-submissions .unit-cell--actions button{
+    width: 100%;
+  }
+
+  .teacher-submissions .unit-cell--actions button{
+    justify-content: center;
+  }
+}
+

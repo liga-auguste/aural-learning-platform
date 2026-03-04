@@ -157,8 +157,16 @@ class EntryDetailView(LockedView, DetailView):
         lock_at = None
 
         if unit and self.request.user.is_authenticated and getattr(self.request.user, "is_student", False):
-            submission, _ = Submission.objects.get_or_create(unit=unit, student=self.request.user)
-            can_edit = submission.is_editable_by_student()
+            submission = Submission.objects.filter(
+                unit=unit,
+                student=self.request.user
+            ).first()
+
+            if submission:
+                can_edit = submission.is_editable_by_student()
+            else:
+                can_edit = False
+
             lock_at = None
 
         context["submission"] = submission
@@ -366,10 +374,11 @@ class TeacherDashboardView(TeacherRequiredMixin, TemplateView):
         ).count()
 
         teacher_target = COURSE_TARGET_MODULES
-        teacher_progress_percent = round(
-            (teacher_completed_modules_count / teacher_target) * 100
-        ) if teacher_target else 0
-
+        teacher_progress_percent = (
+            round((teacher_completed_modules_count / teacher_target) * 100)
+            if teacher_target
+            else 0
+        )
         teacher_progress_percent = min(100, teacher_progress_percent)
 
         context["teacher_completed_modules_count"] = teacher_completed_modules_count
@@ -379,20 +388,23 @@ class TeacherDashboardView(TeacherRequiredMixin, TemplateView):
         # -----------------------------
         # 2️⃣ Dashboard-KPIs
         # -----------------------------
-        context["student_count"] = User.objects.filter(
-            role=User.STUDENT
-        ).count()
-
+        context["student_count"] = User.objects.filter(role=User.STUDENT).count()
         context["module_count"] = Module.objects.count()
 
-        context["completion_count"] = ModuleCompletion.objects.count()
+        # ✅ Variante A: "Zu korrigieren" (alle offenen Einreichungen)
+        pending_qs = Submission.objects.filter(status=Submission.SUBMITTED)
+
+        context["pending_submissions_count"] = pending_qs.count()
+        context["pending_students_count"] = pending_qs.values("student").distinct().count()
+
+        # (Optional) Falls du completion_count nicht mehr als KPI willst:
+        # context["completion_count"] = ModuleCompletion.objects.count()
 
         # -----------------------------
         # 3️⃣ Aktive Einheit (Organisation, nicht Fortschritt)
         # -----------------------------
         active_unit = (
-            Unit.objects
-            .filter(submissions_enabled=True)
+            Unit.objects.filter(submissions_enabled=True)
             .select_related("module")
             .order_by("date", "number", "id")
             .first()
@@ -510,16 +522,16 @@ def upload_submission_file(request, unit_id):
             return redirect("modules:entry_detail", slug=unit.module.slug)
         return redirect("modules:entry_list")
 
+    if not unit.submissions_enabled:
+        return HttpResponseForbidden("Uploads sind gesperrt.")
+    
     submission, _ = Submission.objects.get_or_create(
         unit=unit,
         student=request.user,
     )
 
-    if submission.student_id != request.user.id:
-        return HttpResponseForbidden("Keine Berechtigung.")
-
     if not submission.is_editable_by_student():
-        return HttpResponseForbidden("Uploads sind gesperrt (36h vor nächstem Unterricht).")
+        return HttpResponseForbidden("Uploads sind gesperrt.")
 
     for f in files:
         SubmissionFile.objects.create(submission=submission, file=f)
@@ -547,8 +559,13 @@ def delete_submission_file(request, file_id):
         return HttpResponseForbidden("Löschen ist gesperrt (36h vor nächstem Unterricht).")
 
     slug = submission.unit.module.slug if submission.unit.module else None
+
     sf.delete()
 
+# ✅ Wenn das die letzte Datei war, auch die leere Submission entfernen
+    if not submission.files.exists():
+        submission.delete()
+    
     if slug:
         return redirect("modules:entry_detail", slug=slug)
     return redirect("modules:entry_list")
@@ -566,7 +583,6 @@ class TeacherToggleUnitSubmissionsView(TeacherRequiredMixin, View):
 
         return redirect("modules:teacher_dashboard")
 
-    
 class TeacherSubmissionsDashboardView(TeacherRequiredMixin, TemplateView):
     template_name = "modules/teacher_submissions_dash.html"
 
@@ -574,31 +590,100 @@ class TeacherSubmissionsDashboardView(TeacherRequiredMixin, TemplateView):
         context = super().get_context_data(**kwargs)
 
         User = get_user_model()
-        student_count = User.objects.filter(role=User.STUDENT).count()
-        context["student_count"] = student_count
 
+        # ✅ 1) Alle Schüler laden (damit auch "keine Abgabe" sichtbar ist)
+        students = list(User.objects.filter(role=User.STUDENT).order_by("username", "id"))
+        context["student_count"] = len(students)
+
+        # ✅ 2) Units + Submissions + Files effizient laden
         units = (
             Unit.objects
             .select_related("module")
-            .prefetch_related("submissions")
+            .prefetch_related("submissions__student", "submissions__files")
             .annotate(
                 submissions_count=Count("submissions", distinct=True),
                 files_count=Count("submissions__files", distinct=True),
             )
-        .order_by("number", "date", "id")
+            .order_by("number", "date", "id")
         )
 
-        context["units"] = units
-        context["total_units"] = units.count()
-        context["enabled_units"] = units.filter(submissions_enabled=True).count()
-        
-        context["units"] = units
+        # ✅ 3) Pro Unit: student_rows bauen
+        for u in units:
+            subs_by_student_id = {s.student_id: s for s in u.submissions.all()}
 
+            rows = []
+            for student in students:
+                sub = subs_by_student_id.get(student.id)
+
+                if sub:
+                    files = list(sub.files.all())
+                    has_files = len(files) > 0
+
+                    display_status = sub.status if has_files else None
+
+                    rows.append({
+                        "student_name": getattr(student, "username", str(student)),
+                        "submission_id": sub.id,
+                        "status": display_status,   # ✅ nur wenn has_files
+                        "files": [{"url": f.file.url} for f in files],
+                        "first_file_url": files[0].file.url if has_files else None,
+})
+                else:
+                    rows.append({
+                        "student_name": getattr(student, "username", str(student)),
+                        "submission_id": None,
+                        "status": None,
+                        "files": [],
+                        "first_file_url": None,
+                    })
+
+            u.student_rows = rows
+
+        context["units"] = units
         context["total_units"] = units.count()
         context["enabled_units"] = units.filter(submissions_enabled=True).count()
-        
+
         return context
-    
+
+@login_required
+@require_POST
+def teacher_mark_submission_corrected(request, submission_id):
+    submission = get_object_or_404(Submission, pk=submission_id)
+
+    # Teacher-only (du hast TeacherRequiredMixin nur für CBVs, hier: quick guard)
+    if not getattr(request.user, "is_teacher", False):
+        return HttpResponseForbidden("Nur Lehrkräfte.")
+
+    # Nur wenn eingereicht -> korrigiert
+    Submission.objects.filter(
+        pk=submission.pk,
+        status=Submission.SUBMITTED,
+    ).update(status=Submission.CORRECTED)
+
+    next_url = request.POST.get("next")
+    if next_url:
+        return redirect(next_url)
+    return redirect("modules:teacher_submissions_dashboard")
+
+
+@login_required
+@require_POST
+def teacher_mark_unit_corrected(request, unit_id):
+    unit = get_object_or_404(Unit, pk=unit_id)
+
+    if not getattr(request.user, "is_teacher", False):
+        return HttpResponseForbidden("Nur Lehrkräfte.")
+
+    Submission.objects.filter(
+        unit=unit,
+        status=Submission.SUBMITTED,
+    ).update(status=Submission.CORRECTED)
+
+    next_url = request.POST.get("next")
+    if next_url:
+        return redirect(next_url)
+    return redirect("modules:teacher_submissions_dashboard")
+
 class StudentSubmissionsListView(StudentRequiredMixin, TemplateView):
     template_name = "modules/student_submissions_list.html"
 

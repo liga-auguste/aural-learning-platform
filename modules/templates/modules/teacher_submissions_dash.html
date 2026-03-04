@@ -1,89 +1,190 @@
 {% extends "base.html" %}
 {% block content %}
 
-<section class="teacher-dashboard">
+<section class="teacher-dashboard teacher-submissions">
   <header class="dashboard-header">
     <h2>Hausaufgaben verwalten</h2>
 
-    <p>
-      Freigeschaltet: {{ enabled_units }} / {{ total_units }}
-      {% if active_module %}
-        · Im Moment aktiv: Modul {{ active_module.order }}
-      {% endif %}
-    </p>
   </header>
 
   <table>
-    <thead>
-      <tr>
-        <th>Einheit</th>
-        <th>Modul</th>
-        <th>Status</th>
-        <th>Aktionen</th>
-        <th>Abgaben</th>
-      </tr>
-    </thead>
 
     <tbody>
-      {% for u in units %}
-        <tr>
-          <td>
-            {% if u.number %}{{ u.number }}{% else %}—{% endif %}
-            {% if u.date %} ({{ u.date|date:"d.m.Y H:i" }}){% endif %}
-          </td>
 
-          <td>
-            {% if u.module %}
-              Modul {{ u.module.order }}: {{ u.module.title }}
-            {% else %}
-              —
-            {% endif %}
-          </td>
+{% for u in units %}
 
-          <td>
-            {% if u.submissions_enabled %}
-              ✅ freigeschaltet
-            {% else %}
-              ⛔ gesperrt
-            {% endif %}
-          </td>
+  <tr>
+    <td colspan="4">
+      <details class="unit-accordion">
 
-          
+        {# ✅ Klickbare "Row" (öffnet Details) #}
+        <summary class="unit-row unit-row--summary">
+          <div class="unit-grid">
 
-          <td>
-          <div style="display:flex; gap:0.5rem; flex-wrap:wrap;">
+            {# 1) Modul #}
+            <div class="unit-cell unit-cell--module">
 
-            {# 1️⃣ Freischalten / Sperren #}
-          <form method="post" action="{% url 'modules:teacher_toggle_unit_submissions' u.id %}">
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ request.path }}">
-            <button type="submit">
-            {% if u.submissions_enabled %}
-            Sperren
-            {% else %}
-            Freischalten
-            {% endif %}
-            </button>
-          </form>
+              <div class="unit-meta">
+                <div class="unit-title">
+                
+                {% if u.module %}
+                  {{ u.module.title }}
+                  {% else %}
+                  <div class="unit-title">—</div>
+                  {% endif %}
+                </div>
+  
+                <div class="unit-sub muted">
+                {{ u.submissions_count }} / {{ student_count }} Abgaben
+                {% if u.files_count %}
+                 · {{ u.files_count }} Datei{{ u.files_count|pluralize:"en" }}
+                {% endif %}
+                </div>
+              </div>
+            </div>
 
-    {# 2️⃣ PDFs herunterladen (nur wenn eine Unit existiert) #}
-    <a href="{% url 'modules:teacher_unit_submissions_downloads' u.id %}">
-      <button type="button">
-        PDFs herunterladen
-      </button>
-    </a>
-
-  </div>
-          </td>
-
-          <td>
-            {{ u.submissions_count }} / {{ student_count }}
-              {% if u.files_count %}
-              <div class="muted">{{ u.files_count }} Datei{{ u.files_count|pluralize:"en" }}</div>
+            {# 2) Datum (ohne Uhrzeit) #}
+            <div class="unit-cell unit-cell--date">
+              {% if u.date %}
+                {{ u.date|date:"d.m.Y" }}
+              {% else %}
+                —
               {% endif %}
-          </td>
-        </tr>
-      {% endfor %}
+            </div>
+
+            {# 3) Status Toggle #}
+            <div class="unit-cell unit-cell--status" onclick="event.stopPropagation()">
+              <form method="post" action="{% url 'modules:teacher_toggle_unit_submissions' u.id %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.path }}">
+
+                <label class="toggle" onclick="event.stopPropagation()">
+                  <input
+                    type="checkbox"
+                    {% if u.submissions_enabled %}checked{% endif %}
+                    onchange="this.form.submit()"
+                  >
+                  <span class="toggle__track" aria-hidden="true"></span>
+                  <span class="toggle__label">
+                    {% if u.submissions_enabled %}aktiv{% else %}inaktiv{% endif %}
+                  </span>
+                </label>
+              </form>
+            </div>
+
+            {# 4) Aktionen (PDF Download) #}
+            <div class="unit-cell unit-cell--actions" onclick="event.stopPropagation()">
+              <div class="sub-actions">
+                {% if u.files_count %}
+                  <a href="{% url 'modules:teacher_unit_submissions_downloads' u.id %}">
+                    <button type="button">PDFs herunterladen</button>
+                  </a>
+                {% else %}
+                  <button type="button" disabled title="Noch keine PDFs vorhanden">PDFs herunterladen</button>
+                {% endif %}
+              </div>
+            </div>
+
+          </div>
+        </summary>
+
+        {# ✅ Details: Schüler-Tabelle #}
+        <div class="unit-details__box">
+
+          <table class="submissions-table">
+
+            <tbody>
+              {% for row in u.student_rows %}
+                <tr>
+                  <td>{{ row.student_name }}</td>
+
+                  <td class="subm-files">
+                      {% if row.files %}
+                      <span class="file-check">✓</span>
+                      <span class="muted">Datei vorhanden</span>
+                      {% else %}
+                      <span class="muted">—</span>
+                      {% endif %}
+                  </td>
+
+                  <td class="subm-status">
+  {% if not row.files %}
+    <div class="subm-statusbar">
+      <div class="subm-statusbar__labels">
+        <span class="muted">keine Abgabe</span>
+      </div>
+
+      <div class="course-progress__bar" role="progressbar"
+           aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <div class="course-progress__fill" style="width: 0%;"></div>
+      </div>
+    </div>
+
+  {% elif row.status == "CORRECTED" %}
+    <div class="subm-statusbar">
+      <div class="subm-statusbar__labels">
+        <span>korrigiert</span>
+      </div>
+
+      <div class="course-progress__bar" role="progressbar"
+           aria-valuenow="100" aria-valuemin="0" aria-valuemax="100">
+        <div class="course-progress__fill is-corrected" style="width: 100%;"></div>
+      </div>
+    </div>
+
+  {% else %}
+    <div class="subm-statusbar">
+      <div class="subm-statusbar__labels">
+        <span>eingereicht</span>
+      </div>
+
+      <div class="course-progress__bar" role="progressbar"
+           aria-valuenow="66" aria-valuemin="0" aria-valuemax="100">
+        <div class="course-progress__fill is-submitted" style="width: 66%;"></div>
+      </div>
+    </div>
+  {% endif %}
+</td>
+
+                  <td>
+                    <div class="sub-actions">
+                      {% if row.submission_id and row.files %}
+                        <a href="{{ row.first_file_url }}" target="_blank" rel="noopener">
+                          <button type="button">Öffnen</button>
+                        </a>
+                      {% else %}
+                        <button type="button" disabled>Öffnen</button>
+                      {% endif %}
+
+                      {% if row.submission_id and row.status == "SUBMITTED" %}
+                        <form class="mark-corrected" method="post" action="{% url 'modules:teacher_mark_submission_corrected' row.submission_id %}">
+                          {% csrf_token %}
+                          <input type="hidden" name="next" value="{{ request.path }}">
+                          <button type="submit" class="btn btn-primary"> Als korrigiert markieren</button>
+                        </form>
+                      {% endif %}
+                    </div>
+                  </td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+
+          {% if u.submissions_count %}
+            <form class="unit-bulk" method="post" action="{% url 'modules:teacher_mark_unit_corrected' u.id %}" style="margin-top:0.75rem;">
+              {% csrf_token %}
+              <input type="hidden" name="next" value="{{ request.path }}">
+              <button type="submit">Alle in dieser Einheit als korrigiert markieren</button>
+            </form>
+          {% endif %}
+
+        </div>
+      </details>
+    </td>
+  </tr>
+
+{% endfor %}
+
     </tbody>
   </table>
 </section>

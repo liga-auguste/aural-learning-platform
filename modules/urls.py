@@ -58,6 +58,7 @@ urlpatterns = [
     path("submission-files/<int:file_id>/delete/", views.delete_submission_file, name="delete_submission_file"),
     path("teacher/submissions/", views.TeacherSubmissionsDashboardView.as_view(), name="teacher_submissions_dashboard",),
     path("teacher/units/<int:pk>/toggle-submissions/", views.TeacherToggleUnitSubmissionsView.as_view(), name="teacher_toggle_unit_submissions",),
+    path("teacher/submissions/mark/<int:submission_id>/corrected/", views.teacher_mark_submission_corrected, name="teacher_mark_submission_corrected"), path("teacher/submissions/unit/<int:unit_id>/corrected/", views. teacher_mark_unit_corrected, name="teacher_mark_unit_corrected"),
     path("teacher/units/<int:pk>/downloads/", views.SubmissionsDownloadView.as_view(), name="teacher_unit_submissions_downloads",),
     path("student/", StudentDashboardView.as_view(), name="student_dashboard"),
     path("student/submissions/", StudentSubmissionsListView.as_view(), name="student_submissions_list"),

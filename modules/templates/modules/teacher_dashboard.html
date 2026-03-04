@@ -18,9 +18,11 @@
       </div>
 
       <div class="kpi">
-        <div class="kpi-label">Abschlüsse</div>
-        <div class="kpi-value">{{ completion_count }}</div>
+        <div class="kpi-label">Zu korrigieren</div>
+        <div class="kpi-value">{{ pending_submissions_count }}</div>
+        <div class="kpi-sub">Abgaben{% if pending_students_count %} · {{pending_students_count }} Schüler{% endif %}</div>
       </div>
+
     </div>
 
     <div class="course-progress">
@@ -47,21 +49,6 @@
       <div class="tile-sub">Inhalte ansehen</div>
     </a>
 
-    <a class="tile" href="{% url 'modules:teacher_student_list' %}">
-      <div class="tile-title">Schülerfortschritt</div>
-      <div class="tile-sub">Übersicht & Details</div>
-    </a>
-
-    <a class="tile" href="{% url 'modules:exam_requirements' %}">
-      <div class="tile-title">Prüfungsanforderungen</div>
-      <div class="tile-sub">Curriculum ansehen</div>
-    </a>
-
-    <a class="tile" href="{% url 'modules:glossary_list' %}">
-      <div class="tile-title">Glossar</div>
-      <div class="tile-sub">Begriffe nachschlagen</div>
-    </a>
-
     <a class="tile" href="{% url 'modules:teacher_submissions_dashboard' %}">
       <div class="tile-title">Hausaufgaben verwalten</div>
       <div class="tile-sub">
@@ -72,6 +59,22 @@
     {% endif %}
       </div>
     </a>
+    
+    <a class="tile" href="{% url 'modules:exam_requirements' %}">
+      <div class="tile-title">Prüfungsanforderungen</div>
+      <div class="tile-sub">Curriculum ansehen</div>
+    </a>
+    
+    <a class="tile" href="{% url 'modules:teacher_student_list' %}">
+      <div class="tile-title">Schülerfortschritt</div>
+      <div class="tile-sub">Übersicht & Details</div>
+    </a>
+
+    <a class="tile" href="{% url 'modules:glossary_list' %}">
+      <div class="tile-title">Glossar</div>
+      <div class="tile-sub">Begriffe nachschlagen</div>
+    </a>
+
 
   </div>
 
