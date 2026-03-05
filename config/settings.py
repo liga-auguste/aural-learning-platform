@@ -47,7 +47,6 @@ INSTALLED_APPS = [
 
     "accounts.apps.AccountsConfig",
     "modules.apps.ModulesConfig",
-    "entries.apps.EntriesConfig",
 ]
 
 AUTH_USER_MODEL = "accounts.User"
