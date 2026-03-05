@@ -210,6 +210,11 @@ class EntryCreateView(TeacherRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "modules/entry_form.html"
     success_url = reverse_lazy("modules:entry_list")
     success_message = "Das Modul wurde erstellt!"
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["tasktype_tags"] = Tag.objects.all().order_by("name")
+        return ctx
 
 class EntryUpdateView(TeacherRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Module
@@ -273,12 +278,45 @@ class GlossaryListView(LockedView, ListView):
     context_object_name = "terms"
 
     def get_queryset(self):
-        return (
+        qs = (
             GlossaryEntry.objects
             .all()
             .prefetch_related("modules")
-            .order_by("title")
         )
+
+        # --- Filter ---
+        filter_val = self.request.GET.get("filter", "all")
+        if filter_val == "exam":
+            qs = qs.filter(exam_relevant=True)
+        elif filter_val == "non_exam":
+            qs = qs.filter(exam_relevant=False)
+
+        # --- Sort ---
+        sort_val = self.request.GET.get("sort", "az")
+        if sort_val == "count":
+            qs = qs.annotate(modules_count=Count("modules", distinct=True)).order_by("-modules_count", "title")
+        else:
+            qs = qs.order_by("title")
+
+        return qs
+    
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["current_filter"] = self.request.GET.get("filter", "all")
+        ctx["current_sort"] = self.request.GET.get("sort", "az")
+        return ctx
+
+@login_required
+@require_POST
+def glossary_toggle_exam(request, pk):
+    if not getattr(request.user, "is_teacher", False):
+        return HttpResponseForbidden("Nur Lehrkräfte.")
+
+    term = get_object_or_404(GlossaryEntry, pk=pk)
+    term.exam_relevant = not term.exam_relevant
+    term.save(update_fields=["exam_relevant"])
+
+    return redirect(request.POST.get("next", "/glossar/"))
 
 class ExamRequirementsView(TemplateView):
     template_name = "modules/exam_requirements.html"
@@ -603,6 +641,12 @@ class TeacherSubmissionsDashboardView(TeacherRequiredMixin, TemplateView):
             .annotate(
                 submissions_count=Count("submissions", distinct=True),
                 files_count=Count("submissions__files", distinct=True),
+
+                uploaded_students_count=Count(
+                    "submissions",
+                    filter=Q(submissions__files__isnull=False),
+                    distinct=True,
+                ),
             )
             .order_by("number", "date", "id")
         )

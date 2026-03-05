@@ -28,23 +28,65 @@
   </div>
 
   <div class="form-row">
-    {{ form.tasktype.label_tag }}
+  <label for="{{ form.tasktype.id_for_label }}">Aufgabentypen:</label>
+
+  <div class="form-value">
+    
+    <details class="select-panel" id="tasktype-panel">
+      <summary class="select-summary">
+        <span>Aufgabentypen auswählen/hinzufügen</span>
+        <span class="select-hint">(anzeigen)</span>
+      </summary>
+      
+      <div class="select-body">
+        <div class="tasktype-chips" id="tasktype-chips">
+          {# Beispiel: Chips serverseitig rendern (Tags kommen aus context) #}
+          
+          {% for tag in tasktype_tags %}
+          <button type="button" class="chip" data-tag="{{ tag.name }}">{{ tag.name }}</button>
+          {% endfor %}
+        </div>
+      </div>
+    </details>
+  </div>
+  
+  <div class="form-value">
     {{ form.tasktype }}
     {{ form.tasktype.errors }}
   </div>
+</div>
+
 
   <div class="form-row">
-    <label for="{{ form.glossary_entries.id_for_label }}">
+  <label for="{{ form.glossary_entries.id_for_label }}">
     {{ form.glossary_entries.label }}
   </label>
+
   <div class="form-value">
-    {{ form.glossary_entries }}
-    {% if form.glossary_entries.help_text %}
-      <p class="help">{{ form.glossary_entries.help_text }}</p>
-    {% endif %}
-    {{ form.glossary_entries.errors }}
+    <details class="form-collapsible" {% if form.glossary_entries.value %}open{% endif %}>
+      <summary class="form-collapsible__summary">
+        Lernbegriffe auswählen
+        <span class="form-collapsible__meta">
+          {% if form.glossary_entries.value %}
+            (ausgewählt)
+          {% else %}
+            (anzeigen)
+          {% endif %}
+        </span>
+      </summary>
+
+      <div class="form-collapsible__content">
+        {{ form.glossary_entries }}
+
+        {% if form.glossary_entries.help_text %}
+          <p class="help">{{ form.glossary_entries.help_text }}</p>
+        {% endif %}
+
+        {{ form.glossary_entries.errors }}
+      </div>
+    </details>
   </div>
-  </div>
+</div>
 
 <div class="form-row">
   <label>Materialien</label>

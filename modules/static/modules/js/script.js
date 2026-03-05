@@ -161,3 +161,71 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if ((input?.value || "").trim() !== "") open();
 });
+
+// Aufgabentypen
+(function () {
+
+  const input = document.querySelector('input[name="tasktype"]');
+  const container = document.getElementById("tasktype-chips");
+  if (!input || !container) return;
+
+  function parseTags(value){
+    return value
+      .split(",")
+      .map(t => t.trim())
+      .filter(Boolean);
+  }
+
+  function setTags(tags){
+    input.value = tags.join(", ");
+  }
+
+  function updateChipState(tags){
+
+    const chips = [...container.querySelectorAll(".chip")];
+
+    chips.forEach(chip=>{
+      const tag = chip.dataset.tag.toLowerCase();
+
+      if(tags.some(t => t.toLowerCase() === tag)){
+        chip.classList.add("active");
+      }else{
+        chip.classList.remove("active");
+      }
+    });
+
+    // aktive Chips nach vorne sortieren
+    chips
+      .sort((a,b)=>{
+        const aActive = a.classList.contains("active");
+        const bActive = b.classList.contains("active");
+        return (bActive - aActive);
+      })
+      .forEach(chip => container.appendChild(chip));
+  }
+
+  container.addEventListener("click", e=>{
+
+    const chip = e.target.closest(".chip");
+    if(!chip) return;
+
+    const tag = chip.dataset.tag.trim();
+    let tags = parseTags(input.value);
+
+    const index = tags.findIndex(t => t.toLowerCase() === tag.toLowerCase());
+
+    if(index >= 0){
+      tags.splice(index,1);
+    }else{
+      tags.push(tag);
+    }
+
+    setTags(tags);
+    updateChipState(tags);
+
+  });
+
+  // Initialzustand setzen
+  updateChipState(parseTags(input.value));
+
+})();

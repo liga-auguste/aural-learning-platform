@@ -47,6 +47,8 @@ urlpatterns = [
     # Rest
     path("tasktypes/", TaskTypeListView.as_view(), name="tasktype_list"),
     path("glossar/", GlossaryListView.as_view(), name="glossary_list"),
+    path( "glossar/toggle-exam/<int:pk>/", views.glossary_toggle_exam, name="glossary_toggle_exam",
+),
     path("pruefungsanforderungen/", ExamRequirementsView.as_view(), name="exam_requirements"),
 
     path("teacher/", views.TeacherDashboardView.as_view(), name="teacher_dashboard"),

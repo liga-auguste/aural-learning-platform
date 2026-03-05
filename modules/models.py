@@ -298,8 +298,8 @@ class Unit(models.Model):
 
     class Meta:
         ordering = ["date", "id"]
-        verbose_name = "Unterrichtseinheit"
-        verbose_name_plural = "Unterrichtseinheiten"
+        verbose_name = "Hausaufgabenabgabe"
+        verbose_name_plural = "Hausaufgabenabgaben"
         constraints = [
             # Nummer darf (wenn gesetzt) nur einmal vorkommen.
             models.UniqueConstraint(
@@ -337,13 +337,28 @@ class Unit(models.Model):
         # aber du kannst hier auch erzwingen, dass REGULAR ein Modul haben muss.
         # if self.kind == self.REGULAR and self.module is None:
         #     raise ValidationError({"module": "Reguläre Einheiten sollten einem Modul zugeordnet sein."})
-
+        
     def __str__(self):
-        date_str = timezone.localtime(self.date).strftime("%Y-%m-%d %H:%M")
-        num = f"Einheit {self.number}" if self.number is not None else "Einheit"
-        mod = f" – Modul {self.module.order}" if self.module and self.module.order is not None else ""
-        title = f" – {self.title}" if self.title else ""
-        return f"{num} ({date_str}){mod}{title}"
+        date_str = timezone.localtime(self.date).strftime("%Y-%m-%d")
+
+        if self.module:
+            order = getattr(self.module, "order", None)
+            title = (getattr(self.module, "title", "") or "").strip()
+
+        # Basis: "Modul X" (wenn order existiert) sonst nur Titel
+            base = f"Modul {order}" if order is not None else (title or "Modul")
+
+        # Titel nur ergänzen, wenn er nicht redundant ist (z.B. "Modul 1")
+            if title and title.lower() != base.lower():
+                base = f"{base} – {title}"
+
+            return f"{base} ({date_str})"
+
+        if self.title:
+            return f"{self.title} ({date_str})"
+
+        kind_label = dict(self.KIND_CHOICES).get(self.kind, self.kind)
+        return f"{kind_label} ({date_str})"
 
     @property
     def is_regular(self) -> bool:
@@ -430,6 +445,14 @@ class Submission(models.Model):
         # Safety: Sicherstellen, dass wirklich Student-Role.
         if hasattr(self.student, "is_student") and not self.student.is_student:
             raise ValidationError({"student": "Nur Nutzer mit Rolle 'Schüler' können Abgaben haben."})
+        
+        # ✅ Regel: "Eingereicht" / "Korrigiert" nur, wenn mind. 1 Datei existiert
+        # (bei neuem Objekt ohne pk kann man Inlines noch nicht prüfen)
+        if self.pk and self.status in {self.SUBMITTED, self.CORRECTED}:
+            if not self.files.exists():
+                raise ValidationError({
+                    "status": "Status 'Eingereicht'/'Korrigiert' ist nur erlaubt, wenn mindestens eine PDF hochgeladen wurde."}
+                )
 
 
 def submission_file_upload_path(instance: "SubmissionFile", filename: str) -> str:

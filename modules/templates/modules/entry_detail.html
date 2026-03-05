@@ -42,7 +42,7 @@
         {{ tag.name }}
       </a>
     {% empty %}
-      <span class="muted">keine Aufgabentypen</span>
+      <span class="muted form-value">keine Aufgabentypen</span>
     {% endfor %}
   </div>
 </div>
@@ -200,149 +200,100 @@
 
 </div>
 
- <h2>Abgabe</h2>
+<h3>Abgabe</h3>
 
-<!-- {# =========================
-   LEHRKRAFT
-   ========================= #} -->
 {% if request.user.is_authenticated and request.user.is_teacher %}
 
-  <div class="teacher-submission-status">
+<div class="form-grid">
 
-    <div class="status-line">
-      <strong>Hausaufgabe:</strong>
+  <div class="form-row">
+    <label>Hausaufgabe</label>
+    <div class="form-value">
       {% if object.pdf_3 %}
         <span class="status-ok">✓ PDF vorhanden</span>
       {% else %}
         <span class="status-off">✕ kein PDF</span>
       {% endif %}
     </div>
+  </div>
 
-    <div class="status-line">
-      <strong>Unterrichtseinheit:</strong>
+  <div class="form-row">
+    <label>Unterrichtseinheit</label>
+    <div class="form-value">
       {% if unit %}
-        <span class="status-ok">✓ verknüpft: {{ unit }}</span>
+        <span class="status-ok">✓ verknüpft</span>
       {% else %}
         <span class="status-off">✕ keine Unit</span>
       {% endif %}
     </div>
-
-    <div class="status-line">
-      <strong>Freischaltung:</strong>
-      {% if unit and unit.submissions_enabled %}
-        <span class="status-ok">✓ aktiviert</span>
-      {% elif unit %}
-        <span class="status-off">✕ deaktiviert</span>
-      {% else %}
-        <span class="status-neutral">—</span>
-      {% endif %}
-    </div>
-
   </div>
 
+  <div class="form-row span-2">
+    <label>Freischaltung</label>
+    <div class="form-value form-value--plain">
+      {% if unit %}
+        <form method="post" action="{% url 'modules:teacher_toggle_unit_submissions' unit.id %}">
+          {% csrf_token %}
+          <input type="hidden" name="next" value="{{ request.path }}">
 
-{# =========================
-   SCHÜLER
-   ========================= #}
-{% elif request.user.is_authenticated and request.user.is_student %}
+          <label class="toggle">
+            <input
+              type="checkbox"
+              {% if unit.submissions_enabled %}checked{% endif %}
+              onchange="this.form.submit()"
+            >
+            <span class="toggle__track" aria-hidden="true"></span>
+            <span class="toggle__label">
+              {% if unit.submissions_enabled %}aktiv{% else %}inaktiv{% endif %}
+            </span>
+          </label>
+        </form>
+      {% else %}
+        <span class="muted">—</span>
+      {% endif %}
+    </div>
+  </div>
 
-  <p class="muted">
-  DEBUG:
-  unit={{ unit|default:"None" }},
-  enabled={{ unit.submissions_enabled|default:"-" }},
-  can_edit={{ can_edit }},
-  lock_at={{ lock_at|default:"-" }},
-  submission={{ submission.id|default:"-" }}
-</p>
+  <div class="form-row span-2">
+    <label>Uploads</label>
+    <div class="form-value form-value--plain">
 
-  {% if not unit %}
-    <p class="muted">
-      Für dieses Modul ist noch keine Unterrichtseinheit geplant.
-    </p>
+      {% if u.module %}
+                  {{ u.module.title }}
+                  {% else %}
+                  <div class="unit-title">—</div>
+                  {% endif %}
+                </div>
+  
+                <div class="unit-sub muted">
+                {{ u.submissions_count }} / {{ student_count }} Abgaben
+                {% if u.files_count %}
+                 · {{ u.files_count }} Datei{{ u.files_count|pluralize:"en" }}
+                {% endif %}
 
-  {% elif not unit.submissions_enabled %}
-    <p class="muted">
-      <strong>Abgabe noch nicht freigeschaltet.</strong>
-    </p>
+        <div class="sub-actions">
+          <a href="{% url 'modules:teacher_submissions_dashboard' %}">
+            <button type="button">Zur Abgaben-Übersicht</button>
+          </a>
 
-  {% else %}
-    <section class="card homework">
+          {% if unit.files_count %}
+            <a href="{% url 'modules:teacher_unit_submissions_downloads' unit.id %}">
+              <button type="button">Schülerdateien holen</button>
+            </a>
+          {% else %}
+            <button type="button" disabled>Schülerdateien holen</button>
+          {% endif %}
+        </div>
 
-      <header class="card-header flex-between">
-        <h3>Hausaufgaben Upload</h3>
-
-      </header>
-
-      {% if not can_edit %}
-        <p class="muted">
-          Uploads sind aktuell gesperrt.
-        </p>
+      {% else %}
+        <span class="muted">Noch keine Hausaufgabe vorhanden.</span>
       {% endif %}
 
-      {# ===== Upload-Form ===== #}
-      <form method="post"
-            action="{% url 'modules:upload_submission_file' unit.id %}"
-            enctype="multipart/form-data"
-            class="upload-form">
-        {% csrf_token %}
+    </div>
+  </div>
 
-        <div class="form-row">
-          <label for="files">Dateien auswählen</label>
-          <input id="files"
-                 type="file"
-                 name="files"
-                 multiple
-                 accept=".pdf,application/pdf"
-                 {% if not can_edit %}disabled{% endif %}>
-        </div>
+</div>
 
-        <div class="btn-group">
-          <button class="btn"
-                  type="submit"
-                  {% if not can_edit %}disabled{% endif %}>
-            PDF(s) hochladen
-          </button>
-        </div>
-
-        <p class="muted" style="margin-top:.5rem;">
-          Mehrere PDFs sind möglich.
-        </p>
-      </form>
-
-      {# ===== Bereits hochgeladene Dateien ===== #}
-      <div class="uploaded-files">
-        <h4>Meine hochgeladenen Dateien</h4>
-
-        {% if submission and submission.files.exists %}
-          <ul class="file-list">
-            {% for f in submission.files.all %}
-              <li class="file-row flex-between">
-                <a href="{{ f.file.url }}" target="_blank" rel="noopener">
-                  {{ f.file.name|cut:"submissions/" }}
-                </a>
-
-                {% if can_edit %}
-                  <form method="post"
-                        action="{% url 'modules:delete_submission_file' f.id %}"
-                        style="display:inline;">
-                    {% csrf_token %}
-                    <button class="btn btn-danger" type="submit">
-                      Entfernen
-                    </button>
-                  </form>
-                {% endif %}
-              </li>
-            {% endfor %}
-          </ul>
-        {% else %}
-          <p class="muted">Noch keine Dateien hochgeladen.</p>
-        {% endif %}
-      </div>
-
-    </section>
-  {% endif %}
-
-{% endif %}
 <div class="form-actions">
 
   {# ================= TEACHER ONLY ================= #}
@@ -382,8 +333,6 @@
     </a>
 
   {% endif %}
-  {# ================================================= #}
-
 
   {# ===== Toggle Complete (Schüler + ggf. Teacher) ===== #}
   <form method="post"
