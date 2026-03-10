@@ -2451,6 +2451,73 @@ thon
   color: var(--bcg-col);
 }
 
+/* ---- Abgaben-Liste (Schüler) ---- */
+.submission-list {
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+  margin: 1.25rem 0;
+}
+
+.submission-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: .75rem 1rem;
+  border: 1px solid var(--lecture-hover);
+  border-radius: var(--r-card);
+  background: var(--lecture-bcg);
+}
+
+.submission-item--corrected {
+  border-color: hsl(145, 50%, 55%);
+  background: color-mix(in srgb, hsl(145, 50%, 55%) 8%, var(--lecture-bcg));
+}
+
+.submission-item__info {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: .4rem .75rem;
+}
+
+.submission-item__unit {
+  font-weight: 600;
+}
+
+.submission-item__right {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  flex-shrink: 0;
+}
+
+/* ---- Abgabe-Datei-Liste (Detail) ---- */
+.submission-file-list {
+  list-style: none;
+  padding: 0;
+  margin: .75rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.submission-file-item {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .5rem .75rem;
+  border: 1px solid var(--lecture-hover);
+  border-radius: var(--r-card);
+  background: var(--lecture-bcg);
+}
+
+.submission-file-item__name {
+  flex: 1;
+  font-weight: 500;
+}
+
 .course-progress {
   margin: 0.75rem 0 1.25rem;
 }

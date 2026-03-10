@@ -1,172 +1,128 @@
 {% extends "base.html" %}
+{% block title %}Meine Abgaben{% endblock %}
 
 {% block content %}
+<section class="teacher-dashboard teacher-submissions">
 
-<section class="teacher-dashboard">
   <header class="dashboard-header">
     <h2>Meine Abgaben</h2>
-
-    <div class="kpi-row">
-      <div class="kpi">
-        <div class="kpi-label">Freigeschaltet</div>
-        <div class="kpi-value">{{ counts.enabled_units }}</div>
-        <div class="kpi-sub">Hausaufgaben insgesamt</div>
-      </div>
-
-      <div class="kpi">
-        <div class="kpi-label">Offen</div>
-        <div class="kpi-value">{{ counts.open }}</div>
-        <div class="kpi-sub">noch nicht eingereicht</div>
-      </div>
-
-      <div class="kpi">
-        <div class="kpi-label">In Korrektur</div>
-        <div class="kpi-value">{{ counts.submitted }}</div>
-        <div class="kpi-sub">{{ counts.corrected }} korrigiert</div>
-      </div>
-
-      <div class="kpi">
-        <div class="kpi-label">Gesperrt</div>
-        <div class="kpi-value">{{ counts.locked }}</div>
-        <div class="kpi-sub">36h-Regel aktiv</div>
-      </div>
-    </div>
   </header>
 
-  {# -------------------------
-     1) GESPERRT
-     ------------------------- #}
-  <section class="dashboard-notes">
-    <h2>Gesperrt</h2>
-    {% if counts.locked == 0 %}
-      <p>Keine gesperrten Hausaufgaben 🎉</p>
-    {% else %}
-      <div class="tile-grid">
-        {% for row in rows %}
-          {% if row.status == "locked" %}
-            <a class="tile" href="#">
-              {# TODO: sinnvoller Link (z.B. Unit-Detail oder Abgaben-Info) #}
+  {% if rows %}
+  <table>
+    <tbody>
+      {% for row in rows %}
+      <tr>
+        <td colspan="4">
+          <details class="unit-accordion">
 
-              <div class="tile-title">
-                Einheit {{ row.unit.number|default:"—" }}
-                <span class="badge badge--locked">gesperrt</span>
+            <summary class="unit-row unit-row--summary">
+              <div class="unit-grid">
+
+                {# 1) Modul / Einheit #}
+                <div class="unit-cell unit-cell--module">
+                  <div class="unit-meta">
+                    <div class="unit-title">
+                      {% if row.module %}{{ row.module.title }}{% else %}—{% endif %}
+                    </div>
+                    <div class="unit-sub muted">
+                      {% if row.unit.number %}Einheit {{ row.unit.number }}{% else %}Hausaufgabe{% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                {# 2) Datum #}
+                <div class="unit-cell unit-cell--date">
+                  {% if row.unit.date %}{{ row.unit.date|date:"d.m.Y" }}{% else %}—{% endif %}
+                </div>
+
+                {# 3) Statusbalken #}
+                <div class="unit-cell unit-cell--status">
+                  <div class="subm-statusbar">
+                    <div class="subm-statusbar__labels">
+                      {% if row.status == "open" %}
+                        <span class="muted">offen</span>
+                      {% elif row.status == "locked" %}
+                        <span class="muted">gesperrt</span>
+                      {% elif row.status == "submitted" %}
+                        <span>eingereicht</span>
+                      {% elif row.status == "corrected" %}
+                        <span>korrigiert</span>
+                      {% endif %}
+                    </div>
+                    <div class="course-progress__bar" role="progressbar">
+                      {% if row.status == "corrected" %}
+                        <div class="course-progress__fill is-corrected" style="width:100%"></div>
+                      {% elif row.status == "submitted" %}
+                        <div class="course-progress__fill is-submitted" style="width:66%"></div>
+                      {% else %}
+                        <div class="course-progress__fill" style="width:0%"></div>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+
+                {# 4) Aktion #}
+                <div class="unit-cell unit-cell--actions" onclick="event.stopPropagation()">
+                  <div class="sub-actions">
+                    {% if row.submission %}
+                      <a href="{% url 'modules:student_submission_detail' row.submission.pk %}">
+                        <button type="button">Ansehen</button>
+                      </a>
+                    {% elif row.status == "open" and row.module %}
+                      <a href="{% url 'modules:entry_detail' row.module.slug %}">
+                        <button type="button">Einreichen</button>
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+
               </div>
+            </summary>
 
-              <div class="tile-sub">
-                Modul: {{ row.module.title }}
-                {% if row.lock_at %}
-                  · gesperrt seit {{ row.lock_at|date:"d.m.Y H:i" }}
+            {# Aufgeklappter Bereich #}
+            <div class="unit-details__box">
+              {% if row.submission %}
+                <table class="submissions-table">
+                  <tbody>
+                    {% for file in row.submission.files.all %}
+                    <tr>
+                      <td>{{ file.display_name|default:file.file.name }}</td>
+                      <td class="muted">{{ file.uploaded_at|date:"d.m.Y, H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr><td class="muted">Keine Dateien hochgeladen.</td></tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                {% if row.submission.note_from_student %}
+                  <p class="muted" style="margin-top:.5rem">{{ row.submission.note_from_student }}</p>
                 {% endif %}
-              </div>
-            </a>
-          {% endif %}
-        {% endfor %}
-      </div>
-    {% endif %}
-  </section>
+              {% elif row.status == "open" %}
+                <p class="muted">Noch nicht eingereicht.
+                  {% if row.module %}
+                    <a href="{% url 'modules:entry_detail' row.module.slug %}">→ Zum Modul</a>
+                  {% endif %}
+                </p>
+              {% else %}
+                <p class="muted">Keine Abgabe vorhanden.</p>
+              {% endif %}
+            </div>
 
-  {# -------------------------
-     2) OFFEN
-     ------------------------- #}
-  <section class="dashboard-notes">
-    <h2>Offen</h2>
-    {% if counts.open == 0 %}
-      <p>Keine offenen Hausaufgaben.</p>
-    {% else %}
-      <div class="tile-grid">
-        {% for row in rows %}
-          {% if row.status == "open" %}
-            <a class="tile" href="#">
-              {# TODO: Link zur Unit/Submission-Startseite (Upload/Abgabe starten) #}
+          </details>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
 
-              <div class="tile-title">
-                Einheit {{ row.unit.number|default:"—" }}
-                <span class="badge badge--open">offen</span>
-              </div>
+  {% else %}
+  <p class="muted">Noch keine freigeschalteten Hausaufgaben.</p>
+  {% endif %}
 
-              <div class="tile-sub">
-                Modul: {{ row.module.title }}
-                {% if row.unit.date %}
-                  · Termin: {{ row.unit.date|date:"d.m.Y" }}
-                {% endif %}
-              </div>
-            </a>
-          {% endif %}
-        {% endfor %}
-      </div>
-    {% endif %}
-  </section>
-
-  {# -------------------------
-     3) IN KORREKTUR (SUBMITTED)
-     ------------------------- #}
-  <section class="dashboard-notes">
-    <h2>In Korrektur</h2>
-    {% if counts.submitted == 0 %}
-      <p>Aktuell ist nichts in Korrektur.</p>
-    {% else %}
-      <div class="tile-grid">
-        {% for row in rows %}
-          {% if row.status == "submitted" %}
-            <a class="tile" href="#">
-              {# TODO: Link zur Submission-Detailseite (Dateien anzeigen, ggf. Notiz) #}
-
-              <div class="tile-title">
-                Einheit {{ row.unit.number|default:"—" }}
-                <span class="badge badge--submitted">in Korrektur</span>
-              </div>
-
-              <div class="tile-sub">
-                Modul: {{ row.module.title }}
-                {% if row.submission.submitted_at %}
-                  · eingereicht: {{ row.submission.submitted_at|date:"d.m.Y H:i" }}
-                {% endif %}
-                {% if row.submission and row.submission.files.all|length %}
-                  · Dateien: {{ row.submission.files.all|length }}
-                {% endif %}
-              </div>
-            </a>
-          {% endif %}
-        {% endfor %}
-      </div>
-    {% endif %}
-  </section>
-
-  {# -------------------------
-     4) KORRIGIERT
-     ------------------------- #}
-  <section class="dashboard-notes">
-    <h2>Korrigiert</h2>
-    {% if counts.corrected == 0 %}
-      <p>Noch keine korrigierten Abgaben.</p>
-    {% else %}
-      <div class="tile-grid">
-        {% for row in rows %}
-          {% if row.status == "corrected" %}
-            <a class="tile" href="#">
-              {# TODO: Link zur Submission-Detailseite (Feedback/Downloads) #}
-
-              <div class="tile-title">
-                Einheit {{ row.unit.number|default:"—" }}
-                <span class="badge badge--corrected">korrigiert</span>
-              </div>
-
-              <div class="tile-sub">
-                Modul: {{ row.module.title }}
-                {% if row.submission.updated_at %}
-                  · aktualisiert: {{ row.submission.updated_at|date:"d.m.Y H:i" }}
-                {% endif %}
-                {% if row.submission and row.submission.files.all|length %}
-                  · Dateien: {{ row.submission.files.all|length }}
-                {% endif %}
-              </div>
-            </a>
-          {% endif %}
-        {% endfor %}
-      </div>
-    {% endif %}
-  </section>
+  <div class="form-actions">
+    <a class="btn" href="{% url 'modules:student_dashboard' %}">← Zurück</a>
+  </div>
 
 </section>
-
 {% endblock %}

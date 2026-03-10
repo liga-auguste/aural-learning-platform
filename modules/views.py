@@ -852,13 +852,19 @@ class StudentSubmissionsDetailView(StudentRequiredMixin, DetailView):
     context_object_name = "submission"
 
     def get_queryset(self):
-        # Nur eigene Abgaben + die zugehörigen Objekte effizient laden
         return (
             Submission.objects
             .filter(student=self.request.user)
             .select_related("unit", "unit__module")
             .prefetch_related("files")
         )
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        submission = self.object
+        ctx["can_edit"] = submission.is_editable_by_student()
+        ctx["unit"] = submission.unit
+        return ctx
         
 class SubmissionsDownloadView(TeacherRequiredMixin, View):
     """

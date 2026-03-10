@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Abgabe – {{ unit }}{% endblock %}
+
+{% block content %}
+<section class="teacher-dashboard">
+
+  <header class="dashboard-header">
+    <h2>
+      {% if unit.number %}Einheit {{ unit.number }}{% else %}Hausaufgabe{% endif %}
+      {% if unit.module %} – {{ unit.module.title }}{% endif %}
+    </h2>
+  </header>
+
+  <div class="form-grid">
+
+    <div class="form-row">
+      <label>Status</label>
+      <div class="form-value">
+        <span class="badge badge--{% if submission.status == 'SUBMITTED' %}submitted{% elif submission.status == 'CORRECTED' %}corrected{% else %}open{% endif %}">
+          {% if submission.status == "SUBMITTED" %}Eingereicht
+          {% elif submission.status == "CORRECTED" %}Korrigiert
+          {% else %}{{ submission.status }}
+          {% endif %}
+        </span>
+      </div>
+    </div>
+
+    {% if submission.submitted_at %}
+    <div class="form-row">
+      <label>Eingereicht am</label>
+      <div class="form-value">{{ submission.submitted_at|date:"d.m.Y, H:i" }} Uhr</div>
+    </div>
+    {% endif %}
+
+    {% if unit.date %}
+    <div class="form-row">
+      <label>Unterrichtseinheit</label>
+      <div class="form-value muted">{{ unit.date|date:"d.m.Y" }}</div>
+    </div>
+    {% endif %}
+
+    {% if submission.note_from_student %}
+    <div class="form-row span-2">
+      <label>Deine Notiz</label>
+      <div class="form-value">{{ submission.note_from_student|linebreaksbr }}</div>
+    </div>
+    {% endif %}
+
+  </div>
+
+  {# ---- Dateien ---- #}
+  <h3>Eingereichte Dateien</h3>
+
+  {% if submission.files.all %}
+  <ul class="submission-file-list">
+    {% for file in submission.files.all %}
+    <li class="submission-file-item">
+      <span class="submission-file-item__name">
+        {{ file.display_name|default:file.file.name|slice:"30" }}
+      </span>
+      <span class="muted submission-file-item__date">
+        {{ file.uploaded_at|date:"d.m.Y, H:i" }}
+      </span>
+      {% if can_edit %}
+      <form method="post" action="{% url 'modules:delete_submission_file' file.pk %}" style="display:inline">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.path }}">
+        <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Datei löschen?')">Löschen</button>
+      </form>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="muted">Noch keine Dateien hochgeladen.</p>
+  {% endif %}
+
+  {# ---- Upload (nur wenn editierbar) ---- #}
+  {% if can_edit %}
+  <h3>Weitere Datei hochladen</h3>
+  <form method="post" enctype="multipart/form-data"
+        action="{% url 'modules:upload_submission_file' unit.id %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <div class="form-row">
+      <input type="file" name="file" accept=".pdf" required>
+      <input type="text" name="display_name" placeholder="Bezeichnung (optional)" maxlength="200">
+      <button type="submit" class="btn btn-primary">Hochladen</button>
+    </div>
+  </form>
+  {% endif %}
+
+  <div class="form-actions">
+    {% if unit.module %}
+    <a class="btn" href="{% url 'modules:entry_detail' unit.module.slug %}">Zum Modul</a>
+    {% endif %}
+    <a class="btn" href="{% url 'modules:student_submissions_list' %}">← Alle Abgaben</a>
+  </div>
+
+</section>
+{% endblock %}
