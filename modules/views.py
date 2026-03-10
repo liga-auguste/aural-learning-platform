@@ -266,7 +266,7 @@ class GlossaryListView(LockedView, ListView):
     def get_queryset(self):
         qs = (
             GlossaryEntry.objects
-            .all()
+            .annotate(modules_count=Count("modules", distinct=True))
             .prefetch_related("modules")
         )
 
@@ -280,16 +280,27 @@ class GlossaryListView(LockedView, ListView):
         # --- Sort ---
         sort_val = self.request.GET.get("sort", "az")
         if sort_val == "count":
-            qs = qs.annotate(modules_count=Count("modules", distinct=True)).order_by("-modules_count", "title")
+            qs = qs.order_by("-modules_count", "title")
         else:
             qs = qs.order_by("title")
 
         return qs
-    
+
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
         ctx["current_filter"] = self.request.GET.get("filter", "all")
         ctx["current_sort"] = self.request.GET.get("sort", "az")
+        counts = [t.modules_count for t in ctx["terms"]]
+        max_count = max(counts, default=1) or 1
+        ctx["max_count"] = max_count
+
+        for term in ctx["terms"]:
+            ratio = term.modules_count / max_count
+            # Grün (hue 145): von ungesättigt-hell → gesättigt-dunkel
+            saturation = int(10 + ratio * 70)   # 10% → 80%
+            lightness  = int(82 - ratio * 37)   # 82% → 45%
+            term.freq_color = f"hsl(145, {saturation}%, {lightness}%)"
+
         return ctx
 
 @login_required

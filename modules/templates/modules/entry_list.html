@@ -11,14 +11,25 @@
   {% endif %}
 </header>
 
-<div class="tag-filter">
-  {% if current_tag %}
-  <div class="tag-filter-info">
-    Gefiltert nach: {{ current_tag.name }}
-   <a href="{% url 'modules:entry_list' %}">Filter entfernen</a>
-  </div>
-  {% endif %}
+
+{% if q or current_tag %}
+<div class="filter-banner">
+  <span class="filter-banner__label">
+    {% if object_list|length == 1 %}
+      1 Ergebnis
+    {% else %}
+      {{ object_list|length }} Ergebnisse
+    {% endif %}
+    für
+    {% if q %}<strong>„{{ q }}"</strong>{% endif %}
+    {% if q and current_tag %}und {% endif %}
+    {% if current_tag %}Aufgabentyp <strong>{{ current_tag.name }}</strong>{% endif %}
+  </span>
+  <a class="btn filter-banner__reset" href="{% url 'modules:entry_list' %}">
+    Filter aufheben
+  </a>
 </div>
+{% endif %}
 
 <div class="lectures-container">
 
@@ -124,7 +135,11 @@
   {% endfor %}
 
   {% else %}
-  <p>Noch keine Module vorhanden.</p>
+    {% if q or current_tag %}
+      <p class="muted">Keine Treffer gefunden. <a href="{% url 'modules:entry_list' %}">Alle Module anzeigen</a></p>
+    {% else %}
+      <p class="muted">Noch keine Module vorhanden.</p>
+    {% endif %}
   {% endif %}
 </div>
 {% endblock %}

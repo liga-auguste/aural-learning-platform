@@ -18,24 +18,25 @@
 
   <div class="tag-grid glossary-grid">
     {% for term in terms %}
-      <details class="tag-card glossary-card">
+      <details class="tag-card glossary-card" style="--freq-color: {{ term.freq_color }}">
         <summary class="tag-pill">
   <span class="tag-name">{{ term.title }}</span>
-
-  {% if user.is_staff %}
-    <form class="star-form" method="post" action="{% url 'modules:glossary_toggle_exam' term.pk %}">
-      {% csrf_token %}
-      <input type="hidden" name="next" value="{{ request.get_full_path }}">
-      <button type="submit" class="star-btn" aria-label="Prüfungsrelevanz umschalten">
+  <span class="tag-pill__meta">
+    <span class="tag-count glossary-count" title="{{ term.modules_count }}x im Unterricht">{{ term.modules_count }}</span>
+    {% if user.is_staff %}
+      <form class="star-form" method="post" action="{% url 'modules:glossary_toggle_exam' term.pk %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <button type="submit" class="star-btn" aria-label="Prüfungsrelevanz umschalten">
+          {% if term.exam_relevant %}★{% else %}☆{% endif %}
+        </button>
+      </form>
+    {% else %}
+      <span class="star-static" aria-hidden="true">
         {% if term.exam_relevant %}★{% else %}☆{% endif %}
-      </button>
-    </form>
-  {% else %}
-    {# Für Nicht-Staff nur anzeigen, aber nicht klickbar (optional) #}
-    <span class="star-static" aria-hidden="true">
-      {% if term.exam_relevant %}★{% else %}☆{% endif %}
-    </span>
-  {% endif %}
+      </span>
+    {% endif %}
+  </span>
 </summary>
 
         <div class="tag-panel glossary-panel">

@@ -58,10 +58,28 @@ class ModuleAdminForm(forms.ModelForm):
         label="Aufgabentypen",
     )
 
+    glossary_entries = forms.ModelMultipleChoiceField(
+        queryset=GlossaryEntry.objects.all().order_by("title"),
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="Lernbegriffe",
+    )
+
     class Meta:
         model = Module
-        fields = ("order", "title", "slug", "inclass", "homework", "tasktype",
+        fields = ("order", "title", "slug", "inclass", "homework", "tasktype", "glossary_entries",
           "pdf_1", "pdf_2", "pdf_3", "pdf_4", "audio_1", "audio_1_title", "audio_2", "audio_2_title", "audio_3", "audio_3_title", "audio_4", "audio_4_title")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields["glossary_entries"].initial = self.instance.glossary_terms.all()
+
+    def save(self, commit=True):
+        module = super().save(commit=commit)
+        if commit:
+            module.glossary_terms.set(self.cleaned_data.get("glossary_entries") or [])
+        return module
 
 # --- Module ---
 @admin.register(Module)
@@ -69,7 +87,6 @@ class ModuleAdmin(SortableAdminMixin, admin.ModelAdmin):
     list_display = (
         "order",
         "title",
-        # "has_completion",  # <- empfehle ich rauszunehmen (siehe Hinweis unten)
         "tasktype_list",
         "has_homework",
         "pdf_count",
@@ -96,10 +113,31 @@ class ModuleAdmin(SortableAdminMixin, admin.ModelAdmin):
 
     list_display_links = ("title",)
     ordering = ("order", "id")
-    search_fields = ("title", "inclass", "homework", "tasktype__name")
+    search_fields = ("title", "inclass", "homework", "tasktype__name", "glossary_terms__title")
     prepopulated_fields = {"slug": ("title",)}
-    
+
     form = ModuleAdminForm
+
+    fieldsets = (
+        (None, {
+            "fields": (
+                "order", "title", "slug", "inclass", "homework", "tasktype",
+            ),
+        }),
+        ("Lernbegriffe", {
+            "classes": ("collapse",),
+            "fields": ("glossary_entries",),
+        }),
+        (None, {
+            "fields": (
+                "pdf_1", "pdf_2", "pdf_3", "pdf_4",
+                "audio_1", "audio_1_title",
+                "audio_2", "audio_2_title",
+                "audio_3", "audio_3_title",
+                "audio_4", "audio_4_title",
+            ),
+        }),
+    )
 
     @admin.display(description="Aufgabentypen")
     def tasktype_list(self, obj):
