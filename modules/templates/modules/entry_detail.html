@@ -257,42 +257,24 @@
   <div class="form-row span-2">
     <label>Uploads</label>
     <div class="form-value form-value--plain">
-
-      {% if u.module %}
-                  {{ u.module.title }}
-                  {% else %}
-                  <div class="unit-title">—</div>
-                  {% endif %}
-                </div>
-  
-                <div class="unit-sub muted">
-                {{ u.submissions_count }} / {{ student_count }} Abgaben
-                {% if u.files_count %}
-                 · {{ u.files_count }} Datei{{ u.files_count|pluralize:"en" }}
-                {% endif %}
-
+      {% if unit %}
         <div class="sub-actions">
           <a href="{% url 'modules:teacher_submissions_dashboard' %}">
             <button type="button">Zur Abgaben-Übersicht</button>
           </a>
-
-          {% if unit.files_count %}
-            <a href="{% url 'modules:teacher_unit_submissions_downloads' unit.id %}">
-              <button type="button">Schülerdateien holen</button>
-            </a>
-          {% else %}
-            <button type="button" disabled>Schülerdateien holen</button>
-          {% endif %}
+          <a href="{% url 'modules:teacher_unit_submissions_downloads' unit.id %}">
+            <button type="button">Schülerdateien holen</button>
+          </a>
         </div>
-
       {% else %}
         <span class="muted">Noch keine Hausaufgabe vorhanden.</span>
       {% endif %}
-
     </div>
   </div>
 
 </div>
+
+{% endif %}{# end is_teacher #}
 
 <div class="form-actions">
 

@@ -8,11 +8,11 @@
   <details class="tag-card">
     <summary class="tag-pill">
       <span class="tag-name">{{ tag.name }}</span>
-      <span class="tag-count">{{ tag.modules|length }}</span>
+      <span class="tag-count">{{ tag.modules.count }}</span>
     </summary>
 
     <div class="tag-panel">
-      {% for module in tag.modules %}
+      {% for module in tag.modules.all %}
       <h3 class="tag-module">
         <a href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a>
       </h3>

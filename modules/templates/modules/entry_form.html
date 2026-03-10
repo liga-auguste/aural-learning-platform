@@ -28,31 +28,21 @@
   </div>
 
   <div class="form-row">
-  <label for="{{ form.tasktype.id_for_label }}">Aufgabentypen:</label>
+  <label for="{{ form.tasktype.id_for_label }}">{{ form.tasktype.label }}</label>
 
   <div class="form-value">
-    
-    <details class="select-panel" id="tasktype-panel">
-      <summary class="select-summary">
-        <span>Aufgabentypen auswählen/hinzufügen</span>
-        <span class="select-hint">(anzeigen)</span>
+    <details class="form-collapsible" {% if form.tasktype.value %}open{% endif %}>
+      <summary class="form-collapsible__summary">
+        Aufgabentypen auswählen
+        <span class="form-collapsible__meta">
+          {% if form.tasktype.value %}(ausgewählt){% else %}(anzeigen){% endif %}
+        </span>
       </summary>
-      
-      <div class="select-body">
-        <div class="tasktype-chips" id="tasktype-chips">
-          {# Beispiel: Chips serverseitig rendern (Tags kommen aus context) #}
-          
-          {% for tag in tasktype_tags %}
-          <button type="button" class="chip" data-tag="{{ tag.name }}">{{ tag.name }}</button>
-          {% endfor %}
-        </div>
+      <div class="form-collapsible__content">
+        {{ form.tasktype }}
+        {{ form.tasktype.errors }}
       </div>
     </details>
-  </div>
-  
-  <div class="form-value">
-    {{ form.tasktype }}
-    {{ form.tasktype.errors }}
   </div>
 </div>
 

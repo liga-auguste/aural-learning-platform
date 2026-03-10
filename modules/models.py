@@ -15,12 +15,6 @@ from django.utils import timezone
 from django.utils.text import slugify
 
 # =============================
-# Third Party
-# =============================
-from taggit.managers import TaggableManager
-from taggit.models import Tag
-
-# =============================
 # Local Apps
 # =============================
 from .storages import student_storage, teacher_storage, submissions_storage
@@ -39,7 +33,12 @@ class Module(models.Model):
     slug = models.SlugField(max_length=220, unique=True, blank=True, null=True)
     inclass = models.TextField("Unterricht")
     homework = models.TextField("Hausaufgabe", blank=True, null=True)
-    tasktype = TaggableManager(verbose_name="Aufgabentypen", blank=True)
+    tasktype = models.ManyToManyField(
+        "Aufgabentyp",
+        verbose_name="Aufgabentypen",
+        blank=True,
+        related_name="modules",
+    )
 
     pdf_1 = models.FileField(
         "Skript",
@@ -216,11 +215,28 @@ class GlossaryEntry(models.Model):
         verbose_name = "Lernbegriff"
         verbose_name_plural = "Lernbegriffe"
 
-class Aufgabentyp(Tag):
+class Aufgabentyp(models.Model):
+    name = models.CharField("Name", max_length=100, unique=True)
+    slug = models.SlugField(max_length=100, unique=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base = slugify(self.name) or "typ"
+            candidate = base
+            i = 2
+            while Aufgabentyp.objects.filter(slug=candidate).exclude(pk=self.pk).exists():
+                candidate = f"{base}-{i}"
+                i += 1
+            self.slug = candidate
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return self.name
+
     class Meta:
-        proxy = True
         verbose_name = "Aufgabentyp"
         verbose_name_plural = "Aufgabentypen"
+        ordering = ["name"]
         
 class ProgressMatrix:
     class Meta:

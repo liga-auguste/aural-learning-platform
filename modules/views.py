@@ -25,16 +25,12 @@ from django.views.generic import (
 from datetime import timedelta
 
 # =============================
-# Third Party
-# =============================
-from taggit.models import Tag
-
-# =============================
 # Local Apps
 # =============================
 from accounts.mixins import TeacherRequiredMixin, StudentRequiredMixin
 from .forms import ModuleForm, ContactForm
 from .models import (
+    Aufgabentyp,
     Module,
     GlossaryEntry,
     ModuleCompletion,
@@ -84,13 +80,13 @@ class EntryListView(LockedView, ListView):
             return qs
 
         qs_tag = (
-            Tag.objects.filter(slug=tag_value).first()
-            or Tag.objects.filter(name=tag_value).first()
-            or Tag.objects.filter(slug=slugify(tag_value)).first()
+            Aufgabentyp.objects.filter(slug=tag_value).first()
+            or Aufgabentyp.objects.filter(name=tag_value).first()
+            or Aufgabentyp.objects.filter(slug=slugify(tag_value)).first()
         )
 
         if qs_tag:
-            return qs.filter(tasktype__in=[qs_tag]).distinct()
+            return qs.filter(tasktype=qs_tag).distinct()
 
         return Module.objects.none()
 
@@ -103,9 +99,9 @@ class EntryListView(LockedView, ListView):
         tag_value = self.kwargs.get("tag_slug")
         if tag_value:
             context["current_tag"] = (
-                Tag.objects.filter(slug=tag_value).first()
-                or Tag.objects.filter(name=tag_value).first()
-                or Tag.objects.filter(slug=slugify(tag_value)).first()
+                Aufgabentyp.objects.filter(slug=tag_value).first()
+                or Aufgabentyp.objects.filter(name=tag_value).first()
+                or Aufgabentyp.objects.filter(slug=slugify(tag_value)).first()
             )
 
         completed_ids = set(
@@ -210,11 +206,6 @@ class EntryCreateView(TeacherRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "modules/entry_form.html"
     success_url = reverse_lazy("modules:entry_list")
     success_message = "Das Modul wurde erstellt!"
-    
-    def get_context_data(self, **kwargs):
-        ctx = super().get_context_data(**kwargs)
-        ctx["tasktype_tags"] = Tag.objects.all().order_by("name")
-        return ctx
 
 class EntryUpdateView(TeacherRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Module
@@ -260,17 +251,12 @@ def contact_view(request):
     return render(request, "contact.html", {"form": form})
 
 class TaskTypeListView(ListView):
-    model = Tag
+    model = Aufgabentyp
     template_name = "modules/tasktype_list.html"
     context_object_name = "tags"
 
     def get_queryset(self):
-        tags = Tag.objects.all().order_by("name")
-
-        for tag in tags:
-            tag.modules = Module.objects.filter(tasktype=tag).only("id", "title", "slug")
-
-        return tags
+        return Aufgabentyp.objects.prefetch_related("modules").order_by("name")
 
 class GlossaryListView(LockedView, ListView):
     model = GlossaryEntry

@@ -1,11 +1,9 @@
 from django import forms
 from django.forms.widgets import ClearableFileInput
 from modules.models import Module
-from .models import GlossaryEntry
-from taggit.forms import TagField, TagWidget
+from .models import Aufgabentyp, GlossaryEntry
 from django.db.models import Count
 from .widgets import GlossaryCheckboxWidget
-from taggit.models import Tag
 
 
 class PrettyFileInput(ClearableFileInput):
@@ -16,76 +14,41 @@ class PrettyFileInput(ClearableFileInput):
 
 
 class ModuleForm(forms.ModelForm):
+    tasktype = forms.ModelMultipleChoiceField(
+        queryset=Aufgabentyp.objects.all().order_by("name"),
+        required=False,
+        label="Aufgabentypen",
+        widget=forms.CheckboxSelectMultiple(),
+    )
+
     glossary_entries = forms.ModelMultipleChoiceField(
         queryset=GlossaryEntry.objects.all().order_by("title"),
         required=False,
         label="Lernbegriffe:",
         help_text="Begriffe, die in diesem Modul erklärt und angezeigt werden",
     )
-    
-    tasktype = TagField(
-        required=False,
-        label="Aufgabentypen",
-        widget=TagWidget(attrs={
-            "placeholder": "Neuen Aufgabentyp hinzufügen"
-        }),
-        help_text="Mehrwort-Tags sind ok. Bitte mit Komma trennen."
-    )
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.available_tasktypes = list(Tag.objects.order_by("name").values_list("name", flat=True))
 
-        # Widget setzen
         self.fields["glossary_entries"].widget = GlossaryCheckboxWidget()
-
-        # Queryset mit Usage-Count annotieren
         self.fields["glossary_entries"].queryset = (
-        GlossaryEntry.objects
-        .annotate(modules_count=Count("modules", distinct=True))
-        .order_by("title")
+            GlossaryEntry.objects
+            .annotate(modules_count=Count("modules", distinct=True))
+            .order_by("title")
         )
-
-        # Label anzeigen: "Begriff (3)"
         self.fields["glossary_entries"].label_from_instance = lambda obj: (
-        f"{obj.title} ({getattr(obj, 'modules_count', 0)})"
+            f"{obj.title} ({getattr(obj, 'modules_count', 0)})"
         )
 
-    # Initialwerte setzen, wenn Modul bereits existiert
         if self.instance and self.instance.pk:
             self.fields["glossary_entries"].initial = self.instance.glossary_terms.all()
 
-            names = list(self.instance.tasktype.names())
-            self.initial["tasktype"] = ", ".join(names)
-            
     def save(self, commit=True):
         module = super().save(commit=commit)
         if commit:
             module.glossary_terms.set(self.cleaned_data.get("glossary_entries") or [])
-            
-            if module.pdf_3 and not hasattr(module, "unit"):
-                Unit.objects.create(
-                    module=module,
-                    kind=Unit.REGULAR,
-                    number=module.order,
-                    date=timezone.now(),          # weil Unit.date NOT NULL ist
-                    submissions_enabled=False,
-                )
-        
         return module
-    
-    def clean_tasktype(self):
-        raw = self.cleaned_data.get("tasktype") or ""
-
-        # Falls TagField bereits Liste geliefert hat
-        if isinstance(raw, (list, tuple)):
-            cleaned = [str(p).strip().strip('"').strip("'") for p in raw]
-            return [p for p in cleaned if p]
-
-        # Falls String (z.B. '"Intervalle spielen"')
-        raw = str(raw).replace('"', "").replace("'", "")
-        parts = [p.strip() for p in raw.split(",")]
-        return [p for p in parts if p]
     
     class Meta:
         model = Module

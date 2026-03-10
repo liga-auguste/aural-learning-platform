@@ -8,15 +8,8 @@ from django.utils.html import format_html
 from django.utils import timezone
 from django.db.models import Prefetch, Count
 
-from .models import Module, GlossaryEntry, ModuleCompletion, ProgressMatrixProxy, Unit, Submission, SubmissionFile
+from .models import Aufgabentyp, Module, GlossaryEntry, ModuleCompletion, ProgressMatrixProxy, Unit, Submission, SubmissionFile
 from collections import defaultdict
-from taggit.models import Tag
-from .models import Aufgabentyp
-
-try:
-    admin.site.unregister(Tag)
-except admin.sites.NotRegistered:
-    pass
 
 from adminsortable2.admin import SortableAdminMixin
 
@@ -24,6 +17,7 @@ from adminsortable2.admin import SortableAdminMixin
 class AufgabentypAdmin(admin.ModelAdmin):
     list_display = ("name", "slug")
     search_fields = ("name", "slug")
+    prepopulated_fields = {"slug": ("name",)}
 
 # --- Glossar ---
 
@@ -57,9 +51,8 @@ class ModuleCompletionAdmin(admin.ModelAdmin):
     ordering = ("-completed_at",)
 
 class ModuleAdminForm(forms.ModelForm):
-    # eigene Checkboxen für Tags
-    tasktype_checkboxes = forms.ModelMultipleChoiceField(
-        queryset=Tag.objects.all().order_by("name"),
+    tasktype = forms.ModelMultipleChoiceField(
+        queryset=Aufgabentyp.objects.all().order_by("name"),
         required=False,
         widget=forms.CheckboxSelectMultiple,
         label="Aufgabentypen",
@@ -67,15 +60,8 @@ class ModuleAdminForm(forms.ModelForm):
 
     class Meta:
         model = Module
-        fields = ("order", "title", "slug", "inclass", "homework", "tasktype_checkboxes",
+        fields = ("order", "title", "slug", "inclass", "homework", "tasktype",
           "pdf_1", "pdf_2", "pdf_3", "pdf_4", "audio_1", "audio_1_title", "audio_2", "audio_2_title", "audio_3", "audio_3_title", "audio_4", "audio_4_title")
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # beim Bearbeiten: bereits gesetzte Tags vorhaken
-        if self.instance and self.instance.pk:
-            self.fields["tasktype_checkboxes"].initial = self.instance.tasktype.all()
 
 # --- Module ---
 @admin.register(Module)
@@ -114,18 +100,11 @@ class ModuleAdmin(SortableAdminMixin, admin.ModelAdmin):
     prepopulated_fields = {"slug": ("title",)}
     
     form = ModuleAdminForm
-    exclude = ("tasktype",)
-    
+
     @admin.display(description="Aufgabentypen")
     def tasktype_list(self, obj):
-        names = obj.tasktype.names()
+        names = list(obj.tasktype.values_list("name", flat=True))
         return ", ".join(names) if names else "–"
-    
-    def formfield_for_manytomany(self, db_field, request, **kwargs):
-        formfield = super().formfield_for_manytomany(db_field, request, **kwargs)
-        if db_field.name == "tasktype":
-            formfield.widget = forms.CheckboxSelectMultiple()
-        return formfield
     
     # ---------- Matrix: Custom URLs ----------
     def get_urls(self):
