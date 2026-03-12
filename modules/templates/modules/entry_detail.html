@@ -262,9 +262,13 @@
           <a href="{% url 'modules:teacher_submissions_dashboard' %}">
             <button type="button">Zur Abgaben-Übersicht</button>
           </a>
+          {% if has_submission_files %}
           <a href="{% url 'modules:teacher_unit_submissions_downloads' unit.id %}">
             <button type="button">Schülerdateien holen</button>
           </a>
+          {% else %}
+          <button type="button" disabled title="Keine PDF-Abgaben vorhanden">Schülerdateien holen</button>
+          {% endif %}
         </div>
       {% else %}
         <span class="muted">Noch keine Hausaufgabe vorhanden.</span>

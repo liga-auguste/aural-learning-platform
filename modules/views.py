@@ -147,6 +147,13 @@ class EntryDetailView(LockedView, DetailView):
 
         unit = getattr(obj, "unit", None)
         context["unit"] = unit
+        context["has_submission_files"] = (
+            unit is not None and
+            SubmissionFile.objects.filter(
+                submission__unit=unit,
+                file__endswith=".pdf"
+            ).exists()
+        )
 
         submission = None
         can_edit = False
@@ -296,10 +303,14 @@ class GlossaryListView(LockedView, ListView):
 
         for term in ctx["terms"]:
             ratio = term.modules_count / max_count
-            # Grün (hue 145): von ungesättigt-hell → gesättigt-dunkel
-            saturation = int(10 + ratio * 70)   # 10% → 80%
-            lightness  = int(82 - ratio * 37)   # 82% → 45%
-            term.freq_color = f"hsl(145, {saturation}%, {lightness}%)"
+            term.freq_pct = f"{int(ratio * 30)}%"
+
+        # Stats (immer ungefiltert)
+        all_annotated = GlossaryEntry.objects.annotate(mc=Count("modules", distinct=True))
+        ctx["stats_total"] = all_annotated.count()
+        ctx["stats_exam"] = all_annotated.filter(exam_relevant=True).count()
+        ctx["stats_without_module"] = all_annotated.filter(mc=0).count()
+        ctx["stats_shown"] = len(ctx["terms"])
 
         return ctx
 
@@ -331,15 +342,37 @@ class TeacherStudentListView(TeacherRequiredMixin, ListView):
 
         total_modules = Module.objects.count()
 
-        completed_counts = (
-            ModuleCompletion.objects
-            .values("user_id")
-            .annotate(c=Count("id"))
-        )
-        completed_map = {row["user_id"]: row["c"] for row in completed_counts}
+        completed_counts = {
+            row["user_id"]: row["c"]
+            for row in ModuleCompletion.objects.values("user_id").annotate(c=Count("id"))
+        }
+
+        submission_stats = {
+            row["student_id"]: row
+            for row in Submission.objects.values("student_id").annotate(
+                total=Count("id"),
+                corrected=Count("id", filter=Q(status=Submission.CORRECTED)),
+            )
+        }
+
+        students_data = []
+        for s in context["students"]:
+            comp = completed_counts.get(s.id, 0)
+            sub = submission_stats.get(s.id, {})
+            hw_total = sub.get("total", 0)
+            hw_corrected = sub.get("corrected", 0)
+            progress_pct = round((comp / total_modules) * 100) if total_modules else 0
+            students_data.append({
+                "student": s,
+                "completed": comp,
+                "progress_pct": min(100, progress_pct),
+                "hw_total": hw_total,
+                "hw_corrected": hw_corrected,
+                "hw_submitted": hw_total - hw_corrected,
+            })
 
         context["total_modules"] = total_modules
-        context["completed_map"] = completed_map
+        context["students_data"] = students_data
 
         return context
 
@@ -351,24 +384,46 @@ class TeacherStudentDetailView(TeacherRequiredMixin, TemplateView):
 
         User = get_user_model()
 
-        # Schüler laden (nur STUDENT erlaubt)
-        student = get_object_or_404(
-            User,
-            pk=self.kwargs["pk"],
-            role=User.STUDENT
-        )
+        student = get_object_or_404(User, pk=self.kwargs["pk"], role=User.STUDENT)
 
-        modules = Module.objects.order_by("order", "id")
+        modules = Module.objects.order_by("order", "id").select_related("unit")
 
         completed_ids = set(
-            ModuleCompletion.objects
-            .filter(user=student)
-            .values_list("module_id", flat=True)
+            ModuleCompletion.objects.filter(user=student).values_list("module_id", flat=True)
         )
 
+        submissions_map = {
+            sub.unit_id: sub
+            for sub in Submission.objects.filter(student=student).select_related("unit")
+        }
+
+        module_rows = []
+        for m in modules:
+            try:
+                unit = m.unit
+            except Exception:
+                unit = None
+            submission = submissions_map.get(unit.id) if unit else None
+            module_rows.append({
+                "module": m,
+                "completed": m.id in completed_ids,
+                "unit": unit,
+                "submission": submission,
+            })
+
+        total_modules = len(module_rows)
+        completed_count = len(completed_ids)
+        progress_pct = round((completed_count / total_modules) * 100) if total_modules else 0
+        hw_corrected = sum(1 for s in submissions_map.values() if s.status == Submission.CORRECTED)
+        hw_submitted = len(submissions_map) - hw_corrected
+
         context["student"] = student
-        context["modules"] = modules
-        context["completed_ids"] = completed_ids
+        context["module_rows"] = module_rows
+        context["total_modules"] = total_modules
+        context["completed_count"] = completed_count
+        context["progress_pct"] = min(100, progress_pct)
+        context["hw_submitted"] = hw_submitted
+        context["hw_corrected"] = hw_corrected
 
         return context
     

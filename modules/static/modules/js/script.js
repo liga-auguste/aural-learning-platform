@@ -229,3 +229,27 @@ document.addEventListener("DOMContentLoaded", () => {
   updateChipState(parseTags(input.value));
 
 })();
+
+// Glossary Live-Suche
+document.addEventListener("DOMContentLoaded", () => {
+  const searchInput = document.querySelector("[data-glossary-search]");
+  const grid = document.querySelector("[data-glossary-grid]");
+  const noResults = document.querySelector(".glossary-no-results");
+
+  if (!searchInput || !grid) return;
+
+  searchInput.addEventListener("input", () => {
+    const query = searchInput.value.trim().toLowerCase();
+    const cards = grid.querySelectorAll(".glossary-card");
+    let visible = 0;
+
+    cards.forEach(card => {
+      const name = card.dataset.termName || "";
+      const match = !query || name.includes(query);
+      card.hidden = !match;
+      if (match) visible++;
+    });
+
+    if (noResults) noResults.hidden = visible > 0;
+  });
+});

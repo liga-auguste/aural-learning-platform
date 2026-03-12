@@ -1,56 +1,97 @@
 {% extends "base.html" %}
 
+{% block title %}Fortschritt {{ student.username }}{% endblock %}
+
 {% block content %}
+<section class="teacher-dashboard">
 
-<h1>Fortschritt von {{ student.username }}</h1>
+  <header class="dashboard-header">
+    <h1>{{ student.username }}</h1>
+    <p><a href="{% url 'modules:teacher_student_list' %}">← Schülerliste</a></p>
+  </header>
 
-<p>
-  <a href="{% url 'modules:teacher_student_list' %}">← Zurück zur Schülerliste</a>
-</p>
+  <div class="kpi-row">
+    <div class="kpi">
+      <div class="kpi-label">Module abgeschlossen</div>
+      <div class="kpi-value">{{ completed_count }} / {{ total_modules }}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Hausaufgaben eingereicht</div>
+      <div class="kpi-value">{{ hw_submitted }}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Hausaufgaben korrigiert</div>
+      <div class="kpi-value">{{ hw_corrected }}</div>
+    </div>
+  </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Modul</th>
-      <th>Status</th>
-      <th>Aktion</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for m in modules %}
-      <tr>
-        <td>
-          <a href="{% url 'modules:entry_detail' slug=m.slug %}">
-            {{ m.title }}
-          </a>
-        </td>
+  <div class="course-progress" style="margin-bottom: 1.5rem;">
+    <div class="course-progress__row">
+      <span class="course-progress__label">Kursfortschritt</span>
+      <span class="course-progress__percent">{{ progress_pct }}%</span>
+    </div>
+    <div class="course-progress__bar">
+      <div class="course-progress__fill" style="width: {{ progress_pct }}%"></div>
+    </div>
+  </div>
 
-        <td>
-          {% if m.id in completed_ids %}
-            ✅ Abgeschlossen
-          {% else %}
-            ❌ Offen
-          {% endif %}
-        </td>
+  <div class="progress-table">
 
-        <td>
-          <form method="post" action="{% url 'modules:teacher_toggle_completion' student.id m.slug %}">
-            {% csrf_token %}
+    <div class="progress-table__head">
+      <span>Modul</span>
+      <span>Status</span>
+      <span>Hausaufgabe</span>
+      <span></span>
+    </div>
 
-            {% if m.id in completed_ids %}
-              <button type="submit">Zurücksetzen</button>
+    {% for row in module_rows %}
+    <div class="progress-table__row {% if row.completed %}progress-table__row--done{% endif %}">
+
+      <div class="progress-table__title">
+        <a href="{% url 'modules:entry_detail' slug=row.module.slug %}">{{ row.module.title }}</a>
+      </div>
+
+      <div class="progress-table__status">
+        {% if row.completed %}
+          <span class="badge badge--corrected">Abgeschlossen</span>
+        {% else %}
+          <span class="badge badge--open">Offen</span>
+        {% endif %}
+      </div>
+
+      <div class="progress-table__hw">
+        {% if row.unit %}
+          {% if row.submission %}
+            {% if row.submission.status == "corrected" %}
+              <span class="badge badge--corrected">Korrigiert</span>
             {% else %}
-              <button type="submit">Als abgeschlossen markieren</button>
+              <span class="badge badge--submitted">Eingereicht</span>
             {% endif %}
-          </form>
-        </td>
-      </tr>
-    {% empty %}
-      <tr>
-        <td colspan="3">Keine Module vorhanden.</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+          {% else %}
+            <span class="badge badge--open">Keine Abgabe</span>
+          {% endif %}
+        {% else %}
+          <span class="muted">—</span>
+        {% endif %}
+      </div>
 
+      <div class="progress-table__action">
+        <form method="post" action="{% url 'modules:teacher_toggle_completion' student.id row.module.slug %}">
+          {% csrf_token %}
+          {% if row.completed %}
+            <button type="submit" class="btn btn-sm btn-outline">Zurücksetzen</button>
+          {% else %}
+            <button type="submit" class="btn btn-sm">Abschliessen</button>
+          {% endif %}
+        </form>
+      </div>
+
+    </div>
+    {% empty %}
+    <p>Keine Module vorhanden.</p>
+    {% endfor %}
+
+  </div>
+
+</section>
 {% endblock %}
