@@ -22,13 +22,17 @@ IS_PRODUCTION = os.getenv("DJANGO_ENV") == "production"
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.178.94"]
 
+CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
+
 render_host = os.getenv("RENDER_EXTERNAL_HOSTNAME")
 if render_host:
     ALLOWED_HOSTS.append(render_host)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{render_host}")
 
 custom_domain = os.getenv("CUSTOM_DOMAIN")
 if custom_domain:
     ALLOWED_HOSTS.append(custom_domain)
+    CSRF_TRUSTED_ORIGINS.append(f"https://{custom_domain}")
 
 
 # Application definition
