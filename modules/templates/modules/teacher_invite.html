@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+
+<section class="teacher-dashboard">
+  <header class="dashboard-header">
+    <h2>Einladungen</h2>
+  </header>
+
+  <div style="display: flex; flex-direction: column; gap: 1.25rem; max-width: 860px;">
+
+    <div class="glass-card">
+      <h3>Neue Einladung erstellen</h3>
+      <form method="post" style="margin-top: .75rem; display: flex; flex-direction: column; gap: .75rem;">
+        {% csrf_token %}
+
+        <div class="form-row-inline">
+          <div class="form-col">
+            <label for="first_name">Vorname</label>
+            <input type="text" name="first_name" id="first_name" class="form-control" placeholder="z.B. Anna">
+          </div>
+          <div class="form-col">
+            <label for="last_name">Nachname</label>
+            <input type="text" name="last_name" id="last_name" class="form-control" placeholder="z.B. Müller">
+          </div>
+        </div>
+
+        <div>
+          <label for="email">E-Mail</label>
+          <input type="email" name="email" id="email" class="form-control" placeholder="anna.mueller@schule.de" style="width: 100%;">
+        </div>
+
+        <div class="form-row-inline" style="align-items: flex-end;">
+          <div class="form-col">
+            <label for="role">Rolle</label>
+            <select name="role" id="role" class="form-control">
+              {% for value, label in role_choices %}
+                <option value="{{ value }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <button type="submit" class="btn">Link generieren</button>
+          </div>
+        </div>
+
+      </form>
+    </div>
+
+    {% if invites %}
+    <div style="display: flex; flex-direction: column; gap: .75rem;">
+      <h3 style="margin: 0;">Bestehende Einladungen</h3>
+
+      {% for inv in invites %}
+      <div class="glass-card invite-card">
+
+        <div class="invite-card__header">
+          <div>
+            <div class="invite-card__name">
+              {% if inv.first_name or inv.last_name %}
+                {{ inv.first_name }} {{ inv.last_name }}
+              {% else %}
+                <span class="muted">Kein Name angegeben</span>
+              {% endif %}
+            </div>
+            <div class="muted" style="font-size: .85rem;">
+              {{ inv.get_role_display }}
+              {% if inv.email %} · {{ inv.email }}{% endif %}
+              · läuft ab {{ inv.expires_at|date:"d.m.Y" }}
+            </div>
+          </div>
+
+          <div style="display: flex; align-items: center; gap: .5rem;">
+            {% if inv.used %}
+              <span class="file-check">✓</span><span class="muted" style="font-size:.85rem;">verwendet</span>
+            {% elif inv.is_valid %}
+              <span class="badge badge--open" style="font-size:.8rem;">offen</span>
+            {% else %}
+              <span class="muted" style="font-size:.85rem;">abgelaufen</span>
+            {% endif %}
+
+            <form method="post" action="{% url 'modules:teacher_invite_delete' inv.pk %}">
+              {% csrf_token %}
+              <button type="submit" class="btn icon-btn" title="Löschen"
+                onclick="return confirm('Einladung für {{ inv.first_name }} {{ inv.last_name }} löschen?')">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        {% if inv.is_valid %}
+        <div class="invite-link-row" style="margin-top: .6rem;">
+          <input
+            type="text"
+            class="form-control invite-link-input"
+            readonly
+            value="{{ request.scheme }}://{{ request.get_host }}{% url 'modules:accept_invite' inv.token %}"
+            onclick="this.select()"
+          >
+          <button type="button" class="btn icon-btn" title="Kopieren" onclick="copyInviteLink(this)">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+          </button>
+          <a class="btn icon-btn" title="Per E-Mail senden"
+            href="mailto:{{ inv.email }}?subject=Einladung%20zur%20Geh%C3%B6rbildungsplattform&body=Hallo%20{{ inv.first_name }}%2C%0A%0Adu%20wurdest%20als%20{{ inv.get_role_display }}%20eingeladen.%0ARegistriere%20dich%20hier%3A%0A%0A{{ request.scheme }}://{{ request.get_host }}{% url 'modules:accept_invite' inv.token %}%0A%0ADer%20Link%20ist%207%20Tage%20g%C3%BCltig.">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+          </a>
+        </div>
+        {% endif %}
+
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+  </div>
+</section>
+
+<script>
+function copyInviteLink(btn) {
+  const input = btn.closest('.invite-link-row').querySelector('input');
+  navigator.clipboard.writeText(input.value).then(() => {
+    const original = btn.innerHTML;
+    btn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+    setTimeout(() => { btn.innerHTML = original; }, 1800);
+  });
+}
+</script>
+
+{% endblock %}

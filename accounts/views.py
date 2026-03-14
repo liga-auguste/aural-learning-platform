@@ -3,10 +3,6 @@ from django.shortcuts import resolve_url
 from .forms import RoleLoginForm
 
 
-from django.contrib.auth.views import LoginView
-from django.shortcuts import resolve_url
-
-
 class RoleBasedLoginView(LoginView):
     authentication_form = RoleLoginForm 
 
@@ -19,5 +15,8 @@ class RoleBasedLoginView(LoginView):
 
         if user.is_teacher:
             return resolve_url("modules:teacher_dashboard")
+
+        if user.is_student:
+            return resolve_url("modules:student_dashboard")
 
         return resolve_url("modules:entry_list")

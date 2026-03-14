@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Einladung annehmen{% endblock %}
+{% block body_class %}no-sidebar{% endblock %}
+
+{% block content %}
+<main class="auth-wrapper">
+
+  {% if invalid %}
+    <h1>Ungültige Einladung</h1>
+    <p class="muted">Dieser Einladungslink ist abgelaufen oder wurde bereits verwendet.</p>
+    <a class="btn" href="{% url 'login' %}">Zur Anmeldung</a>
+
+  {% else %}
+    <h1>Willkommen{% if invite.first_name %}, {{ invite.first_name }}{% endif %}!</h1>
+    <p class="muted">Du wurdest als <strong>{{ invite.get_role_display }}</strong> eingeladen. Wähle ein Passwort — du meldest dich später mit deiner E-Mail-Adresse <strong>{{ invite.email }}</strong> an.</p>
+
+    <form method="post">
+      {% csrf_token %}
+
+      {% for field in form %}
+        <div class="form-row">
+          {{ field }}
+          {% for error in field.errors %}
+            <div class="error">{{ error }}</div>
+          {% endfor %}
+        </div>
+      {% endfor %}
+
+      <button class="btn btn-primary" type="submit">Account erstellen</button>
+    </form>
+  {% endif %}
+
+</main>
+{% endblock %}

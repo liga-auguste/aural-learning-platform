@@ -7,6 +7,17 @@ from django.contrib.auth import get_user_model
 from django.utils.html import format_html
 from django.utils import timezone
 from django.db.models import Prefetch, Count
+from taggit.models import Tag as TaggitTag, TaggedItem as TaggitTaggedItem
+from django.contrib.auth.models import Group
+
+# taggit is kept in INSTALLED_APPS only for migration graph compatibility.
+# Groups/Permissions are unused — roles are handled via is_teacher/is_student.
+# Hide all three from the admin.
+for model in (TaggitTag, TaggitTaggedItem, Group):
+    try:
+        admin.site.unregister(model)
+    except admin.sites.NotRegistered:
+        pass
 
 from .models import Aufgabentyp, Module, GlossaryEntry, ModuleCompletion, ProgressMatrixProxy, Unit, Submission, SubmissionFile
 from collections import defaultdict
@@ -164,7 +175,7 @@ class ModuleAdmin(SortableAdminMixin, admin.ModelAdmin):
     def progress_matrix_view(self, request):
         User = get_user_model()
 
-        users = list(User.objects.filter(is_staff=False).order_by("username"))
+        users = list(User.objects.filter(role=User.STUDENT).order_by("username"))
         modules = list(Module.objects.all().order_by("order", "id"))
 
         # user_id -> set(module_id)

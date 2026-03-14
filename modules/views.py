@@ -28,6 +28,8 @@ from datetime import timedelta
 # Local Apps
 # =============================
 from accounts.mixins import TeacherRequiredMixin, StudentRequiredMixin
+from accounts.models import InviteToken
+from accounts.forms import AcceptInviteForm
 from .forms import ModuleForm, ContactForm
 from .models import (
     Aufgabentyp,
@@ -55,7 +57,7 @@ class LockedView(LoginRequiredMixin):
 class EntryListView(LockedView, ListView):
     model = Module
     template_name = "modules/entry_list.html"
-    context_object_name = "entry"  # optional besser: "entries"
+    context_object_name = "entries"
 
     def get_queryset(self):
         tag_value = self.kwargs.get("tag_slug")
@@ -177,6 +179,16 @@ class EntryDetailView(LockedView, DetailView):
         context["lock_at"] = lock_at
         context["now"] = timezone.now()
 
+        audio_blocks = []
+        for i in range(1, 5):
+            audio = getattr(obj, f"audio_{i}")
+            if audio:
+                audio_blocks.append({
+                    "file": audio,
+                    "title": getattr(obj, f"audio_{i}_title", ""),
+                })
+        context["audio_blocks"] = audio_blocks
+
         return context
     
 class EntryToggleCompleteView(LockedView, View):
@@ -244,14 +256,18 @@ def contact_view(request):
 
             body = f"Von: {name} <{email}>\n\nNachricht:\n{message}"
 
-            # E-Mail senden (fürs Portfolio reicht die Console-Variante, s. Settings)
-            send_mail(
-                subject=subject,
-                message=body,
-                from_email=getattr(settings, "DEFAULT_FROM_EMAIL", None),
-                recipient_list=[getattr(settings, "CONTACT_RECIPIENT", "ligaauguste@gmail.com")],
-                fail_silently=True,  # im Portfolio okay
-            )
+            try:
+                send_mail(
+                    subject=subject,
+                    message=body,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[settings.CONTACT_RECIPIENT],
+                    fail_silently=False,
+                )
+            except Exception:
+                messages.error(request, "Die Nachricht konnte leider nicht gesendet werden. Bitte versuche es später erneut.")
+                return render(request, "contact.html", {"form": form})
+
             return redirect(reverse("contact_thanks"))
     else:
         form = ContactForm()
@@ -399,10 +415,7 @@ class TeacherStudentDetailView(TeacherRequiredMixin, TemplateView):
 
         module_rows = []
         for m in modules:
-            try:
-                unit = m.unit
-            except Exception:
-                unit = None
+            unit = getattr(m, "unit", None)
             submission = submissions_map.get(unit.id) if unit else None
             module_rows.append({
                 "module": m,
@@ -457,13 +470,11 @@ class TeacherDashboardView(TeacherRequiredMixin, TemplateView):
         # -----------------------------
         # 1️⃣ Kursfortschritt (Module)
         # -----------------------------
-        COURSE_TARGET_MODULES = 40
-
         teacher_completed_modules_count = ModuleCompletion.objects.filter(
             user=self.request.user
         ).count()
 
-        teacher_target = COURSE_TARGET_MODULES
+        teacher_target = settings.COURSE_TARGET_MODULES
         teacher_progress_percent = (
             round((teacher_completed_modules_count / teacher_target) * 100)
             if teacher_target
@@ -486,9 +497,6 @@ class TeacherDashboardView(TeacherRequiredMixin, TemplateView):
 
         context["pending_submissions_count"] = pending_qs.count()
         context["pending_students_count"] = pending_qs.values("student").distinct().count()
-
-        # (Optional) Falls du completion_count nicht mehr als KPI willst:
-        # context["completion_count"] = ModuleCompletion.objects.count()
 
         # -----------------------------
         # 3️⃣ Aktive Einheit (Organisation, nicht Fortschritt)
@@ -558,23 +566,14 @@ class StudentDashboardView(StudentRequiredMixin, TemplateView):
         context["window_completed_count"] = window_completed_count
         context["window_open_count"] = window_open_count
         
+        course_target = settings.COURSE_TARGET_MODULES
+        course_progress_percent = min(100, round((completed_count / course_target) * 100))
+
         context["total_modules"] = total_modules
         context["completed_count"] = completed_count
         context["next_module"] = next_module
-        
-        COURSE_TARGET_MODULES = 40  # fixes Kursziel
-
-        completed_count = ModuleCompletion.objects.filter(user=user).count()
-
-        course_target = COURSE_TARGET_MODULES
-        course_progress_percent = round((completed_count / course_target) * 100)
-
-        # Optional: nicht über 100% hinaus anzeigen
-        course_progress_percent = min(100, course_progress_percent)
-
         context["course_target"] = course_target
         context["course_progress_percent"] = course_progress_percent
-        context["completed_count"] = completed_count
 
         return context
         
@@ -973,3 +972,79 @@ class SubmissionsDownloadView(TeacherRequiredMixin, View):
         resp = HttpResponse(buf.getvalue(), content_type="application/zip")
         resp["Content-Disposition"] = f'attachment; filename="{filename}"'
         return resp
+
+
+# =============================
+# Einladungs-System
+# =============================
+
+class TeacherInviteView(TeacherRequiredMixin, View):
+    template_name = "modules/teacher_invite.html"
+
+    def get(self, request):
+        User = get_user_model()
+        invites = InviteToken.objects.filter(created_by=request.user).order_by("-expires_at")
+        return render(request, self.template_name, {
+            "invites": invites,
+            "role_choices": User.ROLE_CHOICES,
+        })
+
+    def post(self, request):
+        User = get_user_model()
+        role = request.POST.get("role", User.STUDENT)
+        if role not in dict(User.ROLE_CHOICES):
+            role = User.STUDENT
+        InviteToken.objects.create(
+            created_by=request.user,
+            role=role,
+            first_name=request.POST.get("first_name", "").strip(),
+            last_name=request.POST.get("last_name", "").strip(),
+            email=request.POST.get("email", "").strip(),
+        )
+        return redirect("modules:teacher_invite")
+
+
+class TeacherInviteDeleteView(TeacherRequiredMixin, View):
+    def post(self, request, pk):
+        InviteToken.objects.filter(pk=pk, created_by=request.user).delete()
+        return redirect("modules:teacher_invite")
+
+
+class AcceptInviteView(View):
+    template_name = "modules/accept_invite.html"
+
+    def _get_token(self, token_str):
+        try:
+            token = InviteToken.objects.get(token=token_str)
+        except (InviteToken.DoesNotExist, ValueError):
+            return None
+        return token if token.is_valid else None
+
+    def get(self, request, token):
+        invite = self._get_token(token)
+        if not invite:
+            return render(request, self.template_name, {"invalid": True})
+        form = AcceptInviteForm()
+        return render(request, self.template_name, {"form": form, "invite": invite})
+
+    def post(self, request, token):
+        invite = self._get_token(token)
+        if not invite:
+            return render(request, self.template_name, {"invalid": True})
+        form = AcceptInviteForm(request.POST)
+        if form.is_valid():
+            User = get_user_model()
+            cd = form.cleaned_data
+            User.objects.create_user(
+                username=invite.email,
+                first_name=invite.first_name,
+                last_name=invite.last_name,
+                email=invite.email,
+                password=cd["password1"],
+                role=invite.role,
+            )
+            invite.used = True
+            invite.save()
+            messages.success(request, "Account erstellt — du kannst dich jetzt anmelden.")
+            return redirect("login")
+        return render(request, self.template_name, {"form": form, "invite": invite})

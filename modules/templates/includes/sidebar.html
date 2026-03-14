@@ -14,10 +14,26 @@
     </button>
   </li>
 
+  {% if request.user.is_authenticated %}
+  <li class="sidebar-role-badge">
+    <span class="role-badge {% if request.user.is_staff %}role-badge--teacher{% elif request.user.is_student %}role-badge--student{% endif %}">
+      {% if request.user.is_staff %}
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15.5 7.5 2.3 2.3a1 1 0 0 0 1.4 0l2.1-2.1a1 1 0 0 0 0-1.4L19 4"/><path d="m21 2-9.6 9.6"/><circle cx="7.5" cy="15.5" r="5.5"/></svg>
+      <span class="role-badge__name">{{ request.user.get_full_name|default:request.user.username }}</span>
+      <span class="role-badge__role">Lehrkraft</span>
+      {% elif request.user.is_student %}
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      <span class="role-badge__name">{{ request.user.get_full_name|default:request.user.username }}</span>
+      <span class="role-badge__role">Schüler:in</span>
+      {% endif %}
+    </span>
+  </li>
+  {% endif %}
+
   <!-- Primary links (mit Icons) -->
 
   {# ===== Teacher-only Bereich ===== #}
-  {% if request.user.is_staff %}
+  {% if request.user.is_teacher %}
     <li>
       <a href="{% url 'modules:teacher_dashboard' %}">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-dashboard-icon lucide-layout-dashboard"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>

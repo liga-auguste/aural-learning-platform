@@ -7,21 +7,21 @@
     <h2>Lehrer-Bereich</h2>
 
     <div class="kpi-row">
-      <div class="kpi">
+      <a class="kpi" href="{% url 'modules:teacher_student_list' %}">
         <div class="kpi-label">Schüler</div>
         <div class="kpi-value">{{ student_count }}</div>
-      </div>
+      </a>
 
-      <div class="kpi">
+      <a class="kpi" href="{% url 'modules:entry_list' %}">
         <div class="kpi-label">Module</div>
         <div class="kpi-value">{{ module_count }}</div>
-      </div>
+      </a>
 
-      <div class="kpi">
+      <a class="kpi" href="{% url 'modules:teacher_submissions_dashboard' %}">
         <div class="kpi-label">Zu korrigieren</div>
         <div class="kpi-value">{{ pending_submissions_count }}</div>
-        <div class="kpi-sub">Abgaben{% if pending_students_count %} · {{pending_students_count }} Schüler{% endif %}</div>
-      </div>
+        <div class="kpi-sub">Abgaben{% if pending_students_count %} · {{ pending_students_count }} Schüler{% endif %}</div>
+      </a>
 
     </div>
 
@@ -73,6 +73,11 @@
     <a class="tile" href="{% url 'modules:glossary_list' %}">
       <div class="tile-title">Lernbegriffe</div>
       <div class="tile-sub">Begriffe nachschlagen</div>
+    </a>
+
+    <a class="tile" href="{% url 'modules:teacher_invite' %}">
+      <div class="tile-title">Einladungen</div>
+      <div class="tile-sub">Schüler & Lehrkräfte einladen</div>
     </a>
 
 

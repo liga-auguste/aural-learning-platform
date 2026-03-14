@@ -238,12 +238,6 @@ class Aufgabentyp(models.Model):
         verbose_name_plural = "Aufgabentypen"
         ordering = ["name"]
         
-class ProgressMatrix:
-    class Meta:
-        verbose_name = "Fortschritts-Matrix"
-        verbose_name_plural = "Fortschritts-Matrix"
-        app_label = "modules"
-        
 class Unit(models.Model):
     REGULAR = "REGULAR"
     HOLIDAY = "HOLIDAY"
@@ -348,12 +342,6 @@ class Unit(models.Model):
         if self.number is not None and not (1 <= self.number <= 40):
             raise ValidationError({"number": "Die Einheit-Nummer muss zwischen 1 und 40 liegen."})
 
-        # Optional: Bei HOLIDAY/OTHER/EXAM erlauben wir module leer.
-        # Bei REGULAR darf module leer sein (z.B. wenn du noch planst),
-        # aber du kannst hier auch erzwingen, dass REGULAR ein Modul haben muss.
-        # if self.kind == self.REGULAR and self.module is None:
-        #     raise ValidationError({"module": "Reguläre Einheiten sollten einem Modul zugeordnet sein."})
-        
     def __str__(self):
         date_str = timezone.localtime(self.date).strftime("%Y-%m-%d")
 

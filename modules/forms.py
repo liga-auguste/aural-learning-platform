@@ -98,29 +98,8 @@ class ModuleForm(forms.ModelForm):
             if f and not t:
                 self.add_error(title_field, "Bitte gib einen Titel an, wenn du eine Audiodatei hochlädst.")
 
-            # optional streng: Titel nur erlaubt, wenn auch Datei hochgeladen ist
-            # if t and not f:
-            #     self.add_error(file_field, "Bitte lade auch eine Audiodatei hoch, wenn du einen Titel angibst.")
-
         return cleaned
 
-class ModuleFilesForm(forms.ModelForm):
-    class Meta:
-        model = Module
-        fields = ("pdf_1", "pdf_2", "pdf_3", "pdf_4")
-        widgets = {
-            "pdf_1": forms.ClearableFileInput(attrs={"accept": ".pdf"}),
-            "pdf_2": forms.ClearableFileInput(attrs={"accept": ".pdf"}),
-            "pdf_3": forms.ClearableFileInput(attrs={"accept": ".pdf"}),
-            "pdf_4": forms.ClearableFileInput(attrs={"accept": ".pdf"}),
-        }
-        labels = {
-            "pdf_1": "Skript",
-            "pdf_2": "Lösung zum Skript",
-            "pdf_3": "Hausaufgabe",
-            "pdf_4": "Lösung zur Hausaufgabe",
-        }
-        
 class ContactForm(forms.Form):
     name = forms.CharField(label="Name", max_length=100)
     email = forms.EmailField(label="E-Mail")

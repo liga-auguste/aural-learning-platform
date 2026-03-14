@@ -12,6 +12,7 @@ from .views import (
     StudentSubmissionsListView, StudentSubmissionsDetailView,
     entry_pk_redirect,
     EntryToggleCompleteView,
+    TeacherInviteView, TeacherInviteDeleteView, AcceptInviteView,
 )
 
 app_name = "modules"
@@ -62,8 +63,11 @@ urlpatterns = [
     path("teacher/units/<int:pk>/toggle-submissions/", views.TeacherToggleUnitSubmissionsView.as_view(), name="teacher_toggle_unit_submissions",),
     path("teacher/submissions/mark/<int:submission_id>/corrected/", views.teacher_mark_submission_corrected, name="teacher_mark_submission_corrected"), path("teacher/submissions/unit/<int:unit_id>/corrected/", views. teacher_mark_unit_corrected, name="teacher_mark_unit_corrected"),
     path("teacher/units/<int:pk>/downloads/", views.SubmissionsDownloadView.as_view(), name="teacher_unit_submissions_downloads",),
+    path("teacher/invite/", TeacherInviteView.as_view(), name="teacher_invite"),
+    path("teacher/invite/<int:pk>/delete/", TeacherInviteDeleteView.as_view(), name="teacher_invite_delete"),
+    path("invite/<uuid:token>/", AcceptInviteView.as_view(), name="accept_invite"),
+
     path("student/", StudentDashboardView.as_view(), name="student_dashboard"),
     path("student/submissions/", StudentSubmissionsListView.as_view(), name="student_submissions_list"),
     path("student/submissions/<int:pk>/", StudentSubmissionsDetailView.as_view(), name="student_submission_detail",),
-    # path( "teacher/units/<int:pk>/submissions/", views.TeacherUnitSubmissionsView.as_view(), name="teacher_unit_submissions",),
 ]

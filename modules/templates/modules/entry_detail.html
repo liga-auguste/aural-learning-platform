@@ -97,7 +97,7 @@
         {% endif %}
 
         {# Lösung zum Skript – nur Lehrkraft #}
-        {% if object.pdf_2 and request.user.is_staff %}
+        {% if object.pdf_2 and request.user.is_teacher %}
           <a class="badge" href="{{ object.pdf_2.url }}" target="_blank" rel="noopener">Lösung zum Skript</a>
         {% endif %}
 
@@ -107,7 +107,7 @@
         {% endif %}
 
         {# Lösung zur Hausaufgabe – nur Lehrkraft #}
-        {% if object.pdf_4 and request.user.is_staff %}
+        {% if object.pdf_4 and request.user.is_teacher %}
           <a class="badge" href="{{ object.pdf_4.url }}" target="_blank" rel="noopener">Lösung zur Hausaufgabe</a>
         {% endif %}
 
@@ -120,73 +120,18 @@
 
   {# ================= AUDIO ================= #}
 
-{% if object.audio_1 or object.audio_2 or object.audio_3 or object.audio_4 %}
-
-  {# --- Audio 1 --- #}
-  {% if object.audio_1 %}
+{% if audio_blocks %}
+  {% for block in audio_blocks %}
     <div class="form-row">
-      <label>Audio</label>
-      <label>
-        {% if object.audio_1_title %}
-          <div class="audio-caption">{{ object.audio_1_title }}</div>
-        {% endif %}
-      </label>
+      <label>{% if forloop.first %}Audio{% endif %}</label>
       <div class="form-value audio-block">
+        {% if block.title %}<div class="audio-caption">{{ block.title }}</div>{% endif %}
         <audio controls preload="none" class="audio-player">
-          <source src="{{ object.audio_1.url }}">
+          <source src="{{ block.file.url }}">
         </audio>
       </div>
     </div>
-  {% endif %}
-
-  {# --- Audio 2 --- #}
-  {% if object.audio_2 %}
-    <div class="form-row">
-      <label>
-        {% if object.audio_2_title %}
-          <div class="audio-caption">{{ object.audio_2_title }}</div>
-        {% endif %}
-      </label>
-      <div class="form-value audio-block">
-        <audio controls preload="none" class="audio-player">
-          <source src="{{ object.audio_2.url }}">
-        </audio>
-      </div>
-    </div>
-  {% endif %}
-
-  {# --- Audio 3 --- #}
-  {% if object.audio_3 %}
-    <div class="form-row">
-      <label>
-        {% if object.audio_3_title %}
-          <div class="audio-caption">{{ object.audio_3_title }}</div>
-        {% endif %}
-      </label>
-      <div class="form-value audio-block">
-        <audio controls preload="none" class="audio-player">
-          <source src="{{ object.audio_3.url }}">
-        </audio>
-      </div>
-    </div>
-  {% endif %}
-
-  {# --- Audio 4 --- #}
-  {% if object.audio_4 %}
-    <div class="form-row">
-      <label>
-        {% if object.audio_4_title %}
-          <div class="audio-caption">{{ object.audio_4_title }}</div>
-        {% endif %}
-      </label>
-      <div class="form-value audio-block">
-        <audio controls preload="none" class="audio-player">
-          <source src="{{ object.audio_4.url }}">
-        </audio>
-      </div>
-    </div>
-  {% endif %}
-
+  {% endfor %}
 {% else %}
   <div class="form-row">
     <label>Audio</label>
@@ -202,7 +147,7 @@
 
 <h3>Abgabe</h3>
 
-{% if request.user.is_authenticated and request.user.is_teacher %}
+{% if request.user.is_teacher %}
 
 <div class="form-grid">
 
@@ -283,7 +228,7 @@
 <div class="form-actions">
 
   {# ================= TEACHER ONLY ================= #}
-  {% if request.user.is_staff %}
+  {% if request.user.is_teacher %}
 
     <a class="svg btn btn-icon-text"
        href="{% url 'modules:entry_update' object.pk %}"

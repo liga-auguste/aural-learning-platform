@@ -208,3 +208,7 @@ LOGGING = {
 }
 # Development-only
 DISABLE_SUBMISSION_LOCK = DEBUG
+
+# Kurs-Konfiguration
+COURSE_TARGET_MODULES = 40
+CONTACT_RECIPIENT = os.getenv("CONTACT_RECIPIENT", "")
