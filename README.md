@@ -8,6 +8,16 @@ Eine webbasierte Lernplattform für den Gehörbildungsunterricht, entwickelt mit
 > | Lehrkraft | `Demo_Lehrkraft` | `Demo1234!` |
 > | Schüler:in | `Demo_Schüler_in` | `Demo1234!` |
 
+## Screenshots
+
+| Lehrer-Dashboard | Moduldetail |
+|---|---|
+| ![Lehrer-Dashboard](docs/screenshots/teacher_dashboard.png) | ![Moduldetail](docs/screenshots/module_detail.png) |
+
+| Hausaufgaben verwalten | Einladungssystem |
+|---|---|
+| ![Hausaufgaben verwalten](docs/screenshots/submissions_dashboard.png) | ![Einladungssystem](docs/screenshots/invite_system.png) |
+
 ---
 
 ## Funktionsumfang
