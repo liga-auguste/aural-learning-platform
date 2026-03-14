@@ -35,7 +35,7 @@ class ModuleTemplateLogicTest(TestCase):
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "keine Begriffe")
+        self.assertContains(response, "keine Aufgabentypen")
 
     def test_detail_shows_pdf_fallback_when_no_pdfs(self):
         module = Module.objects.create(

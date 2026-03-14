@@ -1,0 +1,29 @@
+name: Tests
+
+on:
+  push:
+    branches: ["main", "feature/**"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python 3.13 einrichten
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+
+      - name: Abhängigkeiten installieren
+        run: pip install -r requirements.txt
+
+      - name: Tests ausführen
+        env:
+          SECRET_KEY: "ci-test-secret-key-not-used-in-production"
+          DEBUG: "True"
+        run: python manage.py test --settings=config.settings_test --verbosity=2

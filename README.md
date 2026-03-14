@@ -2,6 +2,12 @@
 
 Eine webbasierte Lernplattform für den Gehörbildungsunterricht, entwickelt mit Django. Die Plattform unterstützt zwei Rollen (Lehrkraft / Schüler:in) und bildet den vollständigen Unterrichtsablauf ab – von der Modulverwaltung über Hausaufgaben-Abgaben bis hin zur Korrektur.
 
+> **Live-Demo:** [aural-learning-platform.onrender.com](https://aural-learning-platform.onrender.com)
+> | Rolle | Login | Passwort |
+> |---|---|---|
+> | Lehrkraft | `lehrer@demo.de` | `Demo1234!` |
+> | Schüler:in | `schueler@demo.de` | `Demo1234!` |
+
 ---
 
 ## Funktionsumfang
@@ -191,9 +197,16 @@ R2_BUCKET_SUBMISSIONS=...
 
 ```bash
 python manage.py migrate
-python manage.py createsuperuser
 python manage.py runserver
 ```
+
+**Demo-Daten laden (optional):**
+
+```bash
+python manage.py create_demo_data
+```
+
+Erstellt zwei Demo-Accounts (`lehrer@demo.de` / `schueler@demo.de`, Passwort `Demo1234!`) sowie Beispielmodule, Aufgabentypen und Glossareinträge.
 
 Den Superuser zur Lehrkraft machen: Im Admin `role = TEACHER` setzen oder direkt in der Shell:
 
