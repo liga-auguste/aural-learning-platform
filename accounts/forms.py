@@ -8,14 +8,14 @@ class RoleLoginForm(AuthenticationForm):
         super().__init__(*args, **kwargs)
 
         self.fields["username"].widget.attrs.update({
-            "placeholder": "E-Mail-Adresse",
+            "placeholder": "Benutzername",
             "class": "auth-input",
             "autocomplete": "username",
             "autofocus": "autofocus",
         })
 
         self.fields["password"].widget.attrs.update({
-            "placeholder": "Passwort wählen",
+            "placeholder": "Passwort",
             "class": "auth-input",
             "autocomplete": "current-password",
         })

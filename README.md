@@ -5,8 +5,8 @@ Eine webbasierte Lernplattform für den Gehörbildungsunterricht, entwickelt mit
 > **Live-Demo:** [aural-learning-platform.onrender.com](https://aural-learning-platform.onrender.com)
 > | Rolle | Login | Passwort |
 > |---|---|---|
-> | Lehrkraft | `lehrer@demo.de` | `Demo1234!` |
-> | Schüler:in | `schueler@demo.de` | `Demo1234!` |
+> | Lehrkraft | `Demo_Lehrkraft` | `Demo1234!` |
+> | Schüler:in | `Demo_Schüler_in` | `Demo1234!` |
 
 ---
 
