@@ -20,6 +20,10 @@ PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 # Kein E-Mail-Versand in Tests
 EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
+# Axes deaktivieren — AxesBackend erfordert request-Objekt, das client.login() nicht liefert
+AXES_ENABLED = False
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+
 # Kein R2-Storage in Tests — lokale Dateien
 DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 STORAGES = {
