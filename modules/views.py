@@ -321,6 +321,9 @@ class GlossaryListView(LockedView, ListView):
             ratio = term.modules_count / max_count
             term.freq_pct = f"{int(ratio * 30)}%"
 
+        ctx["exam_terms"]     = [t for t in ctx["terms"] if t.exam_relevant]
+        ctx["non_exam_terms"] = [t for t in ctx["terms"] if not t.exam_relevant]
+
         # Stats (immer ungefiltert)
         all_annotated = GlossaryEntry.objects.annotate(mc=Count("modules", distinct=True))
         ctx["stats_total"] = all_annotated.count()
@@ -357,6 +360,13 @@ class TeacherStudentListView(TeacherRequiredMixin, ListView):
         context = super().get_context_data(**kwargs)
 
         total_modules = Module.objects.count()
+        total_units = Unit.objects.count()
+        total_enabled_units = Unit.objects.filter(submissions_enabled=True).count()
+
+        teacher_modules = ModuleCompletion.objects.filter(
+            user=self.request.user
+        ).count()
+        teacher_pct = round((teacher_modules / total_modules) * 100) if total_modules else 0
 
         completed_counts = {
             row["user_id"]: row["c"]
@@ -377,17 +387,23 @@ class TeacherStudentListView(TeacherRequiredMixin, ListView):
             sub = submission_stats.get(s.id, {})
             hw_total = sub.get("total", 0)
             hw_corrected = sub.get("corrected", 0)
+            hw_waiting = hw_total - hw_corrected
+            hw_open = max(0, total_enabled_units - hw_total)
             progress_pct = round((comp / total_modules) * 100) if total_modules else 0
             students_data.append({
                 "student": s,
                 "completed": comp,
                 "progress_pct": min(100, progress_pct),
-                "hw_total": hw_total,
+                "hw_open": hw_open,
+                "hw_waiting": hw_waiting,
                 "hw_corrected": hw_corrected,
-                "hw_submitted": hw_total - hw_corrected,
             })
 
         context["total_modules"] = total_modules
+        context["total_units"] = total_units
+        context["total_enabled_units"] = total_enabled_units
+        context["teacher_modules"] = teacher_modules
+        context["teacher_pct"] = teacher_pct
         context["students_data"] = students_data
 
         return context

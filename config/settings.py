@@ -20,7 +20,7 @@ DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 IS_PRODUCTION = os.getenv("DJANGO_ENV") == "production"
 
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", "192.168.178.94"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 
 CSRF_TRUSTED_ORIGINS = ["http://localhost:8000", "http://127.0.0.1:8000"]
 
@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "storages",
     "taggit",
     "adminsortable2",
+    "axes",
 
     "accounts.apps.AccountsConfig",
     "modules.apps.ModulesConfig",
@@ -64,7 +65,8 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "config.middleware.RememberMeMiddleware"
+    "config.middleware.RememberMeMiddleware",
+    "axes.middleware.AxesMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -127,6 +129,17 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+# django-axes: Rate Limiting für Login
+AXES_FAILURE_LIMIT = 5          # Sperre nach 5 Fehlversuchen
+AXES_COOLOFF_TIME = 1           # Sperre für 1 Stunde
+AXES_LOCKOUT_PARAMETERS = ["ip_address"]  # Sperre per IP
+AXES_RESET_ON_SUCCESS = True    # Zähler zurücksetzen bei erfolgreichem Login
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/

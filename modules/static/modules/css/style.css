@@ -4,11 +4,11 @@
   --bcg-col: white;
   --text-color: #2d3142;
   --lecture-bcg: #ebebeb;
-  --btn-hover: #ef8354;
+  --btn-hover: #c47a5a;
   --btn: #C2C9D6;
   --lecture-hover: #dadfe7;
   --tags: #c1cbd7;
-  --accent-green: #6dbf7c;
+  --accent-green: #6a9e72;
   --sidebar-hover: color-mix(in srgb, var(--btn) 30%, transparent);
 
   /* radius scales */
@@ -55,11 +55,11 @@
   --bcg-col: #1f1f1f;
   --text-color: rgb(193, 194, 198);
   --lecture-bcg: #3c3c3f;
-  --btn-hover: #be4f1f;
+  --btn-hover: #a85f47;
   --btn: #34435b;
   --lecture-hover: #555559;
   --tags: #505053;
-  --accent-green: #55a866;
+  --accent-green: #5a9060;
 
   --surface-2: var(--lecture-bcg);
   --border-subtle: var(--btn);
@@ -79,7 +79,12 @@
 
 * { box-sizing: border-box; }
 
-html { font-family: "Barlow Semi Condensed", sans-serif; }
+html {
+  font-family: "Barlow Semi Condensed", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
 
 body {
   max-width: 1100px;
@@ -87,6 +92,18 @@ body {
   padding-inline: clamp(0.75rem, 4vw, 2rem);
   color: var(--text-color);
   background-color: var(--bcg-col);
+}
+
+.page-content {
+  padding-top: 2rem;
+}
+
+.page-content > *:first-child {
+  margin-top: 0;
+}
+
+body.no-sidebar .page-content {
+  padding-top: 0;
 }
 
 a {
@@ -1021,6 +1038,34 @@ input, textarea, select, button {
   background: none;
 }
 
+/* Error Pages */
+.error-page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding-block: 3rem;
+}
+
+.error-page__code {
+  font-size: clamp(3rem, 8vw, 5rem);
+  font-weight: 700;
+  color: var(--btn);
+  margin: 0;
+  line-height: 1;
+}
+
+.error-page__title {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 600;
+  margin: 0;
+}
+
+.error-page__text {
+  color: color-mix(in srgb, var(--text-color) 65%, transparent);
+  margin: 0 0 0.5rem;
+}
+
 /* Footer */
 footer.site-footer {
   margin-top: 4rem;
@@ -1163,6 +1208,104 @@ input[type="file"]::file-selector-button:hover {
 }
 
 
+/* Aufgabentypen */
+.tasktype-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.tasktype-item {
+  border: 1px solid var(--border-glass);
+  border-radius: var(--r-card);
+  background: var(--surface-glass);
+  overflow: hidden;
+}
+
+.tasktype-item[open] {
+  border-color: color-mix(in srgb, var(--btn) 60%, transparent);
+}
+
+.tasktype-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  list-style: none;
+  gap: 1rem;
+}
+
+.tasktype-summary::-webkit-details-marker { display: none; }
+
+.tasktype-summary:hover {
+  background: var(--surface-glass-hover);
+}
+
+.tasktype-name {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.tasktype-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+  color: color-mix(in srgb, var(--text-color) 60%, transparent);
+}
+
+.tasktype-count {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-color);
+  font-variant-numeric: tabular-nums;
+  min-width: 1.8rem;
+  text-align: right;
+}
+
+.tasktype-count-label {
+  display: inline-block;
+  width: 3.6rem;
+}
+
+.tasktype-count-label {
+  font-size: 0.85rem;
+}
+
+.tasktype-chevron {
+  transition: transform 0.2s ease;
+  opacity: 0.5;
+}
+
+.tasktype-item[open] .tasktype-chevron {
+  transform: rotate(180deg);
+}
+
+.tasktype-panel {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem 1rem;
+  border-top: 1px solid var(--border-glass);
+}
+
+.tasktype-module-link {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--btn) 30%, transparent);
+  border: 1px solid var(--border-glass);
+  font-size: 0.9rem;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.tasktype-module-link:hover {
+  background: color-mix(in srgb, var(--btn) 55%, transparent);
+}
+
 /* Lernbegriffe */
 .tag-grid{
   display: grid;
@@ -1191,7 +1334,7 @@ input[type="file"]::file-selector-button:hover {
   justify-content: space-between;
   gap: .75rem;
 
-  padding: .9rem 1rem;
+  padding: 1rem 1.1rem;
   font-weight: 600;
   user-select: none;
 }
@@ -1223,8 +1366,9 @@ input[type="file"]::file-selector-button:hover {
   transition: transform .15s ease;
 }
 
-/* Offener Zustand */
-.tag-card[open] { border-color: var(--btn-hover); }
+/* Offener Zustand — kein Farbakzent */
+.tag-card[open] { border-color: var(--border-glass); }
+.glossary-card--exam[open] { border-color: var(--text-color); }
 
 /* Panel mit Modulen */
 /* Glossary: rechte Gruppe (Counter + Stern) */
@@ -1298,9 +1442,9 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .filter-pill.is-active {
-  background: var(--btn-hover);
-  border-color: var(--btn-hover);
-  color: #fff;
+  background: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--bcg-col);
 }
 
 .glossary-stats {
@@ -1327,11 +1471,52 @@ input[type="file"]::file-selector-button:hover {
   margin-top: 2rem;
 }
 
-/* Glossary: Farbkodierung nach Häufigkeit — Karte färbt sich, Badge neutral */
+/* Glossary: 2 Spalten, mehr Luft */
+.glossary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.1rem;
+}
+
+@media (max-width: 600px) {
+  .glossary-grid { grid-template-columns: 1fr; }
+}
+
+/* Glossary: two explicit columns (exam left, non-exam right) */
+.glossary-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.glossary-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (max-width: 700px) {
+  .glossary-columns { grid-template-columns: 1fr; }
+}
+
+/* Glossary: Farbkodierung nach Häufigkeit — nur Summary-Header, Panel bleibt neutral */
 .glossary-card {
-  background: color-mix(in srgb, var(--glossary-tint) var(--freq-pct, 0%), var(--surface-glass));
-  border-color: color-mix(in srgb, var(--glossary-tint) var(--freq-pct, 0%), var(--border-glass));
-  transition: background .2s, border-color .2s;
+  background: var(--surface-glass);
+  border-color: var(--border-glass);
+}
+
+.glossary-card > summary {
+  background: color-mix(in srgb, var(--glossary-tint) var(--freq-pct, 0%), transparent);
+  border-radius: var(--r-lg);
+  transition: background .2s;
+}
+
+.glossary-card[open] > summary {
+  border-radius: var(--r-lg) var(--r-lg) 0 0;
+}
+
+.glossary-card--exam {
+  border: 2px solid var(--text-color);
 }
 
 .glossary-count {
@@ -1341,7 +1526,9 @@ input[type="file"]::file-selector-button:hover {
 
 .tag-panel {
   padding: .85rem 1rem 1rem;
-  border-top: 1px solid var(--lecture-hover);
+  border-top: 1px solid color-mix(in srgb, var(--text-color) 20%, transparent);
+  background: var(--bcg-col);
+  border-radius: 0 0 var(--r-card) var(--r-card);
   display: grid;
   gap: .5rem;
 }
@@ -1466,16 +1653,45 @@ input[type="file"]::file-selector-button:hover {
 
 /* Glossar Stuff */
 .star-form { margin: 0; }
-.star-btn, .star-static {
-  border: 0;
-  background: transparent;
-  padding: 0 .25rem;
-  font-size: 1.1rem;
-  line-height: 1;
-  cursor: pointer;
-  opacity: .7;
+
+.exam-badge,
+.exam-toggle {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--r-pill);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+  text-transform: uppercase;
 }
-.star-btn:hover { opacity: 1; }
+
+.exam-badge {
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  color: var(--text-color);
+  border: 1px solid color-mix(in srgb, var(--text-color) 30%, transparent);
+}
+
+.exam-toggle {
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--text-color) 15%, transparent);
+  color: color-mix(in srgb, var(--text-color) 35%, transparent);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.exam-toggle--active {
+  background: color-mix(in srgb, var(--text-color) 10%, transparent);
+  border-color: color-mix(in srgb, var(--text-color) 40%, transparent);
+  color: var(--text-color);
+}
+
+.exam-toggle:hover {
+  background: color-mix(in srgb, var(--text-color) 8%, transparent);
+  color: var(--text-color);
+  border-color: color-mix(in srgb, var(--text-color) 40%, transparent);
+}
 
 .form-collapsible {
   border-radius: 14px;
@@ -1634,25 +1850,25 @@ input[type="file"]::file-selector-button:hover {
 /* ===== Completed card styling ===== */
 
 .lecture.is-complete{
-  background: color-mix(in srgb, #6b8f5e 18%, var(--surface-glass));
-  border-color: color-mix(in srgb, #6b8f5e 60%, var(--border-glass));
-  border-left: 3px solid #6b8f5e;
+  background: color-mix(in srgb, var(--accent-green) 10%, var(--surface-glass));
+  border-color: color-mix(in srgb, var(--accent-green) 35%, var(--border-glass));
+  border-left: 3px solid color-mix(in srgb, var(--accent-green) 65%, var(--btn));
 }
 
 .darkmode .lecture.is-complete{
-  background: color-mix(in srgb, #7a9e6a 14%, var(--surface-glass));
-  border-color: color-mix(in srgb, #7a9e6a 50%, var(--border-glass));
-  border-left: 3px solid #7a9e6a;
+  background: color-mix(in srgb, var(--accent-green) 8%, var(--surface-glass));
+  border-color: color-mix(in srgb, var(--accent-green) 30%, var(--border-glass));
+  border-left: 3px solid color-mix(in srgb, var(--accent-green) 55%, var(--btn));
 }
 
 .lecture.is-complete:hover,
 .lecture.is-complete:focus-within{
-  background: color-mix(in srgb, #6b8f5e 26%, var(--surface-glass-hover));
+  background: color-mix(in srgb, var(--accent-green) 15%, var(--surface-glass-hover));
 }
 
 .darkmode .lecture.is-complete:hover,
 .darkmode .lecture.is-complete:focus-within{
-  background: color-mix(in srgb, #7a9e6a 20%, var(--surface-glass-hover));
+  background: color-mix(in srgb, var(--accent-green) 12%, var(--surface-glass-hover));
 }
 
 /* ===== Whole card clickable (stretched link) ===== */
@@ -1798,9 +2014,7 @@ nav h1 a:focus {
 /* ============ Teacher Dashboard ============= */
 
 .teacher-dashboard {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 1rem;
+  padding: 0;
 }
 
 .dashboard-header h1 {
@@ -2232,8 +2446,8 @@ button:disabled{
 
 /* Track */
 .toggle__track{
-  width: 3.1rem;
-  height: 1.75rem;
+  width: 3.2rem;
+  height: 1.6rem;
   border-radius: var(--r-pill);
   background: color-mix(in srgb, var(--btn) 65%, transparent);
   border: 1px solid var(--border-glass);
@@ -2245,13 +2459,13 @@ button:disabled{
 /* Knob */
 .toggle__track::after{
   content:"";
-  width: 1.35rem;
-  height: 1.35rem;
+  width: 1.2rem;
+  height: 1.2rem;
   border-radius: 999px;
   background: var(--bcg-col);
   position: absolute;
   top: 50%;
-  left: .2rem;
+  left: .1rem;
   transform: translateY(-50%);
   transition: left .18s ease;
   border: 1px solid color-mix(in srgb, var(--btn) 35%, transparent);
@@ -2264,7 +2478,7 @@ button:disabled{
 }
 
 .toggle input:checked + .toggle__track::after{
-  left: 1.55rem;
+  left: 1.7rem;
 }
 
 /* Label text */
@@ -2596,29 +2810,133 @@ button:disabled{
    Schülerfortschritt – List View
    ================================ */
 
-.student-progress-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 1.5rem;
+.student-table-wrap {
+  overflow-x: auto;
 }
 
-.student-card {
+.student-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.student-table thead th {
+  text-align: left;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: color-mix(in srgb, var(--text-color) 55%, transparent);
+  padding: 0 1rem 0.6rem;
+  border-bottom: 1px solid var(--border-glass);
+}
+
+.student-table thead th.col-stat {
+  text-align: center;
+}
+
+.student-row {
+  cursor: pointer;
+  border-radius: var(--r-card);
+  transition: background 0.15s ease;
+}
+
+.student-row:hover td {
+  background: var(--surface-glass-hover);
+}
+
+.student-row td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-glass);
+  vertical-align: middle;
+}
+
+.student-row:last-child td {
+  border-bottom: none;
+}
+
+.student-row td:first-child { border-radius: var(--r-card) 0 0 var(--r-card); }
+.student-row td:last-child  { border-radius: 0 var(--r-card) var(--r-card) 0; }
+
+.student-name {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.col-progress { width: 35%; min-width: 180px; }
+.col-stat     { width: 10%; text-align: center; white-space: nowrap; }
+
+.student-progress-cell {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-  text-decoration: none;
-  color: inherit;
+  gap: 0.3rem;
 }
 
-.student-card__name {
-  font-size: 1.1rem;
+.student-progress-label {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--text-color) 60%, transparent);
+}
+
+.stat-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.8rem;
+  height: 1.8rem;
+  border-radius: var(--r-pill);
+  font-size: 0.85rem;
   font-weight: 600;
+  background: color-mix(in srgb, var(--btn) 30%, transparent);
+  color: color-mix(in srgb, var(--text-color) 70%, transparent);
+  padding: 0 0.5rem;
 }
 
-.student-card__hw {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
+.stat-num--open {
+  background: color-mix(in srgb, var(--btn-hover) 18%, transparent);
+  color: var(--btn-hover);
+}
+
+.stat-num--waiting {
+  background: color-mix(in srgb, var(--btn) 45%, transparent);
+  color: var(--text-color);
+}
+
+.stat-num--done {
+  background: color-mix(in srgb, var(--accent-green) 20%, transparent);
+  color: var(--accent-green);
+}
+
+.thead-meta th {
+  padding-bottom: 0.2rem;
+  border-bottom: none;
+}
+
+.thead-meta__label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0;
+  color: color-mix(in srgb, var(--text-color) 50%, transparent);
+}
+
+.thead-meta__hw {
+  text-align: center;
+}
+
+/* Marker auf Fortschrittsbalken */
+.course-progress__bar {
+  position: relative;
+}
+
+.progress-marker {
+  position: absolute;
+  top: -3px;
+  bottom: -3px;
+  width: 2px;
+  background: var(--text-color);
+  border-radius: 1px;
+  opacity: 0.35;
+  transform: translateX(-50%);
+  pointer-events: none;
 }
 
 /* ================================

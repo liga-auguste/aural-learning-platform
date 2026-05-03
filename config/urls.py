@@ -26,4 +26,10 @@ urlpatterns = [
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+    from django.views.defaults import page_not_found, permission_denied
+    urlpatterns += [
+        path("test-404/", lambda req: page_not_found(req, None)),
+        path("test-403/", lambda req: permission_denied(req, None)),
+    ]
     

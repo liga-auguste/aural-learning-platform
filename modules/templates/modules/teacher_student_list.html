@@ -6,35 +6,68 @@
 <section class="teacher-dashboard">
 
   <header class="dashboard-header">
-    <h1>Schülerfortschritt</h1>
+    <h2>Schülerfortschritt</h2>
   </header>
 
-  <div class="student-progress-grid">
-    {% for row in students_data %}
-    <a class="student-card tile" href="{% url 'modules:teacher_student_detail' row.student.id %}">
-
-      <div class="student-card__name">{{ row.student.username }}</div>
-
-      <div class="course-progress">
-        <div class="course-progress__row">
-          <span class="course-progress__label">Module</span>
-          <span class="course-progress__percent">{{ row.completed }} / {{ total_modules }}</span>
-        </div>
-        <div class="course-progress__bar">
-          <div class="course-progress__fill" style="width: {{ row.progress_pct }}%"></div>
-        </div>
-      </div>
-
-      <div class="student-card__hw">
-        <span class="badge badge--submitted">{{ row.hw_submitted }} eingereicht</span>
-        <span class="badge badge--corrected">{{ row.hw_corrected }} korrigiert</span>
-      </div>
-
-    </a>
-    {% empty %}
-    <p>Keine Schüler vorhanden.</p>
-    {% endfor %}
+  {% if students_data %}
+  <div class="student-table-wrap">
+    <table class="student-table">
+      <thead>
+        <tr class="thead-meta">
+          <th></th>
+          <th class="col-progress thead-meta__label">Kursstand: {{ teacher_modules }} / {{ total_modules }}</th>
+          <th class="col-stat"></th>
+          <th class="col-stat thead-meta__label">von {{ total_units }} gesamt</th>
+          <th class="col-stat"></th>
+        </tr>
+        <tr>
+          <th class="col-name">Schüler</th>
+          <th class="col-progress">Module</th>
+          <th class="col-stat">Offen</th>
+          <th class="col-stat">Eingereicht</th>
+          <th class="col-stat">Korrigiert</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for row in students_data %}
+        <tr class="student-row" onclick="window.location='{% url 'modules:teacher_student_detail' row.student.id %}'">
+          <td class="col-name">
+            <span class="student-name">{{ row.student.get_full_name|default:row.student.username }}</span>
+          </td>
+          <td class="col-progress">
+            <div class="student-progress-cell">
+              <span class="student-progress-label">{{ row.completed }} / {{ total_modules }}</span>
+              <div class="course-progress__bar">
+                <div class="course-progress__fill" style="width: {{ row.progress_pct }}%"></div>
+                {% if teacher_pct > 0 %}
+                <div class="progress-marker" style="left: {{ teacher_pct }}%" title="Stand Lehrkraft"></div>
+                {% endif %}
+              </div>
+            </div>
+          </td>
+          <td class="col-stat">
+            <span class="stat-num {% if row.hw_open > 0 %}stat-num--open{% endif %}">
+              {{ row.hw_open }}
+            </span>
+          </td>
+          <td class="col-stat">
+            <span class="stat-num {% if row.hw_waiting > 0 %}stat-num--waiting{% endif %}">
+              {{ row.hw_waiting }}
+            </span>
+          </td>
+          <td class="col-stat">
+            <span class="stat-num {% if row.hw_corrected > 0 %}stat-num--done{% endif %}">
+              {{ row.hw_corrected }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
+  {% else %}
+  <p>Keine Schüler vorhanden.</p>
+  {% endif %}
 
 </section>
 {% endblock %}

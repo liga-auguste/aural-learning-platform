@@ -1,28 +1,32 @@
 {% extends "base.html" %}
 
-{% block content %}
-<h2>Alle Aufgabentypen</h2>
+{% block title %}Aufgabentypen{% endblock %}
 
-<div class="tag-grid">
+{% block content %}
+<h2 class="page-title">Aufgabentypen</h2>
+
+<div class="tasktype-list">
   {% for tag in tags %}
-  <details class="tag-card">
-    <summary class="tag-pill">
-      <span class="tag-name">{{ tag.name }}</span>
-      <span class="tag-count">{{ tag.modules.count }}</span>
+  <details class="tasktype-item">
+    <summary class="tasktype-summary">
+      <span class="tasktype-name">{{ tag.name }}</span>
+      <span class="tasktype-meta">
+        <span class="tasktype-count">{{ tag.modules.count }}</span>
+        <span class="tasktype-count-label">Modul{% if tag.modules.count != 1 %}e{% endif %}</span>
+        <svg class="tasktype-chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+      </span>
     </summary>
 
-    <div class="tag-panel">
+    <div class="tasktype-panel">
       {% for module in tag.modules.all %}
-      <h3 class="tag-module">
-        <a href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a>
-      </h3>
+        <a class="tasktype-module-link" href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a>
       {% empty %}
-      <p class="muted">Kommt in keinem Modul vor.</p>
+        <span class="muted">Noch kein Modul zugeordnet.</span>
       {% endfor %}
     </div>
   </details>
   {% empty %}
-  <p>Keine Aufgaben vorhanden.</p>
+  <p>Keine Aufgabentypen vorhanden.</p>
   {% endfor %}
 </div>
 {% endblock %}

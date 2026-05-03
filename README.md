@@ -162,10 +162,10 @@ Lehrkräfte generieren Einladungslinks direkt im Frontend – kein Admin-Zugang 
 
 ---
 
-## Hausaufgaben-Abgabe & Sperrmechanismus
+## Hausaufgaben-Abgabe & Sperre
 
 - `submissions_enabled = True` → Schüler:in kann Dateien hochladen
-- **36-Stunden-Regel**: 36 Stunden vor dem Datum der Folge-Unit wird die Abgabe automatisch gesperrt
+- Lehrkraft sperrt die Hausaufgabenabgabe nach dem Download
 - Status-Übergänge: `SUBMITTED` → `CORRECTED` (manuell durch Lehrkraft oder Bulk-Aktion)
 - Lehrkraft kann alle PDFs einer Einheit als ZIP herunterladen
 

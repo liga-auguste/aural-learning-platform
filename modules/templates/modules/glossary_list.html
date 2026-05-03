@@ -24,11 +24,11 @@
       </a>
       <a href="?filter=exam&sort={{ current_sort }}"
          class="filter-pill {% if current_filter == 'exam' %}is-active{% endif %}">
-        ★ Prüfung
+        Prüfung
       </a>
       <a href="?filter=non_exam&sort={{ current_sort }}"
          class="filter-pill {% if current_filter == 'non_exam' %}is-active{% endif %}">
-        ☆ Nice to know
+        Nice to know
       </a>
     </div>
 
@@ -61,56 +61,135 @@
 
 </div>
 
-<div class="tag-grid glossary-grid" data-glossary-grid>
-  {% for term in terms %}
-    <details class="tag-card glossary-card" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}">
-      <summary class="tag-pill">
-        <span class="tag-name">{{ term.title }}</span>
-        <span class="tag-pill__meta">
-          <span class="tag-count glossary-count" title="{{ term.modules_count }}x im Unterricht">{{ term.modules_count }}</span>
-          {% if request.user.is_teacher %}
-            <form class="star-form" method="post" action="{% url 'modules:glossary_toggle_exam' term.pk %}">
-              {% csrf_token %}
-              <input type="hidden" name="next" value="{{ request.get_full_path }}">
-              <button type="submit" class="star-btn" aria-label="Prüfungsrelevanz umschalten">
-                {% if term.exam_relevant %}★{% else %}☆{% endif %}
-              </button>
-            </form>
-          {% else %}
-            <span class="star-static" aria-hidden="true">
-              {% if term.exam_relevant %}★{% else %}☆{% endif %}
+{% if current_filter == 'all' %}
+  <div class="glossary-columns" data-glossary-grid>
+
+    <div class="glossary-col glossary-col--exam">
+      {% for term in exam_terms %}
+        <details class="tag-card glossary-card glossary-card--exam" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}">
+          <summary class="tag-pill">
+            <span class="tag-name">{{ term.title }}</span>
+            <span class="tag-pill__meta">
+              <span class="tag-count glossary-count" title="{{ term.modules_count }}x im Unterricht">{{ term.modules_count }}</span>
+              {% if request.user.is_teacher %}
+                <form class="star-form" method="post" action="{% url 'modules:glossary_toggle_exam' term.pk %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button type="submit" class="exam-toggle exam-toggle--active" aria-label="Prüfungsrelevanz umschalten">Prüfung</button>
+                </form>
+              {% else %}
+                <span class="exam-badge">Prüfung</span>
+              {% endif %}
             </span>
+          </summary>
+
+          <div class="tag-panel glossary-panel">
+            {% if term.short_definition %}
+              <p class="muted glossary-short">{{ term.short_definition }}</p>
+            {% endif %}
+            <div class="glossary-definition">
+              {{ term.definition|linebreaksbr }}
+            </div>
+            <hr>
+            <p class="muted">Kommt vor in:</p>
+            <ul class="glossary-modules">
+              {% for module in term.modules.all %}
+                <li><a href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a></li>
+              {% empty %}
+                <li class="muted">Noch keinem Modul zugeordnet.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </details>
+      {% empty %}
+        <p class="muted">Keine prüfungsrelevanten Begriffe.</p>
+      {% endfor %}
+    </div>
+
+    <div class="glossary-col glossary-col--non-exam">
+      {% for term in non_exam_terms %}
+        <details class="tag-card glossary-card" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}">
+          <summary class="tag-pill">
+            <span class="tag-name">{{ term.title }}</span>
+            <span class="tag-pill__meta">
+              <span class="tag-count glossary-count" title="{{ term.modules_count }}x im Unterricht">{{ term.modules_count }}</span>
+              {% if request.user.is_teacher %}
+                <form class="star-form" method="post" action="{% url 'modules:glossary_toggle_exam' term.pk %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                  <button type="submit" class="exam-toggle" aria-label="Prüfungsrelevanz umschalten">Prüfung</button>
+                </form>
+              {% endif %}
+            </span>
+          </summary>
+
+          <div class="tag-panel glossary-panel">
+            {% if term.short_definition %}
+              <p class="muted glossary-short">{{ term.short_definition }}</p>
+            {% endif %}
+            <div class="glossary-definition">
+              {{ term.definition|linebreaksbr }}
+            </div>
+            <hr>
+            <p class="muted">Kommt vor in:</p>
+            <ul class="glossary-modules">
+              {% for module in term.modules.all %}
+                <li><a href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a></li>
+              {% empty %}
+                <li class="muted">Noch keinem Modul zugeordnet.</li>
+              {% endfor %}
+            </ul>
+          </div>
+        </details>
+      {% empty %}
+        <p class="muted">Keine weiteren Begriffe.</p>
+      {% endfor %}
+    </div>
+
+  </div>
+
+{% else %}
+  {# Filtered view: single column #}
+  <div class="tag-grid glossary-grid" data-glossary-grid>
+    {% for term in terms %}
+      <details class="tag-card glossary-card {% if term.exam_relevant %}glossary-card--exam{% endif %}" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}">
+        <summary class="tag-pill">
+          <span class="tag-name">{{ term.title }}</span>
+          <span class="tag-pill__meta">
+            <span class="tag-count glossary-count" title="{{ term.modules_count }}x im Unterricht">{{ term.modules_count }}</span>
+            {% if request.user.is_teacher %}
+              <form class="star-form" method="post" action="{% url 'modules:glossary_toggle_exam' term.pk %}">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.get_full_path }}">
+                <button type="submit" class="exam-toggle {% if term.exam_relevant %}exam-toggle--active{% endif %}" aria-label="Prüfungsrelevanz umschalten">Prüfung</button>
+              </form>
+            {% endif %}
+          </span>
+        </summary>
+
+        <div class="tag-panel glossary-panel">
+          {% if term.short_definition %}
+            <p class="muted glossary-short">{{ term.short_definition }}</p>
           {% endif %}
-        </span>
-      </summary>
-
-      <div class="tag-panel glossary-panel">
-        {% if term.short_definition %}
-          <p class="muted glossary-short">{{ term.short_definition }}</p>
-        {% endif %}
-
-        <div class="glossary-definition">
-          {{ term.definition|linebreaksbr }}
+          <div class="glossary-definition">
+            {{ term.definition|linebreaksbr }}
+          </div>
+          <hr>
+          <p class="muted">Kommt vor in:</p>
+          <ul class="glossary-modules">
+            {% for module in term.modules.all %}
+              <li><a href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a></li>
+            {% empty %}
+              <li class="muted">Noch keinem Modul zugeordnet.</li>
+            {% endfor %}
+          </ul>
         </div>
-
-        <hr>
-
-        <p class="muted">Kommt vor in:</p>
-        <ul class="glossary-modules">
-          {% for module in term.modules.all %}
-            <li>
-              <a href="{% url 'modules:entry_detail' module.pk %}">{{ module.title }}</a>
-            </li>
-          {% empty %}
-            <li class="muted">Noch keinem Modul zugeordnet.</li>
-          {% endfor %}
-        </ul>
-      </div>
-    </details>
-  {% empty %}
-    <p>Keine Begriffe vorhanden.</p>
-  {% endfor %}
-</div>
+      </details>
+    {% empty %}
+      <p>Keine Begriffe vorhanden.</p>
+    {% endfor %}
+  </div>
+{% endif %}
 
 <p class="glossary-no-results" hidden>Kein Begriff gefunden.</p>
 
