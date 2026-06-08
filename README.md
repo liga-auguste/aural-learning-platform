@@ -2,6 +2,10 @@
 
 A web-based learning platform for ear training (Gehörbildung), built with Django. The platform supports two roles (teacher / student) and covers the full teaching workflow — from module management and homework submissions to grading.
 
+## Motivation
+
+I teach ear training myself and always struggled to consistently manage course materials and keep up with student submissions. That frustration is what drove me to build this. If I were teaching again, this is the tool I'd want to use.
+
 > **Live Demo:** [aural-learning-platform.onrender.com](https://aural-learning-platform.onrender.com)
 > | Role | Login | Password |
 > |---|---|---|
