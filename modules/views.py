@@ -169,7 +169,7 @@ class EntryDetailView(LockedView, DetailView):
             if submission:
                 can_edit = submission.is_editable_by_student()
             else:
-                can_edit = False
+                can_edit = unit.submissions_enabled
 
             lock_at = None
 

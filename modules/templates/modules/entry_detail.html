@@ -139,7 +139,9 @@
 
 </div>
 
+{% if request.user.is_teacher or request.user.is_student and unit and unit.submissions_enabled %}
 <h3>Abgabe</h3>
+{% endif %}
 
 {% if request.user.is_teacher %}
 
@@ -218,6 +220,66 @@
 </div>
 
 {% endif %}{# end is_teacher #}
+
+{% if request.user.is_student and unit and unit.submissions_enabled %}
+<div class="form-grid">
+
+  {% if submission %}
+  <div class="form-row">
+    <label>Status</label>
+    <div class="form-value">
+      <span class="badge badge--{% if submission.status == 'SUBMITTED' %}submitted{% elif submission.status == 'CORRECTED' %}corrected{% else %}open{% endif %}">
+        {% if submission.status == "SUBMITTED" %}Eingereicht
+        {% elif submission.status == "CORRECTED" %}Korrigiert
+        {% else %}Offen
+        {% endif %}
+      </span>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if submission.files.all %}
+  <div class="form-row span-2">
+    <label>Hochgeladene Dateien</label>
+    <div class="form-value">
+      <ul class="submission-file-list">
+        {% for file in submission.files.all %}
+        <li class="submission-file-item">
+          <span class="submission-file-item__name">{{ file.display_name|default:file.file.name }}</span>
+          <span class="muted submission-file-item__date">{{ file.uploaded_at|date:"d.m.Y, H:i" }}</span>
+          {% if can_edit %}
+          <form method="post" action="{% url 'modules:delete_submission_file' file.pk %}" style="display:inline">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ request.get_full_path }}">
+            <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Datei löschen?')">Löschen</button>
+          </form>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  {% if can_edit %}
+  <div class="form-row span-2">
+    <label>Datei hochladen</label>
+    <div class="form-value form-value--plain">
+      <form method="post" enctype="multipart/form-data"
+            action="{% url 'modules:upload_submission_file' unit.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ request.get_full_path }}">
+        <div style="display:flex; gap:.5rem; flex-wrap:wrap; align-items:center;">
+          <input type="file" name="files" accept=".pdf" required>
+          <button type="submit" class="btn btn-primary">Hochladen</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endif %}{# end is_student #}
 
 <div class="form-actions">
 
