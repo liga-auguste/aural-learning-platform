@@ -1,5 +1,7 @@
 # Ear Training – Aural Learning Platform
 
+![CI](https://github.com/liga-auguste/aural-learning-platform/actions/workflows/test.yml/badge.svg)
+
 A web-based learning platform for ear training (Gehörbildung), built with Django. The platform supports two roles (teacher / student) and covers the full teaching workflow — from module management and homework submissions to grading.
 
 ## Motivation
@@ -21,6 +23,10 @@ I teach ear training myself and always struggled to consistently manage course m
 | Homework Management | Invitation System |
 |---|---|
 | ![Homework Management](docs/screenshots/submissions_dashboard.png) | ![Invitation System](docs/screenshots/invite_system.png) |
+
+| Student Dashboard | Glossary |
+|---|---|
+| ![Student Dashboard](docs/screenshots/student_dashboard.png) | ![Glossary](docs/screenshots/glossary.png) |
 
 ---
 
