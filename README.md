@@ -1,77 +1,77 @@
-# Gehörbildung – Aural Learning Platform
+# Ear Training – Aural Learning Platform
 
-Eine webbasierte Lernplattform für den Gehörbildungsunterricht, entwickelt mit Django. Die Plattform unterstützt zwei Rollen (Lehrkraft / Schüler:in) und bildet den vollständigen Unterrichtsablauf ab – von der Modulverwaltung über Hausaufgaben-Abgaben bis hin zur Korrektur.
+A web-based learning platform for ear training (Gehörbildung), built with Django. The platform supports two roles (teacher / student) and covers the full teaching workflow — from module management and homework submissions to grading.
 
-> **Live-Demo:** [aural-learning-platform.onrender.com](https://aural-learning-platform.onrender.com)
-> | Rolle | Login | Passwort |
+> **Live Demo:** [aural-learning-platform.onrender.com](https://aural-learning-platform.onrender.com)
+> | Role | Login | Password |
 > |---|---|---|
-> | Lehrkraft | `Demo_Lehrkraft` | `Demo1234!` |
-> | Schüler:in | `Demo_Schüler_in` | `Demo1234!` |
+> | Teacher | `Demo_Lehrkraft` | `Demo1234!` |
+> | Student | `Demo_Schüler_in` | `Demo1234!` |
 
 ## Screenshots
 
-| Lehrer-Dashboard | Moduldetail |
+| Teacher Dashboard | Module Detail |
 |---|---|
-| ![Lehrer-Dashboard](docs/screenshots/teacher_dashboard.png) | ![Moduldetail](docs/screenshots/module_detail.png) |
+| ![Teacher Dashboard](docs/screenshots/teacher_dashboard.png) | ![Module Detail](docs/screenshots/module_detail.png) |
 
-| Hausaufgaben verwalten | Einladungssystem |
+| Homework Management | Invitation System |
 |---|---|
-| ![Hausaufgaben verwalten](docs/screenshots/submissions_dashboard.png) | ![Einladungssystem](docs/screenshots/invite_system.png) |
+| ![Homework Management](docs/screenshots/submissions_dashboard.png) | ![Invitation System](docs/screenshots/invite_system.png) |
 
 ---
 
-## Funktionsumfang
+## Features
 
-### Für Schüler:innen
-- Modulübersicht mit persönlichem Fortschritt
-- Modul als „erledigt" markieren
-- Audiodateien und PDFs je Modul
-- Hausaufgaben einreichen (PDF-Upload, 36-Stunden-Sperrfrist vor Abgabetermin)
-- Eigene Abgaben einsehen, Korrekturstatus verfolgen
-- Persönliches Dashboard mit Fortschrittsbalken und „Weiterlernen"-Direktlink
-- Glossar mit Lernbegriffen
+### For Students
+- Module overview with personal progress tracking
+- Mark modules as completed
+- Audio files and PDFs per module
+- Submit homework (PDF upload)
+- View own submissions and track correction status
+- Personal dashboard with progress bar and "Continue Learning" shortcut
+- Glossary with musical terms
 
-### Für Lehrkräfte
-- Module erstellen, bearbeiten, löschen (Skript, Lösung, Hausaufgabe, Audio)
-- Hausaufgaben-Verwaltung: Abgaben je Einheit einsehen, als korrigiert markieren, ZIP-Download aller PDFs
-- Schülerfortschritt einsehen und manuell bearbeiten
-- Einladungslinks für Schüler:innen und Lehrkräfte generieren
-- Glossar pflegen (Lernbegriffe, Prüfungsrelevanz setzen)
-- Aufgabentypen verwalten
-- Kursfortschritt (Ziel: 40 Module) im Überblick
+### For Teachers
+- Create, edit, and delete modules (script, solution, homework, audio)
+- Homework management: view submissions per unit, mark as corrected, ZIP download of all PDFs
+- View and manually edit student progress
+- Generate invitation links for students and teachers
+- Manage glossary (terms, exam relevance)
+- Manage task types
+- Course progress overview (goal: 40 modules)
 
 ---
 
 ## Tech Stack
 
-| Bereich | Technologie |
+| Area | Technology |
 |---|---|
 | Framework | Django 5.2 |
-| Datenbank | PostgreSQL (Produktion), SQLite (Entwicklung) |
-| Dateiablage | Cloudflare R2 (3 Buckets) / lokal (Entwicklung) |
+| Database | PostgreSQL (production), SQLite (development) |
+| File Storage | Cloudflare R2 (3 buckets) / local (development) |
 | Static Files | WhiteNoise + CompressedManifestStaticFilesStorage |
 | Deployment | Gunicorn, HTTPS, HSTS |
-| Abhängigkeiten | django-storages, boto3, adminsortable2 |
+| Dependencies | django-storages, boto3, adminsortable2 |
 | Frontend | Vanilla CSS (Glass Design System), Vanilla JS |
 
 ---
 
-## Architektur
+## Architecture
 
 ### Apps
 
 ```
 aural-learning-platform/
-├── accounts/          # User-Modell, Rollen, Login, Einladungs-System
-├── modules/           # Kernlogik: Module, Glossar, Abgaben, Dashboards
-├── config/            # Django-Konfiguration, URLs, Middleware
-├── templates/         # Globale Templates (Login, About, Impressum …)
-└── imports/           # Skripte für den Erstimport von Moduldaten
+├── accounts/          # User model, roles, login, invitation system
+├── modules/           # Core logic: modules, glossary, submissions, dashboards
+├── config/            # Django configuration, URLs, middleware
+├── templates/         # Global templates (login, about, imprint …)
+└── imports/           # Scripts for initial module data import
 ```
 
-### Rollen-System
+### Role System
 
-Das Rollen-System läuft über ein eigenes `role`-Feld im User-Modell – nicht über Djangos Permissions oder Groups:
+The role system uses a custom `role` field on the user model — not Django's built-in permissions or groups:
 
 ```python
 class User(AbstractUser):
@@ -86,23 +86,23 @@ class User(AbstractUser):
     def is_student(self): return self.role == self.STUDENT
 ```
 
-Views werden mit `TeacherRequiredMixin` bzw. `StudentRequiredMixin` abgesichert.
+Views are protected with `TeacherRequiredMixin` and `StudentRequiredMixin`.
 
-### Datei-Storage (Cloudflare R2)
+### File Storage (Cloudflare R2)
 
-Drei getrennte Buckets – abhängig von der Sensitivität der Datei:
+Three separate buckets — based on file sensitivity:
 
-| Storage | Inhalt | Sichtbarkeit |
+| Storage | Contents | Visibility |
 |---|---|---|
-| `StudentMaterialsR2Storage` | Skript, Hausaufgaben-PDF, Audio | Eingeloggte Nutzer |
-| `TeacherMaterialsR2Storage` | Lösungen (PDF 2 & 4) | Nur Lehrkraft |
-| `SubmissionsR2Storage` | Schüler-Abgaben | Nur Lehrkraft + eigene Schüler |
+| `StudentMaterialsR2Storage` | Script, homework PDF, audio | Logged-in users |
+| `TeacherMaterialsR2Storage` | Solutions (PDF 2 & 4) | Teachers only |
+| `SubmissionsR2Storage` | Student submissions | Teachers + submitting student |
 
-Im Entwicklungsmodus (`DEBUG=True`) wird lokal gespeichert.
+In development mode (`DEBUG=True`), files are stored locally.
 
 ---
 
-## Datenmodell (Übersicht)
+## Data Model (Overview)
 
 ```
 User (accounts)
@@ -110,20 +110,20 @@ User (accounts)
  └── created_invites → InviteToken
 
 InviteToken (accounts)
- ├── token: UUID (einmalig, 7 Tage gültig)
+ ├── token: UUID (single-use, valid for 7 days)
  ├── role: TEACHER | STUDENT
  ├── first_name, last_name, email
  └── used: bool
 
 Module
  ├── title, slug, order
- ├── inclass (Unterrichtsinhalt), homework
- ├── pdf_1 … pdf_4 (Skript, Lösungen, Hausaufgabe)
- ├── audio_1 … audio_4 + Titel
- ├── tasktype → Aufgabentyp (M2M)
+ ├── inclass (lesson content), homework
+ ├── pdf_1 … pdf_4 (script, solutions, homework)
+ ├── audio_1 … audio_4 + titles
+ ├── tasktype → TaskType (M2M)
  └── glossary_terms → GlossaryEntry (M2M)
 
-Unit  (wird automatisch bei Hausaufgaben-PDF angelegt)
+Unit  (created automatically when a homework PDF is added)
  ├── module → Module (1:1)
  ├── date, number, kind (REGULAR | HOLIDAY | EXAM | OTHER)
  └── submissions_enabled: bool
@@ -143,58 +143,58 @@ GlossaryEntry
  ├── exam_relevant: bool
  └── modules → Module (M2M)
 
-Aufgabentyp
+TaskType
  └── name, slug
 ```
 
 ---
 
-## Einladungs-System
+## Invitation System
 
-Lehrkräfte generieren Einladungslinks direkt im Frontend – kein Admin-Zugang nötig.
+Teachers generate invitation links directly in the frontend — no admin access required.
 
 **Flow:**
-1. Lehrkraft → `/teacher/invite/` → Vorname, Nachname, E-Mail, Rolle eingeben → Link generieren
-2. Link per Kopieren- oder Mail-Button direkt versenden
-3. Eingeladene Person öffnet Link → sieht ihren Namen und die Rolle → setzt nur ein Passwort
-4. Username wird automatisch auf die E-Mail gesetzt
-5. Link ist einmalig nutzbar und läuft nach 7 Tagen ab
+1. Teacher → `/teacher/invite/` → enter first name, last name, email, role → generate link
+2. Share the link via copy or email button
+3. Invited person opens the link → sees their name and role → sets a password only
+4. Username is automatically set to the email address
+5. Link is single-use and expires after 7 days
 
 ---
 
-## Hausaufgaben-Abgabe & Sperre
+## Homework Submission & Locking
 
-- `submissions_enabled = True` → Schüler:in kann Dateien hochladen
-- Lehrkraft sperrt die Hausaufgabenabgabe nach dem Download
-- Status-Übergänge: `SUBMITTED` → `CORRECTED` (manuell durch Lehrkraft oder Bulk-Aktion)
-- Lehrkraft kann alle PDFs einer Einheit als ZIP herunterladen
+- `submissions_enabled = True` → student can upload files
+- Teacher locks submissions after downloading
+- Status transitions: `SUBMITTED` → `CORRECTED` (manually by teacher or via bulk action)
+- Teacher can download all PDFs for a unit as a ZIP
 
 ---
 
-## Setup (Entwicklung)
+## Setup (Development)
 
-**Voraussetzungen:** Python 3.11+, PostgreSQL (oder SQLite)
+**Prerequisites:** Python 3.11+, PostgreSQL (or SQLite)
 
 ```bash
 git clone <repo>
 cd aural-learning-platform
 
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-**.env anlegen:**
+**Create a `.env` file:**
 
 ```env
-SECRET_KEY=dein-secret-key
+SECRET_KEY=your-secret-key
 DEBUG=True
 DATABASE_URL=postgres://user:password@localhost:5432/dbname
 
-# Kontaktformular
-CONTACT_RECIPIENT=deine@email.de
+# Contact form
+CONTACT_RECIPIENT=your@email.com
 
-# Cloudflare R2 (nur Produktion)
+# Cloudflare R2 (production only)
 R2_ACCESS_KEY_ID=...
 R2_SECRET_ACCESS_KEY=...
 R2_ENDPOINT_URL=https://<account>.r2.cloudflarestorage.com
@@ -203,25 +203,25 @@ R2_BUCKET_TEACHER=...
 R2_BUCKET_SUBMISSIONS=...
 ```
 
-**Datenbank & Start:**
+**Migrate and run:**
 
 ```bash
-python manage.py migrate
-python manage.py runserver
+python3 manage.py migrate
+python3 manage.py runserver
 ```
 
-**Demo-Daten laden (optional):**
+**Load demo data (optional):**
 
 ```bash
-python manage.py create_demo_data
+python3 manage.py create_demo_data
 ```
 
-Erstellt zwei Demo-Accounts (`lehrer@demo.de` / `schueler@demo.de`, Passwort `Demo1234!`) sowie Beispielmodule, Aufgabentypen und Glossareinträge.
+Creates two demo accounts (`lehrer@demo.de` / `schueler@demo.de`, password `Demo1234!`) along with sample modules, task types, and glossary entries.
 
-Den Superuser zur Lehrkraft machen: Im Admin `role = TEACHER` setzen oder direkt in der Shell:
+To make a superuser a teacher — set `role = TEACHER` in the admin, or via the shell:
 
 ```bash
-python manage.py shell -c "
+python3 manage.py shell -c "
 from accounts.models import User
 u = User.objects.get(username='<username>')
 u.role = 'TEACHER'
@@ -231,7 +231,7 @@ u.save()
 
 ---
 
-## Deployment (Produktion)
+## Deployment (Production)
 
 ```env
 DJANGO_ENV=production
@@ -240,23 +240,23 @@ DATABASE_URL=<postgres-url>
 ```
 
 ```bash
-python manage.py collectstatic
+python3 manage.py collectstatic
 gunicorn config.wsgi:application
 ```
 
-Aktiviert automatisch: HTTPS-Redirect, HSTS (7 Tage), Secure Cookies, SSL-Header.
+Automatically enables: HTTPS redirect, HSTS (7 days), secure cookies, SSL headers.
 
 ---
 
-## Bekannte technische Schulden
+## Known Technical Debt
 
-| Thema | Details |
+| Topic | Details |
 |---|---|
-| `django-taggit` entfernen | Taggit ist im Code nicht mehr aktiv (ersetzt durch `Aufgabentyp`), bleibt wegen Migrationshistorie in `INSTALLED_APPS`. Lösung: Migrationen squashen, dann Paket aus Settings und `requirements.txt` entfernen. |
+| Remove `django-taggit` | Taggit is no longer active in the code (replaced by `TaskType`), but remains in `INSTALLED_APPS` due to migration history. Fix: squash migrations, then remove the package from settings and `requirements.txt`. |
 
 ---
 
-## Projektstruktur
+## Project Structure
 
 ```
 aural-learning-platform/
@@ -269,32 +269,32 @@ aural-learning-platform/
 │   └── migrations/
 ├── modules/
 │   ├── models.py           # Module, Unit, Submission, GlossaryEntry, …
-│   ├── views.py            # ~30 Views
+│   ├── views.py            # ~30 views
 │   ├── urls.py
 │   ├── forms.py            # ModuleForm, ContactForm
-│   ├── admin.py            # Erweiterte Admin-Ansichten
-│   ├── storages.py         # R2-Storage-Klassen
+│   ├── admin.py            # Extended admin views
+│   ├── storages.py         # R2 storage classes
 │   ├── context_processors.py
 │   ├── widgets.py
 │   ├── migrations/
 │   ├── static/modules/
-│   │   ├── css/style.css   # Haupt-Stylesheet (Glass Design System)
+│   │   ├── css/style.css   # Main stylesheet (Glass Design System)
 │   │   ├── css/auth.css
 │   │   ├── js/script.js
 │   │   └── icons/
 │   └── templates/
 │       ├── base.html
 │       ├── includes/sidebar.html
-│       └── modules/        # Alle App-Templates
+│       └── modules/        # All app templates
 ├── config/
 │   ├── settings.py
 │   ├── urls.py
 │   ├── wsgi.py
 │   └── middleware.py       # RememberMeMiddleware
-├── templates/              # Globale Templates (Login, Impressum, …)
-├── imports/                # Datenimport-Skripte
-├── media/                  # Lokale Uploads (nur Entwicklung)
-├── staticfiles/            # collectstatic-Output
+├── templates/              # Global templates (login, imprint, …)
+├── imports/                # Data import scripts
+├── media/                  # Local uploads (development only)
+├── staticfiles/            # collectstatic output
 ├── requirements.txt
 └── manage.py
 ```

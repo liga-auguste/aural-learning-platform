@@ -3,37 +3,69 @@
 
 {% block content %}
   <h2>Kontakt</h2>
-  <p>Schreib mir gern eine Nachricht zu „Gehörbildung Online“.</p>
+  <p>Schreib mir gern eine Nachricht zu diesem Projekt.</p>
 
-  <form method="post" class="form">
-    {% csrf_token %}
-    {{ form.hp_field }} {# Honeypot #}
+  <div id="contact-success" class="alert alert-success" style="display:none;">
+    Dein Mail-Programm wurde geöffnet. Bitte sende die vorbereitete E-Mail ab.
+  </div>
 
+  <form id="contact-form" class="form" novalidate>
     <div class="form-row">
       {{ form.name.label_tag }} {{ form.name }}
-      {% for e in form.name.errors %}<div class="error">{{ e }}</div>{% endfor %}
+      <div class="error" id="error-name"></div>
     </div>
 
     <div class="form-row">
       {{ form.email.label_tag }} {{ form.email }}
-      {% for e in form.email.errors %}<div class="error">{{ e }}</div>{% endfor %}
-    </div>
-
-    <div class="form-row">
-      {{ form.subject.label_tag }} {{ form.subject }}
-      {% for e in form.subject.errors %}<div class="error">{{ e }}</div>{% endfor %}
+      <div class="error" id="error-email"></div>
     </div>
 
     <div class="form-row">
       {{ form.message.label_tag }} {{ form.message }}
-      {% for e in form.message.errors %}<div class="error">{{ e }}</div>{% endfor %}
+      <div class="error" id="error-message"></div>
     </div>
 
     <div class="form-row checkbox">
       <label>{{ form.consent }} {{ form.consent.label }}</label>
-      {% for e in form.consent.errors %}<div class="error">{{ e }}</div>{% endfor %}
+      <div class="error" id="error-consent"></div>
     </div>
 
     <button type="submit" class="btn">Senden</button>
   </form>
+
+  <script>
+    document.getElementById("contact-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name    = document.getElementById("id_name").value.trim();
+      const email   = document.getElementById("id_email").value.trim();
+      const subject = document.getElementById("id_subject").value.trim();
+      const message = document.getElementById("id_message").value.trim();
+      const consent = document.getElementById("id_consent").checked;
+
+      // clear errors
+      ["name", "email", "message", "consent"].forEach(f =>
+        document.getElementById("error-" + f).textContent = ""
+      );
+
+      let valid = true;
+      if (!name)    { document.getElementById("error-name").textContent    = "Bitte gib deinen Namen ein.";     valid = false; }
+      if (!email)   { document.getElementById("error-email").textContent   = "Bitte gib deine E-Mail ein.";    valid = false; }
+      if (!message) { document.getElementById("error-message").textContent = "Bitte schreib eine Nachricht.";  valid = false; }
+      if (!consent) { document.getElementById("error-consent").textContent = "Bitte stimme der Datenschutzerklärung zu."; valid = false; }
+      if (!valid) return;
+
+      const recipient = "{{ contact_email }}";
+      const mailSubject = subject || "Nachricht zu Unterricht in Gehörbildung";
+      const body = `Von: ${name} <${email}>\n\nNachricht:\n${message}`;
+
+      window.location.href =
+        "mailto:" + encodeURIComponent(recipient) +
+        "?subject=" + encodeURIComponent(mailSubject) +
+        "&body="    + encodeURIComponent(body);
+
+      document.getElementById("contact-form").style.display = "none";
+      document.getElementById("contact-success").style.display = "block";
+    });
+  </script>
 {% endblock %}

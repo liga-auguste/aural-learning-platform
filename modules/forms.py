@@ -101,10 +101,10 @@ class ModuleForm(forms.ModelForm):
         return cleaned
 
 class ContactForm(forms.Form):
-    name = forms.CharField(label="Name", max_length=100)
-    email = forms.EmailField(label="E-Mail")
-    subject = forms.CharField(label="Betreff", max_length=150, required=False)
-    message = forms.CharField(label="Nachricht", widget=forms.Textarea(attrs={"rows": 6}))
+    name = forms.CharField(label="Dein Name", max_length=100)
+    email = forms.EmailField(label="Deine E-Mail")
+    subject = forms.CharField(label="Betreff (optional)", max_length=150, required=False)
+    message = forms.CharField(label="Deine Nachricht", widget=forms.Textarea(attrs={"rows": 6}))
     consent = forms.BooleanField(
         label="Ich stimme der Verarbeitung meiner Angaben zu (Datenschutz)."
     )

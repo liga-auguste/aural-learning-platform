@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 1420" font-family="system-ui, sans-serif">
+
+  <!-- Background -->
+  <rect width="1100" height="1420" fill="#f8f9fa" rx="12"/>
+
+  <!-- ══════════════════════════════════════════
+       TITLE
+  ══════════════════════════════════════════ -->
+  <text x="550" y="36" text-anchor="middle" font-size="22" font-weight="bold" fill="#1a1a2e">Aural Learning Platform – Gesamtübersicht</text>
+  <text x="550" y="56" text-anchor="middle" font-size="13" fill="#666">Django 5.2 · SQLite/PostgreSQL · S3 Storage · Whitenoise · Render.com</text>
+
+  <!-- ══════════════════════════════════════════
+       ROW 1: AUTH
+  ══════════════════════════════════════════ -->
+  <rect x="30" y="72" width="1040" height="110" rx="8" fill="#e8eaf6" stroke="#5c6bc0" stroke-width="1.5"/>
+  <text x="50" y="92" font-size="12" font-weight="bold" fill="#3949ab">AUTHENTICATION  (accounts app)</text>
+
+  <rect x="50" y="100" width="200" height="70" rx="6" fill="#fff" stroke="#7986cb" stroke-width="1.2"/>
+  <text x="150" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#283593">User (AbstractUser)</text>
+  <text x="150" y="134" text-anchor="middle" font-size="10" fill="#555">role: TEACHER | STUDENT</text>
+  <text x="150" y="148" text-anchor="middle" font-size="10" fill="#555">is_teacher / is_student</text>
+  <text x="150" y="162" text-anchor="middle" font-size="10" fill="#555">django.contrib.auth.urls</text>
+
+  <rect x="268" y="100" width="200" height="70" rx="6" fill="#fff" stroke="#7986cb" stroke-width="1.2"/>
+  <text x="368" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#283593">InviteToken</text>
+  <text x="368" y="134" text-anchor="middle" font-size="10" fill="#555">token (UUID) · role</text>
+  <text x="368" y="148" text-anchor="middle" font-size="10" fill="#555">expires_at · used</text>
+  <text x="368" y="162" text-anchor="middle" font-size="10" fill="#555">gültig 7 Tage</text>
+
+  <rect x="486" y="100" width="210" height="70" rx="6" fill="#fff" stroke="#7986cb" stroke-width="1.2"/>
+  <text x="591" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#283593">RoleBasedLoginView</text>
+  <text x="591" y="134" text-anchor="middle" font-size="10" fill="#555">→ Teacher Dashboard</text>
+  <text x="591" y="148" text-anchor="middle" font-size="10" fill="#555">→ Student Dashboard</text>
+  <text x="591" y="162" text-anchor="middle" font-size="10" fill="#555">django-axes (Brute-Force-Schutz)</text>
+
+  <rect x="714" y="100" width="336" height="70" rx="6" fill="#fff" stroke="#7986cb" stroke-width="1.2"/>
+  <text x="882" y="118" text-anchor="middle" font-size="11" font-weight="bold" fill="#283593">Mixins &amp; Decorators</text>
+  <text x="882" y="134" text-anchor="middle" font-size="10" fill="#555">TeacherRequiredMixin · StudentRequiredMixin</text>
+  <text x="882" y="148" text-anchor="middle" font-size="10" fill="#555">LoginRequiredMixin (LockedView)</text>
+  <text x="882" y="162" text-anchor="middle" font-size="10" fill="#555">@login_required</text>
+
+  <!-- ══════════════════════════════════════════
+       ROW 2: MODELS
+  ══════════════════════════════════════════ -->
+  <rect x="30" y="200" width="1040" height="190" rx="8" fill="#e8f5e9" stroke="#43a047" stroke-width="1.5"/>
+  <text x="50" y="220" font-size="12" font-weight="bold" fill="#2e7d32">DATENMODELLE  (modules app)</text>
+
+  <rect x="50" y="228" width="185" height="150" rx="6" fill="#fff" stroke="#66bb6a" stroke-width="1.2"/>
+  <text x="142" y="246" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">Module</text>
+  <text x="142" y="262" text-anchor="middle" font-size="10" fill="#555">title · slug · order</text>
+  <text x="142" y="276" text-anchor="middle" font-size="10" fill="#555">inclass · homework</text>
+  <text x="142" y="290" text-anchor="middle" font-size="10" fill="#555">pdf_1 Skript (student)</text>
+  <text x="142" y="304" text-anchor="middle" font-size="10" fill="#555">pdf_2 Lösung (teacher)</text>
+  <text x="142" y="318" text-anchor="middle" font-size="10" fill="#555">pdf_3/4 Hausaufgabe</text>
+  <text x="142" y="332" text-anchor="middle" font-size="10" fill="#555">audio_1–4 (mp3/wav…)</text>
+  <text x="142" y="346" text-anchor="middle" font-size="10" fill="#777">→ auto-creates Unit</text>
+  <text x="142" y="362" text-anchor="middle" font-size="10" fill="#b71c1c">M2M: Aufgabentyp</text>
+
+  <rect x="250" y="228" width="185" height="150" rx="6" fill="#fff" stroke="#66bb6a" stroke-width="1.2"/>
+  <text x="342" y="246" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">GlossaryEntry</text>
+  <text x="342" y="262" text-anchor="middle" font-size="10" fill="#555">title · slug</text>
+  <text x="342" y="276" text-anchor="middle" font-size="10" fill="#555">short_definition</text>
+  <text x="342" y="290" text-anchor="middle" font-size="10" fill="#555">definition</text>
+  <text x="342" y="304" text-anchor="middle" font-size="10" fill="#555">exam_relevant</text>
+  <text x="342" y="318" text-anchor="middle" font-size="10" fill="#b71c1c">M2M: Module</text>
+
+  <rect x="450" y="228" width="155" height="150" rx="6" fill="#fff" stroke="#66bb6a" stroke-width="1.2"/>
+  <text x="527" y="246" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">Aufgabentyp</text>
+  <text x="527" y="262" text-anchor="middle" font-size="10" fill="#555">name · slug</text>
+  <text x="527" y="276" text-anchor="middle" font-size="10" fill="#555">Filter-Tag</text>
+  <text x="527" y="290" text-anchor="middle" font-size="10" fill="#555">für Module-Liste</text>
+
+  <rect x="620" y="228" width="185" height="150" rx="6" fill="#fff" stroke="#66bb6a" stroke-width="1.2"/>
+  <text x="712" y="246" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">Unit (Einheit)</text>
+  <text x="712" y="262" text-anchor="middle" font-size="10" fill="#555">number (1–40)</text>
+  <text x="712" y="276" text-anchor="middle" font-size="10" fill="#555">date · kind</text>
+  <text x="712" y="290" text-anchor="middle" font-size="10" fill="#555">REGULAR/HOLIDAY</text>
+  <text x="712" y="304" text-anchor="middle" font-size="10" fill="#555">EXAM / OTHER</text>
+  <text x="712" y="318" text-anchor="middle" font-size="10" fill="#555">submissions_enabled</text>
+  <text x="712" y="332" text-anchor="middle" font-size="10" fill="#b71c1c">1:1 → Module</text>
+
+  <rect x="820" y="228" width="235" height="150" rx="6" fill="#fff" stroke="#66bb6a" stroke-width="1.2"/>
+  <text x="937" y="246" text-anchor="middle" font-size="11" font-weight="bold" fill="#1b5e20">Submission / SubmissionFile</text>
+  <text x="937" y="262" text-anchor="middle" font-size="10" fill="#555">status: SUBMITTED | CORRECTED</text>
+  <text x="937" y="276" text-anchor="middle" font-size="10" fill="#555">submitted_at · note_from_student</text>
+  <text x="937" y="290" text-anchor="middle" font-size="10" fill="#555">SubmissionFile: file (PDF)</text>
+  <text x="937" y="304" text-anchor="middle" font-size="10" fill="#555">display_name · position</text>
+  <text x="937" y="318" text-anchor="middle" font-size="10" fill="#b71c1c">FK → Unit · FK → User</text>
+  <text x="937" y="332" text-anchor="middle" font-size="10" fill="#555">is_editable_by_student()</text>
+
+  <rect x="50" y="384" width="390" height="28" rx="5" fill="#f1f8e9" stroke="#aed581" stroke-width="1"/>
+  <text x="245" y="403" text-anchor="middle" font-size="10" fill="#33691e">ModuleCompletion (user × module, unique) · ProgressMatrixProxy (Admin-Ansicht)</text>
+
+  <!-- ══════════════════════════════════════════
+       ROW 3: VIEWS
+  ══════════════════════════════════════════ -->
+  <rect x="30" y="428" width="1040" height="190" rx="8" fill="#fce4ec" stroke="#e91e63" stroke-width="1.5"/>
+  <text x="50" y="448" font-size="12" font-weight="bold" fill="#880e4f">VIEWS &amp; URLS</text>
+
+  <rect x="50" y="456" width="220" height="150" rx="6" fill="#fff" stroke="#f48fb1" stroke-width="1.2"/>
+  <text x="160" y="474" text-anchor="middle" font-size="11" font-weight="bold" fill="#880e4f">Student-Bereich</text>
+  <text x="160" y="490" text-anchor="middle" font-size="10" fill="#555">/student/ Dashboard</text>
+  <text x="160" y="504" text-anchor="middle" font-size="10" fill="#555">/modules/ Modulliste</text>
+  <text x="160" y="518" text-anchor="middle" font-size="10" fill="#555">/modules/&lt;slug&gt;/ Detail</text>
+  <text x="160" y="532" text-anchor="middle" font-size="10" fill="#555">/student/submissions/ Liste</text>
+  <text x="160" y="546" text-anchor="middle" font-size="10" fill="#555">/units/&lt;id&gt;/upload/ (PDF)</text>
+  <text x="160" y="560" text-anchor="middle" font-size="10" fill="#555">/glossar/ · /pruefungsanforderungen/</text>
+  <text x="160" y="574" text-anchor="middle" font-size="10" fill="#555">toggle-complete (Fortschritt)</text>
+
+  <rect x="285" y="456" width="240" height="150" rx="6" fill="#fff" stroke="#f48fb1" stroke-width="1.2"/>
+  <text x="405" y="474" text-anchor="middle" font-size="11" font-weight="bold" fill="#880e4f">Lehrer-Bereich</text>
+  <text x="405" y="490" text-anchor="middle" font-size="10" fill="#555">/teacher/ Dashboard</text>
+  <text x="405" y="504" text-anchor="middle" font-size="10" fill="#555">/teacher/students/ Liste + Detail</text>
+  <text x="405" y="518" text-anchor="middle" font-size="10" fill="#555">/teacher/submissions/ Abgaben</text>
+  <text x="405" y="532" text-anchor="middle" font-size="10" fill="#555">/teacher/units/&lt;pk&gt;/toggle-submissions/</text>
+  <text x="405" y="546" text-anchor="middle" font-size="10" fill="#555">/teacher/units/&lt;pk&gt;/downloads/ ZIP</text>
+  <text x="405" y="560" text-anchor="middle" font-size="10" fill="#555">mark-corrected (Einzel / ganze Unit)</text>
+  <text x="405" y="574" text-anchor="middle" font-size="10" fill="#555">toggle-completion (Student×Modul)</text>
+
+  <rect x="540" y="456" width="210" height="150" rx="6" fill="#fff" stroke="#f48fb1" stroke-width="1.2"/>
+  <text x="645" y="474" text-anchor="middle" font-size="11" font-weight="bold" fill="#880e4f">Einladungssystem</text>
+  <text x="645" y="490" text-anchor="middle" font-size="10" fill="#555">/teacher/invite/ erstellen</text>
+  <text x="645" y="504" text-anchor="middle" font-size="10" fill="#555">/invite/&lt;uuid&gt;/ annehmen</text>
+  <text x="645" y="518" text-anchor="middle" font-size="10" fill="#555">→ Account wird angelegt</text>
+  <text x="645" y="532" text-anchor="middle" font-size="10" fill="#555">Rolle aus Token übernommen</text>
+
+  <rect x="765" y="456" width="290" height="150" rx="6" fill="#fff" stroke="#f48fb1" stroke-width="1.2"/>
+  <text x="910" y="474" text-anchor="middle" font-size="11" font-weight="bold" fill="#880e4f">Admin &amp; Sonstiges</text>
+  <text x="910" y="490" text-anchor="middle" font-size="10" fill="#555">/admin/ Django-Admin</text>
+  <text x="910" y="504" text-anchor="middle" font-size="10" fill="#555">Modul-Changeliste (custom template)</text>
+  <text x="910" y="518" text-anchor="middle" font-size="10" fill="#555">Fortschrittsmatrix (ProgressMatrixProxy)</text>
+  <text x="910" y="532" text-anchor="middle" font-size="10" fill="#555">Submission-Changeliste (custom)</text>
+  <text x="910" y="546" text-anchor="middle" font-size="10" fill="#555">adminsortable2 (Drag&amp;Drop Reihenfolge)</text>
+  <text x="910" y="560" text-anchor="middle" font-size="10" fill="#555">/kontakt/ · /about/ · /impressum/ · /datenschutz/</text>
+
+  <!-- ══════════════════════════════════════════
+       ROW 4: INFRA
+  ══════════════════════════════════════════ -->
+  <rect x="30" y="636" width="1040" height="120" rx="8" fill="#fff3e0" stroke="#fb8c00" stroke-width="1.5"/>
+  <text x="50" y="656" font-size="12" font-weight="bold" fill="#e65100">INFRASTRUKTUR &amp; SERVICES</text>
+
+  <rect x="50" y="664" width="190" height="80" rx="6" fill="#fff" stroke="#ffb74d" stroke-width="1.2"/>
+  <text x="145" y="682" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">File Storage (S3)</text>
+  <text x="145" y="698" text-anchor="middle" font-size="10" fill="#555">student_storage → public</text>
+  <text x="145" y="712" text-anchor="middle" font-size="10" fill="#555">teacher_storage → privat</text>
+  <text x="145" y="726" text-anchor="middle" font-size="10" fill="#555">submissions_storage → privat</text>
+
+  <rect x="255" y="664" width="180" height="80" rx="6" fill="#fff" stroke="#ffb74d" stroke-width="1.2"/>
+  <text x="345" y="682" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">Datenbank</text>
+  <text x="345" y="698" text-anchor="middle" font-size="10" fill="#555">SQLite (lokal/dev)</text>
+  <text x="345" y="712" text-anchor="middle" font-size="10" fill="#555">PostgreSQL (prod)</text>
+  <text x="345" y="726" text-anchor="middle" font-size="10" fill="#555">psycopg2 · dj-database-url</text>
+
+  <rect x="450" y="664" width="180" height="80" rx="6" fill="#fff" stroke="#ffb74d" stroke-width="1.2"/>
+  <text x="540" y="682" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">Sicherheit</text>
+  <text x="540" y="698" text-anchor="middle" font-size="10" fill="#555">django-axes (Login-Schutz)</text>
+  <text x="540" y="712" text-anchor="middle" font-size="10" fill="#555">CSRF · Rollen-Mixins</text>
+  <text x="540" y="726" text-anchor="middle" font-size="10" fill="#555">403-Guard überall</text>
+
+  <rect x="645" y="664" width="180" height="80" rx="6" fill="#fff" stroke="#ffb74d" stroke-width="1.2"/>
+  <text x="735" y="682" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">Deployment</text>
+  <text x="735" y="698" text-anchor="middle" font-size="10" fill="#555">Render.com (Hosting)</text>
+  <text x="735" y="712" text-anchor="middle" font-size="10" fill="#555">Gunicorn · Whitenoise</text>
+  <text x="735" y="726" text-anchor="middle" font-size="10" fill="#555">python-dotenv (.env)</text>
+
+  <rect x="840" y="664" width="220" height="80" rx="6" fill="#fff" stroke="#ffb74d" stroke-width="1.2"/>
+  <text x="950" y="682" text-anchor="middle" font-size="11" font-weight="bold" fill="#e65100">CI / Tests</text>
+  <text x="950" y="698" text-anchor="middle" font-size="10" fill="#555">GitHub Actions (test.yml)</text>
+  <text x="950" y="712" text-anchor="middle" font-size="10" fill="#555">push main + feature/**</text>
+  <text x="950" y="726" text-anchor="middle" font-size="10" fill="#555">coverage · settings_test.py</text>
+
+  <!-- ══════════════════════════════════════════
+       DIVIDER
+  ══════════════════════════════════════════ -->
+  <line x1="30" y1="780" x2="1070" y2="780" stroke="#bbb" stroke-width="1.5" stroke-dasharray="6,4"/>
+  <text x="550" y="800" text-anchor="middle" font-size="15" font-weight="bold" fill="#37474f">MAINTENANCE-CHECKLISTE – Was muss gepflegt werden?</text>
+
+  <!-- ══════════════════════════════════════════
+       MAINTENANCE ROW 1
+  ══════════════════════════════════════════ -->
+
+  <!-- 1. Frontend-Assets -->
+  <rect x="30" y="812" width="320" height="250" rx="8" fill="#fff" stroke="#546e7a" stroke-width="1.5"/>
+  <rect x="30" y="812" width="320" height="28" rx="8" fill="#546e7a"/>
+  <text x="190" y="831" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">Frontend-Assets</text>
+
+  <text x="48" y="856" font-size="10" fill="#263238">FAVICON-SET  (modules/static/modules/icons/)</text>
+  <text x="56" y="872" font-size="10" fill="#555">favicon.ico</text>
+  <text x="56" y="886" font-size="10" fill="#555">favicon-16x16.png  favicon-32x32.png</text>
+  <text x="56" y="900" font-size="10" fill="#555">favicon-48x48.png  favicon-64x64.png</text>
+  <text x="56" y="914" font-size="10" fill="#555">apple-touch-icon.png  (180×180)</text>
+  <text x="56" y="928" font-size="10" fill="#555">android-chrome-192x192.png</text>
+
+  <text x="48" y="948" font-size="10" fill="#263238">CSS</text>
+  <text x="56" y="964" font-size="10" fill="#555">style.css  (Haupt-Styles, Dark-Mode)</text>
+  <text x="56" y="978" font-size="10" fill="#555">auth.css  (Login-Seite)</text>
+
+  <text x="48" y="998" font-size="10" fill="#263238">JAVASCRIPT</text>
+  <text x="56" y="1014" font-size="10" fill="#555">script.js  (Nav, Dark-Mode-Toggle)</text>
+
+  <text x="48" y="1034" font-size="10" fill="#263238">SCHRIFTEN (extern, CDN)</text>
+  <text x="56" y="1050" font-size="10" fill="#e53935">Barlow Semi Condensed via fonts.bunny.net</text>
+
+  <!-- 2. PWA / Manifest -->
+  <rect x="365" y="812" width="250" height="250" rx="8" fill="#fff" stroke="#546e7a" stroke-width="1.5"/>
+  <rect x="365" y="812" width="250" height="28" rx="8" fill="#546e7a"/>
+  <text x="490" y="831" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">PWA / Web-App</text>
+
+  <text x="383" y="856" font-size="10" fill="#263238">MANIFEST  (modules/static/modules/)</text>
+  <text x="391" y="872" font-size="10" fill="#555">manifest.json</text>
+  <text x="391" y="886" font-size="10" fill="#555">name: "Gehörbildung"</text>
+  <text x="391" y="900" font-size="10" fill="#555">short_name: "Gehörbildung"</text>
+  <text x="391" y="914" font-size="10" fill="#555">theme_color: #0f2a3a</text>
+  <text x="391" y="928" font-size="10" fill="#555">background_color: #0f2a3a</text>
+  <text x="391" y="942" font-size="10" fill="#555">start_url: /</text>
+  <text x="391" y="956" font-size="10" fill="#555">icons: android-chrome + apple-touch</text>
+  <text x="383" y="976" font-size="10" fill="#263238">HINWEIS</text>
+  <text x="391" y="992" font-size="10" fill="#e53935">Icon-Pfade im manifest.json auf</text>
+  <text x="391" y="1006" font-size="10" fill="#e53935">/static/... nach collectstatic prüfen</text>
+
+  <!-- 3. Templates -->
+  <rect x="630" y="812" width="440" height="250" rx="8" fill="#fff" stroke="#546e7a" stroke-width="1.5"/>
+  <rect x="630" y="812" width="440" height="28" rx="8" fill="#546e7a"/>
+  <text x="850" y="831" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">Templates (HTML)</text>
+
+  <text x="648" y="856" font-size="10" fill="#263238">BASIS</text>
+  <text x="656" y="872" font-size="10" fill="#555">modules/templates/base.html  (Haupt-Layout, Nav, Dark-Mode)</text>
+  <text x="656" y="886" font-size="10" fill="#555">modules/templates/includes/sidebar.html</text>
+
+  <text x="648" y="906" font-size="10" fill="#263238">SEITEN-TEMPLATES  (modules/templates/modules/)</text>
+  <text x="656" y="922" font-size="10" fill="#555">home · entry_list · entry_detail · entry_form · entry_confirm_delete</text>
+  <text x="656" y="936" font-size="10" fill="#555">glossary_list · glossary_toggle_exam · exam_requirements</text>
+  <text x="656" y="950" font-size="10" fill="#555">tasktype_list · accept_invite · teacher_invite</text>
+  <text x="656" y="964" font-size="10" fill="#555">student_dashboard · student_submissions_list · student_submission_detail</text>
+  <text x="656" y="978" font-size="10" fill="#555">teacher_dashboard · teacher_student_list · teacher_student_detail</text>
+  <text x="656" y="992" font-size="10" fill="#555">teacher_submissions_dash</text>
+
+  <text x="648" y="1012" font-size="10" fill="#263238">ADMIN-CUSTOM-TEMPLATES  (templates/admin/modules/)</text>
+  <text x="656" y="1028" font-size="10" fill="#555">module_change_list.html · progress_matrix.html · submission/change_list.html</text>
+
+  <text x="648" y="1048" font-size="10" fill="#263238">FEHLERSEITEN  (templates/)</text>
+  <text x="656" y="1058" font-size="10" fill="#555">403.html · 404.html · 500.html</text>
+
+  <!-- ══════════════════════════════════════════
+       MAINTENANCE ROW 2
+  ══════════════════════════════════════════ -->
+
+  <!-- 4. Konfiguration -->
+  <rect x="30" y="1075" width="310" height="230" rx="8" fill="#fff" stroke="#546e7a" stroke-width="1.5"/>
+  <rect x="30" y="1075" width="310" height="28" rx="8" fill="#546e7a"/>
+  <text x="185" y="1094" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">Konfiguration &amp; Secrets</text>
+
+  <text x="48" y="1118" font-size="10" fill="#263238">.env  (nie ins Git!)</text>
+  <text x="56" y="1134" font-size="10" fill="#555">SECRET_KEY</text>
+  <text x="56" y="1148" font-size="10" fill="#555">DATABASE_URL · DB_NAME/USER/HOST/PORT</text>
+  <text x="56" y="1162" font-size="10" fill="#555">R2_BUCKET_STUDENT/TEACHER/SUBMISSIONS</text>
+  <text x="56" y="1176" font-size="10" fill="#555">R2_ENDPOINT_URL · AWS_ACCESS_KEY_ID</text>
+  <text x="56" y="1190" font-size="10" fill="#555">RENDER_EXTERNAL_HOSTNAME · CUSTOM_DOMAIN</text>
+  <text x="56" y="1204" font-size="10" fill="#555">EMAIL_HOST · EMAIL_HOST_PASSWORD</text>
+  <text x="56" y="1218" font-size="10" fill="#555">DEBUG=False (Prod)</text>
+
+  <text x="48" y="1238" font-size="10" fill="#263238">CONFIG-FILES</text>
+  <text x="56" y="1254" font-size="10" fill="#555">config/settings.py · settings_test.py</text>
+  <text x="56" y="1268" font-size="10" fill="#555">.gitignore · .coveragerc</text>
+  <text x="56" y="1282" font-size="10" fill="#555">requirements.txt</text>
+
+  <!-- 5. Tests & CI -->
+  <rect x="355" y="1075" width="300" height="230" rx="8" fill="#fff" stroke="#546e7a" stroke-width="1.5"/>
+  <rect x="355" y="1075" width="300" height="28" rx="8" fill="#546e7a"/>
+  <text x="505" y="1094" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">Tests &amp; CI/CD</text>
+
+  <text x="373" y="1118" font-size="10" fill="#263238">TESTDATEIEN</text>
+  <text x="381" y="1134" font-size="10" fill="#555">modules/tests/test_views.py</text>
+  <text x="381" y="1148" font-size="10" fill="#555">modules/tests/test_models.py</text>
+  <text x="381" y="1162" font-size="10" fill="#555">modules/tests/test_glossary_views.py</text>
+  <text x="381" y="1176" font-size="10" fill="#555">modules/tests/test_submission_views.py</text>
+  <text x="381" y="1190" font-size="10" fill="#555">modules/tests/test_teacher_student_views.py</text>
+  <text x="381" y="1204" font-size="10" fill="#555">accounts/tests.py</text>
+
+  <text x="373" y="1224" font-size="10" fill="#263238">GITHUB ACTIONS</text>
+  <text x="381" y="1240" font-size="10" fill="#555">.github/workflows/test.yml</text>
+  <text x="381" y="1254" font-size="10" fill="#555">Trigger: push main + feature/**</text>
+  <text x="381" y="1268" font-size="10" fill="#555">Python 3.13 · pip cache</text>
+
+  <!-- 6. Demo & Dokumentation -->
+  <rect x="670" y="1075" width="400" height="230" rx="8" fill="#fff" stroke="#546e7a" stroke-width="1.5"/>
+  <rect x="670" y="1075" width="400" height="28" rx="8" fill="#546e7a"/>
+  <text x="870" y="1094" text-anchor="middle" font-size="12" font-weight="bold" fill="#fff">Demo-Zugänge &amp; Dokumentation</text>
+
+  <text x="688" y="1118" font-size="10" fill="#263238">DEMO-ACCOUNTS  (manuell im Admin pflegen)</text>
+  <text x="696" y="1134" font-size="10" fill="#555">Demo_Lehrkraft  /  Passwort: Demo1234!</text>
+  <text x="696" y="1148" font-size="10" fill="#555">Demo_Schüler_in  /  Passwort: Demo1234!</text>
+  <text x="696" y="1162" font-size="10" fill="#e53935">Regelmäßig Daten/Abgaben bereinigen</text>
+
+  <text x="688" y="1182" font-size="10" fill="#263238">README.md</text>
+  <text x="696" y="1198" font-size="10" fill="#555">Live-Demo-Link · Login-Tabelle</text>
+  <text x="696" y="1212" font-size="10" fill="#555">Screenshots aktuell halten</text>
+
+  <text x="688" y="1232" font-size="10" fill="#263238">SCREENSHOTS  (docs/screenshots/)</text>
+  <text x="696" y="1248" font-size="10" fill="#555">teacher_dashboard.png · module_detail.png</text>
+  <text x="696" y="1262" font-size="10" fill="#555">submissions_dashboard.png · invite_system.png</text>
+
+  <text x="688" y="1282" font-size="10" fill="#263238">ARCHITEKTUR-GRAFIK</text>
+  <text x="696" y="1296" font-size="10" fill="#555">docs/app_architecture.svg  (diese Datei)</text>
+
+  <!-- ══════════════════════════════════════════
+       ARROWS
+  ══════════════════════════════════════════ -->
+  <defs>
+    <marker id="arr" markerWidth="8" markerHeight="8" refX="4" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#9e9e9e"/>
+    </marker>
+  </defs>
+  <line x1="550" y1="182" x2="550" y2="200" stroke="#9e9e9e" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <line x1="550" y1="418" x2="550" y2="428" stroke="#9e9e9e" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+  <line x1="550" y1="618" x2="550" y2="636" stroke="#9e9e9e" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arr)"/>
+
+  <!-- Footer -->
+  <text x="550" y="1410" text-anchor="middle" font-size="10" fill="#999">accounts/ · modules/ · config/ · templates/ · media/ (S3) · .github/ · docs/</text>
+</svg>

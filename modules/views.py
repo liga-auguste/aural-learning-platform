@@ -246,32 +246,11 @@ class EntryDeleteView(TeacherRequiredMixin, SuccessMessageMixin, DeleteView):
         return super().delete(request, *args, **kwargs)
 
 def contact_view(request):
-    if request.method == "POST":
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            name = form.cleaned_data["name"]
-            email = form.cleaned_data["email"]
-            subject = form.cleaned_data.get("subject") or "Kontaktformular"
-            message = form.cleaned_data["message"]
-
-            body = f"Von: {name} <{email}>\n\nNachricht:\n{message}"
-
-            try:
-                send_mail(
-                    subject=subject,
-                    message=body,
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[settings.CONTACT_RECIPIENT],
-                    fail_silently=False,
-                )
-            except Exception:
-                messages.error(request, "Die Nachricht konnte leider nicht gesendet werden. Bitte versuche es später erneut.")
-                return render(request, "contact.html", {"form": form})
-
-            return redirect(reverse("contact_thanks"))
-    else:
-        form = ContactForm()
-    return render(request, "contact.html", {"form": form})
+    form = ContactForm()
+    return render(request, "contact.html", {
+        "form": form,
+        "contact_email": settings.CONTACT_RECIPIENT,
+    })
 
 class TaskTypeListView(ListView):
     model = Aufgabentyp
