@@ -9,7 +9,7 @@ class ModuleViewTest(TestCase):
     def setUp(self):
         User = get_user_model()
         self.user = User.objects.create_user(username="testuser", password="testpass123")
-        self.client.login(username="testuser", password="testpass123")
+        self.client.force_login(self.user)
 
     def test_detail_page_loads_for_existing_module(self):
         module = Module.objects.create(
@@ -58,7 +58,7 @@ class ModuleViewLogicTest(TestCase):
         cls.user = User.objects.create_user(username="testuser", password="testpass123")
 
     def setUp(self):
-        self.client.login(username="testuser", password="testpass123")
+        self.client.force_login(self.user)
 
     def list_url(self):
         return reverse("modules:entry_list")

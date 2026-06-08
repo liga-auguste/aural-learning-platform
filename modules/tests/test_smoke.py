@@ -20,10 +20,7 @@ class SmokeTest(TestCase):
             password="testpass123"
         )
         
-        self.client.login(
-            username="testuser",
-            password="testpass123"
-        )
+        self.client.force_login(user)
         
         url = reverse("modules:entry_list")
         response = self.client.get(url)

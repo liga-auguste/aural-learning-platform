@@ -9,8 +9,8 @@ from modules.models import Module
 class ModuleTemplateLogicTest(TestCase):
     def setUp(self):
         User = get_user_model()
-        User.objects.create_user(username="testuser", password="testpass123")
-        self.client.login(username="testuser", password="testpass123")
+        self.user = User.objects.create_user(username="testuser", password="testpass123")
+        self.client.force_login(self.user)
 
     def test_detail_shows_homework_fallback_when_empty(self):
         module = Module.objects.create(
@@ -107,8 +107,8 @@ class ModuleTemplateLogicTest(TestCase):
 class ModuleNavigationTest(TestCase):
     def setUp(self):
         User = get_user_model()
-        User.objects.create_user(username="testuser", password="testpass123")
-        self.client.login(username="testuser", password="testpass123")
+        self.user = User.objects.create_user(username="testuser", password="testpass123")
+        self.client.force_login(self.user)
 
     def test_detail_page_contains_next_prev_links(self):
         m1 = Module.objects.create(title="Modul 1", slug="modul-1", inclass="x", order=1)

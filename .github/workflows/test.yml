@@ -3,12 +3,17 @@ name: Tests
 on:
   push:
     branches: ["main", "feature/**"]
+    paths-ignore:
+      - 'coverage.svg'
   pull_request:
     branches: ["main"]
 
 jobs:
   test:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -26,4 +31,44 @@ jobs:
         env:
           SECRET_KEY: "ci-test-secret-key-not-used-in-production"
           DEBUG: "True"
-        run: python manage.py test --settings=config.settings_test --verbosity=2
+        run: coverage run --source=. manage.py test --settings=config.settings_test --verbosity=2
+
+      - name: Coverage-Badge generieren und committen
+        if: github.ref == 'refs/heads/main'
+        run: |
+          python3 - <<'EOF'
+          import subprocess, sys
+
+          result = subprocess.run(["python3", "-m", "coverage", "report"], capture_output=True, text=True)
+          total = result.stdout.strip().split("\n")[-1].split()[-1]
+          pct = int(total.replace("%", ""))
+
+          if pct >= 90: color = "#4c1"
+          elif pct >= 75: color = "#97ca00"
+          elif pct >= 60: color = "#dfb317"
+          else: color = "#e05d44"
+
+          label_w, value_w = 63, 35
+          total_w = label_w + value_w
+          svg = f"""<svg xmlns="http://www.w3.org/2000/svg" width="{total_w}" height="20">
+            <rect rx="3" width="{total_w}" height="20" fill="#555"/>
+            <rect rx="3" x="{label_w}" width="{value_w}" height="20" fill="{color}"/>
+            <rect x="{label_w}" width="4" height="20" fill="{color}"/>
+            <g fill="#fff" text-anchor="middle" font-family="DejaVu Sans,Verdana,Geneva,sans-serif" font-size="11">
+              <text x="{label_w // 2}" y="15" fill="#010101" fill-opacity=".3">coverage</text>
+              <text x="{label_w // 2}" y="14">coverage</text>
+              <text x="{label_w + value_w // 2}" y="15" fill="#010101" fill-opacity=".3">{total}</text>
+              <text x="{label_w + value_w // 2}" y="14">{total}</text>
+            </g>
+          </svg>"""
+
+          with open("coverage.svg", "w") as f:
+              f.write(svg)
+          print(f"Badge: {total}")
+          EOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add coverage.svg
+          git diff --staged --quiet || git commit -m "chore: update coverage badge [skip ci]"
+          git push
