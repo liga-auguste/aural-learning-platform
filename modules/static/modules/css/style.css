@@ -8,7 +8,7 @@
   --btn: #C2C9D6;
   --lecture-hover: #dadfe7;
   --tags: #c1cbd7;
-  --accent-green: #6a9e72;
+  --accent-green: #85bf8e;
   --sidebar-hover: color-mix(in srgb, var(--btn) 30%, transparent);
 
   /* radius scales */
@@ -59,7 +59,7 @@
   --btn: #34435b;
   --lecture-hover: #555559;
   --tags: #505053;
-  --accent-green: #5a9060;
+  --accent-green: #72b07a;
 
   --surface-2: var(--lecture-bcg);
   --border-subtle: var(--btn);
@@ -1317,7 +1317,7 @@ input[type="file"]::file-selector-button:hover {
 }
 
 .tag-card{
-  border: 1px solid var(--border-glass);
+  border: 2px solid var(--border-glass);
   border-radius: var(--r-card);
   background: var(--surface-glass);
   overflow: hidden;
@@ -1718,6 +1718,17 @@ input[type="file"]::file-selector-button:hover {
 
 .form-collapsible__content {
   padding: 0.5rem 0.25rem 0.25rem;
+}
+
+.form-collapsible__content > div > div {
+  break-inside: avoid;
+}
+
+@media (min-width: 820px) {
+  .form-collapsible__content > div {
+    columns: 2;
+    column-gap: 1.5rem;
+  }
 }
 
 .form-collapsible__meta {
@@ -2550,15 +2561,15 @@ button:disabled{
 }
 
 .role-badge--teacher {
-  background: color-mix(in srgb, var(--btn-hover) 15%, transparent);
-  border-color: color-mix(in srgb, var(--btn-hover) 35%, transparent);
-  color: var(--btn-hover);
+  background: color-mix(in srgb, var(--btn) 30%, transparent);
+  border-color: color-mix(in srgb, var(--btn) 55%, transparent);
+  color: var(--text-color);
 }
 
 .darkmode .role-badge--teacher {
-  background: color-mix(in srgb, var(--btn-hover) 18%, transparent);
-  border-color: color-mix(in srgb, var(--btn-hover) 40%, transparent);
-  color: color-mix(in srgb, var(--btn-hover) 85%, white);
+  background: color-mix(in srgb, var(--btn) 25%, transparent);
+  border-color: color-mix(in srgb, var(--btn) 50%, transparent);
+  color: var(--text-color);
 }
 
 .role-badge--student {
