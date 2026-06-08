@@ -25,7 +25,7 @@ class ModuleForm(forms.ModelForm):
         queryset=GlossaryEntry.objects.all().order_by("title"),
         required=False,
         label="Lernbegriffe:",
-        help_text="Begriffe, die in diesem Modul erklärt und angezeigt werden",
+        help_text="",
     )
 
     def __init__(self, *args, **kwargs):

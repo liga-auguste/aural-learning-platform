@@ -48,33 +48,35 @@
 </div>
 
   {% with glossary_terms=object.glossary_terms.all %}
-  {% if glossary_terms %}
     <div class="form-row span-2">
       <label>Lernbegriffe</label>
+      {% if glossary_terms %}
+        <div class="form-value form-value--plain">
+          <div class="tag-grid">
+            {% for term in glossary_terms %}
+              <details class="tag-card {% if term.exam_relevant %}glossary-card--exam{% endif %}">
+                <summary class="tag-pill">
+                  <span class="tag-name">{{ term.title }}</span>
+                </summary>
 
-      <div class="form-value form-value--plain">
-        <div class="tag-grid">
-          {% for term in glossary_terms %}
-            <details class="tag-card {% if term.exam_relevant %}glossary-card--exam{% endif %}">
-              <summary class="tag-pill">
-                <span class="tag-name">{{ term.title }}</span>
-              </summary>
+                <div class="tag-panel">
+                  {% if term.short_definition %}
+                    <p class="muted">{{ term.short_definition }}</p>
+                  {% endif %}
 
-              <div class="tag-panel">
-                {% if term.short_definition %}
-                  <p class="muted">{{ term.short_definition }}</p>
-                {% endif %}
-
-                <p>{{ term.definition|linebreaksbr }}</p>
-              </div>
-            </details>
-          {% endfor %}
+                  <p>{{ term.definition|linebreaksbr }}</p>
+                </div>
+              </details>
+            {% endfor %}
+          </div>
         </div>
-      </div>
-
+      {% elif request.user.is_teacher %}
+        <div class="form-value">
+          <a href="{% url 'modules:entry_update' object.pk %}" class="status-off">keine Lernbegriffe — jetzt zuweisen</a>
+        </div>
+      {% endif %}
     </div>
-  {% endif %}
-{% endwith %}
+  {% endwith %}
 
   <div class="form-row span-2">
   <label>Materialien</label>
