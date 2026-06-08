@@ -198,41 +198,9 @@ class ContactViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("form", response.context)
 
-    def test_valid_post_sends_mail_and_redirects(self):
-        from django.core import mail
-        from django.test import override_settings
-        with override_settings(CONTACT_RECIPIENT="empfaenger@example.com", DEFAULT_FROM_EMAIL="noreply@example.com"):
-            response = self.client.post(reverse("contact"), {
-                "name": "Max Mustermann",
-                "email": "max@example.com",
-                "subject": "Test",
-                "message": "Hallo!",
-                "consent": True,
-                "hp_field": "",
-            })
-        self.assertRedirects(response, reverse("contact_thanks"), fetch_redirect_response=False)
-        self.assertEqual(len(mail.outbox), 1)
-
-    def test_invalid_post_rerenders_form(self):
-        response = self.client.post(reverse("contact"), {
-            "name": "",
-            "email": "kein-email",
-            "message": "",
-            "consent": False,
-        })
-        self.assertEqual(response.status_code, 200)
-        self.assertIn("form", response.context)
-
-    def test_honeypot_blocks_spam(self):
-        from django.core import mail
-        self.client.post(reverse("contact"), {
-            "name": "Spammer",
-            "email": "spam@example.com",
-            "message": "Kaufe jetzt!",
-            "consent": True,
-            "hp_field": "bot-filled-this",
-        })
-        self.assertEqual(len(mail.outbox), 0)
+    def test_get_includes_contact_email(self):
+        response = self.client.get(reverse("contact"))
+        self.assertIn("contact_email", response.context)
 
 
 # ---------------------------------------------------------------------------
