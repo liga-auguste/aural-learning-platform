@@ -2,6 +2,7 @@
 
 ![CI](https://github.com/liga-auguste/aural-learning-platform/actions/workflows/test.yml/badge.svg)
 ![Coverage](coverage.svg)
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 A web-based learning platform for ear training (Gehörbildung), built with Django. The platform supports two roles (teacher / student) and covers the full teaching workflow — from module management and homework submissions to grading.
 
