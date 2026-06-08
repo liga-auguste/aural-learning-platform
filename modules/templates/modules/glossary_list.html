@@ -66,7 +66,7 @@
 
     <div class="glossary-col glossary-col--exam">
       {% for term in exam_terms %}
-        <details class="tag-card glossary-card glossary-card--exam" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}">
+        <details class="tag-card glossary-card glossary-card--exam" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}" data-term-def="{{ term.definition|lower|truncatechars:300 }}">
           <summary class="tag-pill">
             <span class="tag-name">{{ term.title }}</span>
             <span class="tag-pill__meta">
@@ -108,7 +108,7 @@
 
     <div class="glossary-col glossary-col--non-exam">
       {% for term in non_exam_terms %}
-        <details class="tag-card glossary-card" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}">
+        <details class="tag-card glossary-card" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}" data-term-def="{{ term.definition|lower|truncatechars:300 }}">
           <summary class="tag-pill">
             <span class="tag-name">{{ term.title }}</span>
             <span class="tag-pill__meta">
@@ -152,7 +152,7 @@
   {# Filtered view: single column #}
   <div class="tag-grid glossary-grid" data-glossary-grid>
     {% for term in terms %}
-      <details class="tag-card glossary-card {% if term.exam_relevant %}glossary-card--exam{% endif %}" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}">
+      <details class="tag-card glossary-card {% if term.exam_relevant %}glossary-card--exam{% endif %}" style="--freq-pct: {{ term.freq_pct }}" data-term-name="{{ term.title|lower }}" data-term-def="{{ term.definition|lower|truncatechars:300 }}">
         <summary class="tag-pill">
           <span class="tag-name">{{ term.title }}</span>
           <span class="tag-pill__meta">

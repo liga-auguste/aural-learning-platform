@@ -245,7 +245,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     cards.forEach(card => {
       const name = card.dataset.termName || "";
-      const match = !query || name.includes(query);
+      const def  = card.dataset.termDef  || "";
+      const match = !query || name.includes(query) || def.includes(query);
       card.hidden = !match;
       if (match) visible++;
     });
