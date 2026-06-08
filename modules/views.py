@@ -569,6 +569,13 @@ class StudentDashboardView(StudentRequiredMixin, TemplateView):
         context["course_target"] = course_target
         context["course_progress_percent"] = course_progress_percent
 
+        _, hw_counts = _get_homework_counts(user)
+        context["homework_enabled_units_count"] = hw_counts["enabled_units"]
+        context["homework_open_count"] = hw_counts["open"]
+        context["homework_locked_count"] = hw_counts["locked"]
+        context["homework_submitted_count"] = hw_counts["submitted"]
+        context["homework_corrected_count"] = hw_counts["corrected"]
+
         return context
         
 
@@ -773,114 +780,79 @@ def teacher_mark_unit_corrected(request, unit_id):
         return redirect(next_url)
     return redirect("modules:teacher_submissions_dashboard")
 
+def _get_homework_counts(user):
+    """Returns (rows, counts) for a student’s homework submissions."""
+    now = timezone.now()
+
+    enabled_units = list(
+        Unit.objects
+        .filter(submissions_enabled=True)
+        .select_related("module")
+        .order_by("date", "number", "id")
+    )
+
+    submissions_qs = (
+        Submission.objects
+        .filter(student=user, unit__in=enabled_units)
+        .select_related("unit", "unit__module")
+        .prefetch_related("files")
+    )
+    submissions_by_unit_id = {s.unit_id: s for s in submissions_qs}
+
+    units_with_date = sorted(
+        [u for u in enabled_units if getattr(u, "date", None)],
+        key=lambda u: u.date,
+    )
+    lock_at_by_unit_id = {}
+    for i, unit in enumerate(units_with_date):
+        next_unit = units_with_date[i + 1] if i + 1 < len(units_with_date) else None
+        lock_at_by_unit_id[unit.id] = (
+            None if next_unit is None else next_unit.date - timedelta(hours=36)
+        )
+    for unit in enabled_units:
+        lock_at_by_unit_id.setdefault(unit.id, None)
+
+    rows = []
+    counts = {"enabled_units": len(enabled_units), "open": 0, "locked": 0, "submitted": 0, "corrected": 0}
+
+    for unit in enabled_units:
+        submission = submissions_by_unit_id.get(unit.id)
+        lock_at = lock_at_by_unit_id.get(unit.id)
+
+        if submission:
+            status_key = "corrected" if submission.status == Submission.CORRECTED else "submitted"
+        else:
+            status_key = "locked" if (lock_at is not None and now >= lock_at) else "open"
+
+        counts[status_key] += 1
+        rows.append({
+            "unit": unit,
+            "module": unit.module,
+            "submission": submission,
+            "status": status_key,
+            "lock_at": lock_at,
+        })
+
+    status_order = {"locked": 0, "open": 1, "submitted": 2, "corrected": 3}
+    rows.sort(key=lambda r: (
+        status_order.get(r["status"], 99),
+        r["unit"].date is None,
+        r["unit"].date or timezone.datetime.min.replace(tzinfo=timezone.get_current_timezone()),
+        r["unit"].id,
+    ))
+
+    return rows, counts
+
+
 class StudentSubmissionsListView(StudentRequiredMixin, TemplateView):
     template_name = "modules/student_submissions_list.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        user = self.request.user
-        now = timezone.now()
+        rows, counts = _get_homework_counts(self.request.user)
 
-        # ------------------------------------------------------------
-        # 1) Alle freigeschalteten Units (Hausaufgaben-relevant) holen
-        # ------------------------------------------------------------
-        enabled_units_qs = (
-            Unit.objects
-            .filter(submissions_enabled=True)
-            .select_related("module")
-            .order_by("date", "number", "id")
-        )
-
-        enabled_units = list(enabled_units_qs)
-
-        # ------------------------------------------------------------
-        # 2) Alle Submissions des Users für diese Units holen
-        #    (inkl. Dateien, damit du in der Liste ggf. Downloads zeigen kannst)
-        # ------------------------------------------------------------
-        submissions_qs = (
-            Submission.objects
-            .filter(student=user, unit__in=enabled_units)
-            .select_related("unit", "unit__module")
-            .prefetch_related("files")
-        )
-
-        # Dictionary: unit_id -> submission
-        submissions_by_unit_id = {s.unit_id: s for s in submissions_qs}
-
-        # ------------------------------------------------------------
-        # 3) "Nächste Unit nach Datum" vorberechnen (für 36h-Lock)
-        #    Wir betrachten nur Units mit date != NULL.
-        # ------------------------------------------------------------
-        units_with_date = [u for u in enabled_units if getattr(u, "date", None)]
-        units_with_date.sort(key=lambda u: u.date)
-
-        # Map: unit_id -> lock_at (datetime) oder None
-        lock_at_by_unit_id = {}
-
-        for i, unit in enumerate(units_with_date):
-            next_unit = units_with_date[i + 1] if i + 1 < len(units_with_date) else None
-            if next_unit is None:
-                lock_at_by_unit_id[unit.id] = None
-            else:
-                lock_at_by_unit_id[unit.id] = next_unit.date - timedelta(hours=36)
-
-        # Units ohne date -> kein Lock (None)
-        for unit in enabled_units:
-            lock_at_by_unit_id.setdefault(unit.id, None)
-
-        # ------------------------------------------------------------
-        # 4) Zeilen bauen: pro Unit ein "Row"-Objekt mit Status + Links
-        # ------------------------------------------------------------
-        rows = []
-        counts = {
-            "enabled_units": len(enabled_units),
-            "open": 0,
-            "locked": 0,
-            "submitted": 0,
-            "corrected": 0,
-        }
-
-        for unit in enabled_units:
-            submission = submissions_by_unit_id.get(unit.id)
-            lock_at = lock_at_by_unit_id.get(unit.id)
-
-            if submission:
-                # Es gibt eine Submission: Status kommt aus Submission.status
-                if submission.status == Submission.CORRECTED:
-                    status_key = "corrected"
-                else:
-                    status_key = "submitted"
-            else:
-                # Keine Submission vorhanden -> offen oder gesperrt
-                if lock_at is not None and now >= lock_at:
-                    status_key = "locked"
-                else:
-                    status_key = "open"
-
-            counts[status_key] += 1
-
-            rows.append({
-                "unit": unit,
-                "module": unit.module,
-                "submission": submission,     # None wenn noch nicht abgegeben
-                "status": status_key,         # open | locked | submitted | corrected
-                "lock_at": lock_at,           # None wenn nicht berechenbar
-            })
-
-        # Optional: sortiere, wie du’s im UI willst (z.B. gesperrt zuerst)
-        status_order = {"locked": 0, "open": 1, "submitted": 2, "corrected": 3}
-        rows.sort(key=lambda r: (status_order.get(r["status"], 99),
-                                 r["unit"].date is None,  # dated zuerst
-                                 r["unit"].date or timezone.datetime.min.replace(tzinfo=timezone.get_current_timezone()),
-                                 r["unit"].id))
-
-        # ------------------------------------------------------------
-        # 5) Context für Template + KPI-Kachel
-        # ------------------------------------------------------------
         context["rows"] = rows
         context["counts"] = counts
-
-        # Diese Keys sind praktisch fürs Dashboard-KPI (falls du sie hier wiederverwenden willst)
         context["homework_enabled_units_count"] = counts["enabled_units"]
         context["homework_open_count"] = counts["open"]
         context["homework_locked_count"] = counts["locked"]
