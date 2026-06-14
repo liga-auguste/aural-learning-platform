@@ -158,8 +158,6 @@ class EntryDetailView(LockedView, DetailView):
 
         submission = None
         can_edit = False
-        lock_at = None
-
         if unit and self.request.user.is_authenticated and getattr(self.request.user, "is_student", False):
             submission = Submission.objects.filter(
                 unit=unit,
@@ -171,11 +169,8 @@ class EntryDetailView(LockedView, DetailView):
             else:
                 can_edit = unit.submissions_enabled
 
-            lock_at = None
-
         context["submission"] = submission
         context["can_edit"] = can_edit
-        context["lock_at"] = lock_at
         context["now"] = timezone.now()
 
         audio_blocks = []
@@ -572,7 +567,6 @@ class StudentDashboardView(StudentRequiredMixin, TemplateView):
         _, hw_counts = _get_homework_counts(user)
         context["homework_enabled_units_count"] = hw_counts["enabled_units"]
         context["homework_open_count"] = hw_counts["open"]
-        context["homework_locked_count"] = hw_counts["locked"]
         context["homework_submitted_count"] = hw_counts["submitted"]
         context["homework_corrected_count"] = hw_counts["corrected"]
 
@@ -799,30 +793,16 @@ def _get_homework_counts(user):
     )
     submissions_by_unit_id = {s.unit_id: s for s in submissions_qs}
 
-    units_with_date = sorted(
-        [u for u in enabled_units if getattr(u, "date", None)],
-        key=lambda u: u.date,
-    )
-    lock_at_by_unit_id = {}
-    for i, unit in enumerate(units_with_date):
-        next_unit = units_with_date[i + 1] if i + 1 < len(units_with_date) else None
-        lock_at_by_unit_id[unit.id] = (
-            None if next_unit is None else next_unit.date - timedelta(hours=36)
-        )
-    for unit in enabled_units:
-        lock_at_by_unit_id.setdefault(unit.id, None)
-
     rows = []
-    counts = {"enabled_units": len(enabled_units), "open": 0, "locked": 0, "submitted": 0, "corrected": 0}
+    counts = {"enabled_units": len(enabled_units), "open": 0, "submitted": 0, "corrected": 0}
 
     for unit in enabled_units:
         submission = submissions_by_unit_id.get(unit.id)
-        lock_at = lock_at_by_unit_id.get(unit.id)
 
         if submission:
             status_key = "corrected" if submission.status == Submission.CORRECTED else "submitted"
         else:
-            status_key = "locked" if (lock_at is not None and now >= lock_at) else "open"
+            status_key = "open"
 
         counts[status_key] += 1
         rows.append({
@@ -830,7 +810,6 @@ def _get_homework_counts(user):
             "module": unit.module,
             "submission": submission,
             "status": status_key,
-            "lock_at": lock_at,
         })
 
     status_order = {"locked": 0, "open": 1, "submitted": 2, "corrected": 3}
@@ -855,7 +834,6 @@ class StudentSubmissionsListView(StudentRequiredMixin, TemplateView):
         context["counts"] = counts
         context["homework_enabled_units_count"] = counts["enabled_units"]
         context["homework_open_count"] = counts["open"]
-        context["homework_locked_count"] = counts["locked"]
         context["homework_submitted_count"] = counts["submitted"]
         context["homework_corrected_count"] = counts["corrected"]
 
