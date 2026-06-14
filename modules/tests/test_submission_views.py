@@ -533,5 +533,5 @@ class StudentSubmissionsListViewTest(TestCase):
         response = self.client.get(reverse("modules:student_submissions_list"))
         counts = response.context["counts"]
         rows = response.context["rows"]
-        total = counts["open"] + counts["locked"] + counts["submitted"] + counts["corrected"]
+        total = counts["open"] + counts["submitted"] + counts["corrected"]
         self.assertEqual(total, len(rows))
