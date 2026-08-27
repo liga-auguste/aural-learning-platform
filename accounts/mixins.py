@@ -7,7 +7,7 @@ class TeacherRequiredMixin(LoginRequiredMixin, UserPassesTestMixin):
     Erlaubt Zugriff nur für eingeloggte Lehrkräfte (user.is_teacher == True).
     """
 
-    login_url = "login"  # oder dein Login-URL-Name
+    login_url = "login"
 
     def test_func(self):
         user = self.request.user
